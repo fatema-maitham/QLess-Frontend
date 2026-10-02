@@ -1,18 +1,18 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router'
-import './index.css'
-import App from './App.jsx'
-import { UserProvider } from './contexts/UserContext.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import "./index.css";
+import App from "./App.jsx";
+import { UserProvider } from "./contexts/UserContext.jsx";
 
-// Wrap the App component with the BrowserRouter component to enable
-// enable route handling throughout your application.
-createRoot(document.getElementById('root')).render(
+// BrowserRouter enables routing across the whole app.
+// UserProvider shares the logged-in user with every page.
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <UserProvider>
         <App />
       </UserProvider>
     </BrowserRouter>
-  </StrictMode>,
-)
+  </StrictMode>
+);

@@ -1,0 +1,14 @@
+/* App shell: the wrapper around every page */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Each page fills the remaining height */
+.app>main {
+  flex: 1;
+}

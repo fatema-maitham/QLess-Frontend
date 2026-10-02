@@ -12,10 +12,12 @@ import NotFound from './components/NotFound/NotFound';
 import NavBar from './components/NavBar/NavBar';
 import SignUpForm from './components/SignUpForm/SignUpForm';
 import SignInForm from './components/SignInForm/SignInForm';
-import Dashboard from './components/Dashboard/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import Placeholder from './components/Placeholder/Placeholder';
 
-// Context
+// Context + helpers
 import { UserContext } from './contexts/UserContext';
+import { ROLES, homeFor } from './lib/helpers/roles';
 
 import './App.css';
 

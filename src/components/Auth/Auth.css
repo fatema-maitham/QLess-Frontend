@@ -13,6 +13,7 @@
 .auth.flip .auth-glow { left: auto; right: -160px; }
 
 /* ===== Dark side panel ===== */
+
 .auth-side {
   position: relative;
   background: var(--ink);
@@ -113,6 +114,7 @@
 .auth-side footer { color: var(--faint); font-size: 13px; position: relative; }
 
 /* ===== Form side ===== */
+
 .auth-main { display: flex; flex-direction: column; padding: 22px clamp(20px, 4vw, 48px); overflow-y: auto; }
 .auth-main.fade { animation: auth-in .6s var(--ease); }
 .auth-top { display: flex; justify-content: flex-end; align-items: center; gap: 12px; font-size: 14px; color: var(--muted); }

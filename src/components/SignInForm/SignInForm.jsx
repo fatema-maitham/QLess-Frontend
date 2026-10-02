@@ -33,6 +33,8 @@ const SignInForm = () => {
       setMessage(err.message);
     } finally {
       setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -6,6 +6,18 @@ import { UserContext } from '../../contexts/UserContext';
 import AuthLayout from '../Auth/AuthLayout';
 import { UserIcon, MailIcon, PhoneIcon, LockIcon, EyeIcon, BuildingIcon, AlertIcon } from '../Auth/AuthIcons';
 
+const STRENGTH_COLORS = ['#E2572A', '#F26B3A', '#F7C98B', '#1E1A18'];
+const STRENGTH_LABELS = ['Weak', 'Okay', 'Good', 'Strong'];
+
+const getStrength = (p) => {
+  let s = 0;
+  if (p.length >= 6) s++;
+  if (p.length >= 10) s++;
+  if (/\d/.test(p)) s++;
+  if (/[^A-Za-z0-9]/.test(p) || /[A-Z]/.test(p)) s++;
+  return s;
+};
+
 
 const SignUpForm = () => {
   const navigate = useNavigate();

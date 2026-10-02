@@ -6,6 +6,7 @@ import { removeToken } from '../../lib/helpers/jwt-helpers';
 const NavBar = () => {
   const { user, setUser } = useContext(UserContext);
 
+
   const handleSignOut = () => {
     removeToken();
     setUser(null);

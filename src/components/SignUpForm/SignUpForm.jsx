@@ -55,6 +55,12 @@ const SignUpForm = () => {
     }
   };
 
+  const hint = !password
+    ? '6+ characters. A number makes it stronger.'
+    : tooShort
+      ? 'Too short. Use at least 6 characters.'
+      : `${STRENGTH_LABELS[strength - 1]} password`;
+
   const isFormInvalid = () => {
     return !(username && email && password && password === passwordConf);
   };

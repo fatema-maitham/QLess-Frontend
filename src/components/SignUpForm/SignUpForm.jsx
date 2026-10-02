@@ -21,16 +21,19 @@ const getStrength = (p) => {
 
 const SignUpForm = () => {
   const navigate = useNavigate();
-  const [message, setMessage] = useState('');
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    passwordConf: '',
-  });
   const { setUser } = useContext(UserContext);
-
-  const { username, email, password, passwordConf } = formData;
+  const [role, setRole] = useState('customer');
+  const [showPw, setShowPw] = useState(false);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '', email: '', phone: '', password: '', passwordConf: '',
+  });
+  const { name, email, phone, password, passwordConf } = formData;
+  const strength = getStrength(password);
+  const tooShort = password.length > 0 && password.length < 6;
+  const mismatch = passwordConf.length > 0 && password !== passwordConf;
+  const isValid = name && email.includes('@') && password.length >= 6 && password === passwordConf;
 
   const handleChange = (evt) => {
     setMessage('');

@@ -18,7 +18,7 @@ const App = () => {
 
   return (
     <>
-      <NavBar />
+      {showNav && <NavBar />}
       <Routes>
         <Route path='/' element={user ? <Dashboard /> : <Landing/> } />
         <Route path='/sign-up' element={<SignUpForm />} />

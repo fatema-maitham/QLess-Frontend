@@ -42,12 +42,17 @@ const SignUpForm = () => {
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
-
-    const payload = { username, email, password };
-    const user = await authService.signUp(payload)
-
-    setUser(user); // this line will print the form data to the console
-    navigate('/')
+    if (!isValid) return;
+    setLoading(true);
+    try {
+      const user = await signUp({ name, email, password, role, phone: phone || null });
+      setUser(user);
+      navigate('/');
+    } catch (err) {
+      setMessage(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const isFormInvalid = () => {

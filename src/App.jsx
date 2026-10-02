@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Routes, Route, useLocation } from 'react-router';
+import { Routes, Route, Navigate, useLocation } from 'react-router';
 
 // Fatema's pages
 import LandingPage from './components/Landing/LandingPage';

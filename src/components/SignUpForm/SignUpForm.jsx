@@ -1,9 +1,10 @@
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-// Services
-import * as authService from '../../services/authService';
+import { signUp } from '../../services/authService';
 import { UserContext } from '../../contexts/UserContext';
+import AuthLayout from '../Auth/AuthLayout';
+import { UserIcon, MailIcon, PhoneIcon, LockIcon, EyeIcon, BuildingIcon, AlertIcon } from '../Auth/AuthIcons';
 
 
 const SignUpForm = () => {

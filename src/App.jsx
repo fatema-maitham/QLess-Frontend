@@ -3,6 +3,9 @@ import { Routes, Route, useLocation } from 'react-router';
 
 // Fatema's pages
 import LandingPage from './components/Landing/LandingPage';
+import BrowsePage from './components/Browse/BrowsePage';
+import BusinessDetailsPage from './components/BusinessDetails/BusinessDetailsPage';
+import BranchDetailsPage from './components/BranchDetails/BranchDetailsPage';
 import NotFound from './components/NotFound/NotFound';
 
 // Maram's pages
@@ -28,13 +31,21 @@ export default function App() {
     <div className="app">
       {showNav && <NavBar />}
       <Routes>
+        {/* Home: signed in → dashboard, visitor → landing page */}
         <Route path="/" element={user ? <Dashboard /> : <LandingPage />} />
+
+        {/* Auth (Maram) */}
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/sign-in" element={<SignInForm />} />
 
-        {/* Add new pages here, for example:
+        {/* Browse (Fatema) */}
+        <Route path="/businesses" element={<BrowsePage />} />
+        <Route path="/businesses/:businessId" element={<BusinessDetailsPage />} />
+        <Route path="/branches/:branchId" element={<BranchDetailsPage />} />
+
+        {/* Next steps:
+        <Route path="/queues/:queueId" element={<JoinQueuePage />} />
         <Route path="/business/register" element={<BusinessRegister />} />
-        <Route path="/businesses" element={<Businesses />} />
         */}
 
         <Route path="*" element={<NotFound />} />

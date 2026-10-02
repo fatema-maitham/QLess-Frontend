@@ -1,82 +1,32 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
+import { ArrowRight, CheckCircle, Plus, Quotes } from "@phosphor-icons/react";
+import ColorIcon from "./ColorIcon";
 import {
-  ArrowRight,
-  Bank,
-  Bell,
-  Buildings,
-  CalendarCheck,
-  Car,
-  ChatCircleText,
-  CheckCircle,
-  ForkKnife,
-  GraduationCap,
-  Hospital,
-  Lightning,
-  Megaphone,
-  Package,
-  PawPrint,
-  PiggyBank,
-  Pill,
-  Plus,
-  Quotes,
-  Scales,
-  SimCard,
-  Smiley,
-  Stack,
-  Star,
-  Storefront,
-  TestTube,
-  UserCircle,
-  UsersThree,
-} from "@phosphor-icons/react";
-import {
-  TRUST_POINTS,
   PARTNER_LOGOS,
   REVIEWS,
-  QUEUE_SCROLL,
   STEPS,
   AUDIENCES,
   FEATURES,
   VALUES,
   STATS,
-  INDUSTRIES,
   PLACES,
   FAQS,
   FOOTER_LINKS,
 } from "./landingData";
 import "./LandingPage.css";
 
-const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-
-/* =========================================================
-   Icon map (data uses short names)
-   ========================================================= */
-
-const ICONS = {
-  bell: Bell,
-  calendar: CalendarCheck,
-  buildings: Buildings,
-  users: UsersThree,
-  megaphone: Megaphone,
-  star: Star,
-  smile: Smiley,
-  scales: Scales,
-  stack: Stack,
-  chat: ChatCircleText,
-  government: Bank,
-  banks: PiggyBank,
-  healthcare: Hospital,
-  pharmacies: Pill,
-  telecom: SimCard,
-  universities: GraduationCap,
-  car: Car,
-  restaurants: ForkKnife,
-  labs: TestTube,
-  veterinary: PawPrint,
-  post: Package,
-  utilities: Lightning,
-};
+// The 8 industries shown on the landing page (icon names match ColorIcon.jsx)
+const INDUSTRIES = [
+  { name: "Healthcare", icon: "healthcare" },
+  { name: "Government", icon: "government" },
+  { name: "Banks", icon: "banks" },
+  { name: "Restaurants", icon: "restaurants" },
+  { name: "Veterinary", icon: "veterinary" },
+  { name: "Pharmacies", icon: "pharmacies" },
+  { name: "Salons and beauty", icon: "salons" },
+  { name: "Universities", icon: "universities" },
+];
 
 /* =========================================================
    Hooks
@@ -175,7 +125,7 @@ function SectionHead({ eyebrow, title, text, id, children }) {
 }
 
 /* =========================================================
-   1. Hero (static)
+   1. Hero
    ========================================================= */
 function Hero() {
   return (
@@ -213,8 +163,9 @@ function Hero() {
     </section>
   );
 }
+
 /* =========================================================
-   3. Three steps
+   2. Three steps
    ========================================================= */
 
 function Steps() {
@@ -238,14 +189,14 @@ function Steps() {
 }
 
 /* =========================================================
-   4. Visitors and businesses
+   3. Visitors and businesses
    ========================================================= */
 
-function SideCard({ data, variant, Icon }) {
+function SideCard({ data, variant, icon }) {
   return (
     <article className={`lp-side lp-side--${variant}`}>
       <span className="lp-side__icon">
-        <Icon size={34} weight="duotone" />
+        <ColorIcon name={icon} size={64} />
       </span>
       <span className="lp-side__tag">{data.tag}</span>
       <h3>{data.title}</h3>
@@ -254,7 +205,7 @@ function SideCard({ data, variant, Icon }) {
       <ul className="lp-side__points">
         {data.points.map((point) => (
           <li key={point}>
-            <CheckCircle size={22} weight="fill" />
+            <CheckCircle size={22} weight="fill" className="lp-check" />
             {point}
           </li>
         ))}
@@ -282,10 +233,10 @@ function Audiences() {
 
         <div className="lp-audience__grid lp-stagger">
           <Reveal>
-            <SideCard data={AUDIENCES.visitors} variant="visitors" Icon={UserCircle} />
+            <SideCard data={AUDIENCES.visitors} variant="visitors" icon="visitor" />
           </Reveal>
           <Reveal>
-            <SideCard data={AUDIENCES.business} variant="business" Icon={Storefront} />
+            <SideCard data={AUDIENCES.business} variant="business" icon="business" />
           </Reveal>
         </div>
       </div>
@@ -294,7 +245,7 @@ function Audiences() {
 }
 
 /* =========================================================
-   5. Features
+   4. Features
    ========================================================= */
 
 function Features() {
@@ -310,12 +261,11 @@ function Features() {
 
         <div className="lp-feats lp-stagger">
           {FEATURES.map((feature) => {
-            const FeatureIcon = ICONS[feature.icon];
             return (
               <Reveal key={feature.title}>
                 <article className="lp-feat">
                   <span className="lp-feat__icon">
-                    <FeatureIcon size={28} weight="duotone" />
+                    <ColorIcon name={feature.icon} size={56} />
                   </span>
                   <h3>{feature.title}</h3>
                   <p>{feature.text}</p>
@@ -330,7 +280,7 @@ function Features() {
 }
 
 /* =========================================================
-   6. Why QLess
+   5. Why QLess
    ========================================================= */
 
 function Values() {
@@ -345,11 +295,10 @@ function Values() {
 
         <div className="lp-values lp-stagger">
           {VALUES.map((value) => {
-            const ValueIcon = ICONS[value.icon];
             return (
               <Reveal key={value.title} className="lp-value">
                 <span className="lp-value__icon">
-                  <ValueIcon size={28} weight="duotone" />
+                  <ColorIcon name={value.icon} size={56} />
                 </span>
                 <h3>{value.title}</h3>
                 <p>{value.text}</p>
@@ -363,7 +312,7 @@ function Values() {
 }
 
 /* =========================================================
-   7. Numbers (count up)
+   6. Numbers (count up)
    ========================================================= */
 
 function StatNumber({ stat, start, reduced }) {
@@ -406,7 +355,7 @@ function Numbers({ reduced }) {
 }
 
 /* =========================================================
-   8. Trusted by: logos + reviews
+   7. Trusted by: logos + reviews
    ========================================================= */
 
 function LogoItem({ logo, hidden }) {
@@ -479,7 +428,7 @@ function Reviews() {
 }
 
 /* =========================================================
-   9. Industries
+   8. Industries
    ========================================================= */
 
 function Industries() {
@@ -494,22 +443,17 @@ function Industries() {
         />
 
         <ul className="lp-inds lp-stagger">
-          {INDUSTRIES.map((industry) => {
-            const IndustryIcon = ICONS[industry.icon];
-            return (
-              <Reveal as="li" key={industry.name}>
-                <Link
-                  className="lp-ind"
-                  to={`/businesses?category=${encodeURIComponent(industry.name)}`}
-                >
-                  <span className="lp-ind__icon">
-                    <IndustryIcon size={36} weight="duotone" />
-                  </span>
-                  {industry.name}
-                </Link>
-              </Reveal>
-            );
-          })}
+          {INDUSTRIES.map((industry) => (
+            <Reveal as="li" key={industry.name}>
+              <Link
+                className="lp-ind"
+                to={`/businesses?category=${encodeURIComponent(industry.name)}`}
+              >
+                <ColorIcon name={industry.icon} size={64} />
+                <span className="lp-ind__name">{industry.name}</span>
+              </Link>
+            </Reveal>
+          ))}
         </ul>
 
         <div className="lp-more">
@@ -523,7 +467,7 @@ function Industries() {
 }
 
 /* =========================================================
-   10. Places
+   9. Places
    ========================================================= */
 
 function Places() {
@@ -581,7 +525,7 @@ function Places() {
 }
 
 /* =========================================================
-   11. FAQ
+   10. FAQ
    ========================================================= */
 
 function Faq() {
@@ -609,7 +553,7 @@ function Faq() {
 }
 
 /* =========================================================
-   12. Orange section
+   11. Orange section
    ========================================================= */
 
 function OrangeCta() {
@@ -635,7 +579,7 @@ function OrangeCta() {
             <Link className="btn lp-btn-dark" to="/business/register">
               Register your business
             </Link>
-            <Link className="btn btn--outline" to="/register">
+            <Link className="btn btn--outline" to="/sign-up">
               Join a queue
             </Link>
           </div>
@@ -646,7 +590,7 @@ function OrangeCta() {
 }
 
 /* =========================================================
-   13. Footer
+   12. Footer
    ========================================================= */
 
 function Footer() {

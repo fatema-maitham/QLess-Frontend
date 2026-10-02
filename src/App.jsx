@@ -1,29 +1,24 @@
-import { useContext } from 'react';
-import { Route, Routes } from 'react-router';
+import { Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import NotFound from "./pages/NotFound";
+import "./App.css";
 
-// Components
-import NavBar from './components/NavBar/NavBar';
-import SignUpForm from './components/SignUpForm/SignUpForm';
-import SignInForm from './components/SignInForm/SignInForm';
-import Dashboard from './components/Dashboard/Dashboard'
-import Landing from './components/Landing/Landing'
-
-// Context
-import { UserContext } from './contexts/UserContext';
-
-const App = () => {
-  const { user } = useContext(UserContext)
-
+export default function App() {
   return (
-    <>
-      <NavBar />
+    <div className="app">
       <Routes>
-        <Route path='/' element={user ? <Dashboard /> : <Landing/> } />
-        <Route path='/sign-up' element={<SignUpForm />} />
-        <Route path='/sign-in' element={<SignInForm />} />
-      </Routes>
-    </>
-  );
-};
+        <Route path="/" element={<LandingPage />} />
 
-export default App;
+        {/* Add new pages here, for example:
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/business/register" element={<BusinessRegister />} />
+        <Route path="/businesses" element={<Businesses />} />
+        <Route path="/businesses/:id" element={<BusinessDetails />} />
+        */}
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
+  );
+}

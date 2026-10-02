@@ -11,6 +11,10 @@ const SignInForm = () => {
   const [showPw, setShowPw] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const { setUser } = useContext(UserContext);
+  const [showPw, setShowPw] = useState(false);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
 
   const handleChange = (evt) => {

@@ -1,0 +1,68 @@
+/* =========================================================
+   Colourful outlined icons (ColorIcon.jsx)
+   ========================================================= */
+.cicon {
+  /* extra icon colours (only used inside icons) */
+  --icon-blue: #8ec5f7;
+  --icon-green: #94d8a8;
+  --icon-yellow: #ffd36e;
+  --icon-red: #f47c7c;
+  --icon-purple: #c3b1f5;
+
+  display: block;
+  flex: none;
+  overflow: visible;
+}
+
+/* thick dark outline on every shape */
+.cicon * {
+  stroke: var(--color-text);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cicon .ns {
+  stroke: none;
+}
+
+/* fills */
+.cicon .fo {
+  fill: var(--color-primary);
+}
+
+.cicon .fp {
+  fill: var(--color-accent);
+}
+
+.cicon .fw {
+  fill: var(--color-bg);
+}
+
+.cicon .fm {
+  fill: var(--color-surface);
+}
+
+.cicon .fi {
+  fill: var(--color-text);
+}
+
+.cicon .fb {
+  fill: var(--icon-blue);
+}
+
+.cicon .fg {
+  fill: var(--icon-green);
+}
+
+.cicon .fy {
+  fill: var(--icon-yellow);
+}
+
+.cicon .fr {
+  fill: var(--icon-red);
+}
+
+.cicon .fv {
+  fill: var(--icon-purple);
+}

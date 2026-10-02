@@ -1361,3 +1361,59 @@
     display: none;
   }
 }
+
+/* =========================================================
+   Colourful icons: no tile behind them, just the drawing
+   ========================================================= */
+.lp-feat__icon,
+.lp-value__icon,
+.lp-ind__icon,
+.lp-side__icon {
+  display: inline-flex;
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.lp-ind__icon {
+  justify-content: center;
+}
+
+.lp-feat__icon .cicon,
+.lp-value__icon .cicon,
+.lp-ind__icon .cicon,
+.lp-side__icon .cicon {
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+/* small tilt when the card is hovered */
+.lp-feat:hover .cicon,
+.lp-value:hover .cicon,
+.lp-ind:hover .cicon,
+.lp-side:hover .cicon {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+/* orange ticks and quote marks */
+.lp-check {
+  flex: none;
+  color: var(--color-primary);
+}
+
+.lp-review__icon {
+  color: var(--color-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .lp-feat:hover .cicon,
+  .lp-value:hover .cicon,
+  .lp-ind:hover .cicon,
+  .lp-side:hover .cicon {
+    transform: none;
+  }
+}

@@ -37,6 +37,9 @@ const handleAuth = async (url, body) => {
   return data.user;
 };
 
+// { name, email, password, phone, role }
+const signUp = (formData) => handleAuth(`${BASE_URL}/sign-up`, formData);
+
 export {
   signUp,
   signIn,

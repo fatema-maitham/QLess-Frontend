@@ -1,9 +1,11 @@
 import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 
 import { signIn } from '../../services/authService';
 
 import { UserContext } from '../../contexts/UserContext';
+import AuthLayout from '../Auth/AuthLayout';
+import { MailIcon, LockIcon, EyeIcon, AlertIcon } from '../Auth/AuthIcons';
 
 const SignInForm = () => {
   const navigate = useNavigate();

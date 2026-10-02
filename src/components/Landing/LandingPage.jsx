@@ -10,12 +10,23 @@ import {
   FEATURES,
   VALUES,
   STATS,
-  INDUSTRIES,
   PLACES,
   FAQS,
   FOOTER_LINKS,
 } from "./landingData";
 import "./LandingPage.css";
+
+// The 8 industries shown on the landing page (icon names match ColorIcon.jsx)
+const INDUSTRIES = [
+  { name: "Healthcare", icon: "healthcare" },
+  { name: "Government", icon: "government" },
+  { name: "Banks", icon: "banks" },
+  { name: "Restaurants", icon: "restaurants" },
+  { name: "Veterinary", icon: "veterinary" },
+  { name: "Pharmacies", icon: "pharmacies" },
+  { name: "Salons and beauty", icon: "salons" },
+  { name: "Universities", icon: "universities" },
+];
 
 /* =========================================================
    Hooks
@@ -152,8 +163,9 @@ function Hero() {
     </section>
   );
 }
+
 /* =========================================================
-   3. Three steps
+   2. Three steps
    ========================================================= */
 
 function Steps() {
@@ -177,7 +189,7 @@ function Steps() {
 }
 
 /* =========================================================
-   4. Visitors and businesses
+   3. Visitors and businesses
    ========================================================= */
 
 function SideCard({ data, variant, icon }) {
@@ -233,7 +245,7 @@ function Audiences() {
 }
 
 /* =========================================================
-   5. Features
+   4. Features
    ========================================================= */
 
 function Features() {
@@ -268,7 +280,7 @@ function Features() {
 }
 
 /* =========================================================
-   6. Why QLess
+   5. Why QLess
    ========================================================= */
 
 function Values() {
@@ -300,7 +312,7 @@ function Values() {
 }
 
 /* =========================================================
-   7. Numbers (count up)
+   6. Numbers (count up)
    ========================================================= */
 
 function StatNumber({ stat, start, reduced }) {
@@ -343,7 +355,7 @@ function Numbers({ reduced }) {
 }
 
 /* =========================================================
-   8. Trusted by: logos + reviews
+   7. Trusted by: logos + reviews
    ========================================================= */
 
 function LogoItem({ logo, hidden }) {
@@ -416,7 +428,7 @@ function Reviews() {
 }
 
 /* =========================================================
-   9. Industries
+   8. Industries
    ========================================================= */
 
 function Industries() {
@@ -431,21 +443,17 @@ function Industries() {
         />
 
         <ul className="lp-inds lp-stagger">
-          {INDUSTRIES.map((industry) => {
-            return (
-              <Reveal as="li" key={industry.name}>
-                <Link
-                  className="lp-ind"
-                  to={`/businesses?category=${encodeURIComponent(industry.name)}`}
-                >
-                  <span className="lp-ind__icon">
-                    <ColorIcon name={industry.icon} size={64} />
-                  </span>
-                  {industry.name}
-                </Link>
-              </Reveal>
-            );
-          })}
+          {INDUSTRIES.map((industry) => (
+            <Reveal as="li" key={industry.name}>
+              <Link
+                className="lp-ind"
+                to={`/businesses?category=${encodeURIComponent(industry.name)}`}
+              >
+                <ColorIcon name={industry.icon} size={64} />
+                <span className="lp-ind__name">{industry.name}</span>
+              </Link>
+            </Reveal>
+          ))}
         </ul>
 
         <div className="lp-more">
@@ -459,7 +467,7 @@ function Industries() {
 }
 
 /* =========================================================
-   10. Places
+   9. Places
    ========================================================= */
 
 function Places() {
@@ -517,7 +525,7 @@ function Places() {
 }
 
 /* =========================================================
-   11. FAQ
+   10. FAQ
    ========================================================= */
 
 function Faq() {
@@ -545,7 +553,7 @@ function Faq() {
 }
 
 /* =========================================================
-   12. Orange section
+   11. Orange section
    ========================================================= */
 
 function OrangeCta() {
@@ -582,7 +590,7 @@ function OrangeCta() {
 }
 
 /* =========================================================
-   13. Footer
+   12. Footer
    ========================================================= */
 
 function Footer() {

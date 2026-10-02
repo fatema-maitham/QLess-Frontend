@@ -109,8 +109,7 @@ const SHAPES = {
       <path d="M26 29a14 14 0 0 1 28 0z" className="fy" />
       <rect x="14" y="29" width="52" height="7" className="fw" />
       <path d="M21 36v19M33 36v19M47 36v19M59 36v19" />
-      <rect x="10" y="55" width="60" height="9" rx="2" className="fb" />
-    </>
+      <rect x="10" y="55" width="60" height="9" rx="2" className="fm" />    </>
   ),
   banks: (
     <>
@@ -118,8 +117,7 @@ const SHAPES = {
       <circle cx="40" cy="23" r="4" className="fy" />
       <rect x="14" y="30" width="52" height="6" className="fw" />
       <path d="M20 36v18M33 36v18M47 36v18M60 36v18" />
-      <rect x="10" y="54" width="60" height="9" rx="2" className="fg" />
-    </>
+      <rect x="10" y="54" width="60" height="9" rx="2" className="fm" />    </>
   ),
   healthcare: (
     <>
@@ -131,11 +129,10 @@ const SHAPES = {
   pharmacies: (
     <>
       <g transform="rotate(-35 40 40)">
-        <rect x="12" y="29" width="50" height="22" rx="11" className="fw" />
-        <path d="M37 29H23a11 11 0 0 0 0 22h14z" className="fo" />
+        <rect x="13" y="28" width="54" height="24" rx="12" className="fw" />
+        <path d="M40 28H25a12 12 0 0 0 0 24h15z" className="fr" />
+        <path d="M22 35a5 5 0 0 0-3 4" />
       </g>
-      <circle cx="59" cy="59" r="10" className="fg" />
-      <path d="M52 66l14-14" />
     </>
   ),
   telecom: (
@@ -189,6 +186,16 @@ const SHAPES = {
       <ellipse cx="34" cy="24" rx="6" ry="8" className="fp" />
       <ellipse cx="46" cy="24" rx="6" ry="8" className="fp" />
       <ellipse cx="56" cy="34" rx="6" ry="8" className="fp" />
+    </>
+  ),
+  salons: (
+    <>
+      <path d="M30 47 53 13M50 47 27 13" />
+      <circle cx="40" cy="30" r="3" className="fi ns" />
+      <circle cx="24" cy="54" r="9" className="fy" />
+      <circle cx="56" cy="54" r="9" className="fy" />
+      <circle cx="24" cy="54" r="3.5" className="fw" />
+      <circle cx="56" cy="54" r="3.5" className="fw" />
     </>
   ),
   post: (

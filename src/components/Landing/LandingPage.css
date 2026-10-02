@@ -112,12 +112,6 @@
 }
 
 /* =========================================================
-   1. Hero (static)
-   ========================================================= */
-/* =========================================================
-   1. Hero
-   ========================================================= */
-/* =========================================================
    1. Hero
    ========================================================= */
 .lp-hero {
@@ -300,7 +294,6 @@
   }
 }
 
-
 /* =========================================================
    3. Steps
    ========================================================= */
@@ -413,18 +406,16 @@
 }
 
 .lp-side__icon {
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
+  display: inline-flex;
   margin-bottom: var(--space-2);
-  border-radius: 50%;
-  background: var(--color-bg);
 }
 
-.lp-side--business .lp-side__icon {
-  background: var(--color-inverse-tint);
-  color: var(--color-accent);
+.lp-side__icon .cicon {
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.lp-side:hover .lp-side__icon .cicon {
+  transform: scale(1.08) rotate(-4deg);
 }
 
 .lp-side__tag {
@@ -472,7 +463,7 @@
 
 .lp-side__points svg {
   flex: none;
-  color: var(--color-text);
+  color: var(--color-primary);
 }
 
 .lp-side--business .lp-side__points svg {
@@ -508,13 +499,16 @@
 }
 
 .lp-feat__icon {
-  display: grid;
-  place-items: center;
-  width: 56px;
-  height: 56px;
+  display: inline-flex;
   margin-bottom: var(--space-2);
-  border-radius: 16px;
-  background: var(--color-bg);
+}
+
+.lp-feat .cicon {
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.lp-feat:hover .cicon {
+  transform: scale(1.08) rotate(-4deg);
 }
 
 .lp-feat h3 {
@@ -544,13 +538,16 @@
 }
 
 .lp-value__icon {
-  display: grid;
-  place-items: center;
-  width: 56px;
-  height: 56px;
+  display: inline-flex;
   margin-bottom: var(--space-2);
-  border-radius: 50%;
-  background: var(--color-accent);
+}
+
+.lp-value .cicon {
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.lp-value:hover .cicon {
+  transform: scale(1.08) rotate(-4deg);
 }
 
 .lp-value h3 {
@@ -726,7 +723,7 @@
 }
 
 /* =========================================================
-   9. Industries
+   9. Industries (8 cards, no orange hover)
    ========================================================= */
 .lp-inds {
   display: grid;
@@ -737,51 +734,56 @@
   list-style: none;
 }
 
+.lp-inds>li {
+  display: flex;
+}
+
 .lp-ind {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--space-4);
-  height: 100%;
-  padding: var(--space-8) var(--space-4) var(--space-6);
+  min-height: 170px;
+  padding: var(--space-6) var(--space-4);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
   background: var(--color-bg);
-  font-weight: var(--weight-semibold);
+  color: var(--color-text);
   text-align: center;
   text-decoration: none;
   transition:
     transform var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out),
-    border-color var(--duration-base);
+    box-shadow var(--duration-base) var(--ease-out);
 }
 
-.lp-ind__icon {
-  display: grid;
-  place-items: center;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  color: var(--color-text);
-  transition:
-    background-color var(--duration-base) var(--ease-out),
-    transform var(--duration-base) var(--ease-out);
+.lp-ind__name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
 }
 
+.lp-ind .cicon {
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+/* hover: lift + soft shadow, icon tilts (no orange) */
 .lp-ind:hover {
-  border-color: var(--color-border);
   box-shadow: var(--shadow-sm);
-  transform: translateY(-6px);
+  transform: translateY(-4px);
 }
 
-.lp-ind:hover .lp-ind__icon {
-  background: var(--color-primary);
-  transform: scale(1.06);
+.lp-ind:hover .cicon {
+  transform: scale(1.08) rotate(-4deg);
 }
 
 .lp-ind:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
+}
+
+.lp-ind:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
 }
 
 .lp-more {
@@ -1318,6 +1320,20 @@
     width: 100%;
   }
 
+  .lp-inds {
+    gap: var(--space-3);
+  }
+
+  .lp-ind {
+    min-height: 140px;
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .lp-ind .cicon {
+    width: 52px;
+    height: 52px;
+  }
+
   .lp-faq__item {
     padding-inline: var(--space-4);
   }
@@ -1359,61 +1375,5 @@
 
   .lp-logo[aria-hidden="true"] {
     display: none;
-  }
-}
-
-/* =========================================================
-   Colourful icons: no tile behind them, just the drawing
-   ========================================================= */
-.lp-feat__icon,
-.lp-value__icon,
-.lp-ind__icon,
-.lp-side__icon {
-  display: inline-flex;
-  width: auto;
-  height: auto;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-}
-
-.lp-ind__icon {
-  justify-content: center;
-}
-
-.lp-feat__icon .cicon,
-.lp-value__icon .cicon,
-.lp-ind__icon .cicon,
-.lp-side__icon .cicon {
-  transition: transform var(--duration-slow) var(--ease-out);
-}
-
-/* small tilt when the card is hovered */
-.lp-feat:hover .cicon,
-.lp-value:hover .cicon,
-.lp-ind:hover .cicon,
-.lp-side:hover .cicon {
-  transform: scale(1.08) rotate(-4deg);
-}
-
-/* orange ticks and quote marks */
-.lp-check {
-  flex: none;
-  color: var(--color-primary);
-}
-
-.lp-review__icon {
-  color: var(--color-primary);
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-  .lp-feat:hover .cicon,
-  .lp-value:hover .cicon,
-  .lp-ind:hover .cicon,
-  .lp-side:hover .cicon {
-    transform: none;
   }
 }

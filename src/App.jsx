@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Route, Routes } from 'react-router';
+import { Route, Routes, useLocation } from 'react-router';
 
 // Components
 import NavBar from './components/NavBar/NavBar';

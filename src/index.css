@@ -1,5 +1,23 @@
 @import "./styles/tokens.css";
 
+/* ---------- Auth pages tokens (Maram) ---------- */
+:root {
+  --bg: #F5F2EE;
+  --surface: #FFFFFF;
+  --soft: #EDE8E2;
+  --line: #E2DCD4;
+  --ink: #1E1A18;
+  --muted: #5A524C;
+  --faint: #8A827B;
+  --orange: #F26B3A;
+  --orange-btn: #E2572A;
+  --orange-dk: #C9481F;
+  --peach: #F7C98B;
+  --peach-soft: #FCEBD3;
+  --sans: 'Montserrat', system-ui, sans-serif;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}
+
 /* ---------- Base ---------- */
 :root {
   font-family: var(--font-sans);

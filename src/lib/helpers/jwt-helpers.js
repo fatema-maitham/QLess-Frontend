@@ -1,28 +1,34 @@
-export function getUserFromToken(){
-    // pull the raw token from local storage
-    const token = localStorage.getItem('token');
-
-   return parseToken(token)
+// Save the token after sign in / sign up
+export function registerToken(token) {
+  localStorage.setItem('token', token);
 }
 
-export function parseToken(token){
-   // if there is no token, then the user is not signed in
-    if(!token) return null
+// Read the token (used for requests that need login)
+export function getToken() {
 
-    // then extract the payload (second part of the token)
-    const payload = token.split('.')[1]
-
-    // Convert the serialized payload into JSON
-    const tokenJSON = atob(payload)
-
-    // Take that json and convert it back into JS
-    return JSON.parse(tokenJSON)
+  return localStorage.getItem('token');
 }
 
-export function removeToken(){
-    window.localStorage.removeItem('token')
+// Save the user object the backend sends back
+export function saveUser(user) {
+  localStorage.setItem('user', JSON.stringify(user));
 }
 
-export function registerToken(token){
-    window.localStorage.setItem('token', token);
+// Get the signed-in user when the page loads
+export function getUserFromToken() {
+  const token = localStorage.getItem('token');
+  const user = localStorage.getItem('user');
+  if (!token || !user) return null;
+
+  try {
+    return JSON.parse(user);
+  } catch {
+    return null;
+  }
+}
+
+// Sign out: remove both
+export function removeToken() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
 }

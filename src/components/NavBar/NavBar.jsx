@@ -4,32 +4,30 @@ import { UserContext } from '../../contexts/UserContext';
 import { removeToken } from '../../lib/helpers/jwt-helpers';
 
 const NavBar = () => {
+  const { user, setUser } = useContext(UserContext);
 
-  const { user, setUser } = useContext(UserContext)
 
-  const handleSignOut = ()=>{
-    removeToken()
-    setUser(null)
-  }
+  const handleSignOut = () => {
+    removeToken();
+    setUser(null);
+  };
 
   return (
     <nav>
       <ul>
-
-        { user
-          ?
+        {user ? (
           <>
-            <li>Hello {user.username}</li>
+            <li>Hello {user.name}</li>
             <li><Link to="/">Dashboard</Link></li>
             <li><Link to="/" onClick={handleSignOut}>Sign Out</Link></li>
           </>
-          :
+        ) : (
           <>
-            <li><Link to="/">Dashboard</Link></li>
-            <li><Link to='/sign-up'>Sign Up</Link></li>
-            <li><Link to='/sign-in'>Sign In</Link></li>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/sign-up">Sign Up</Link></li>
+            <li><Link to="/sign-in">Sign In</Link></li>
           </>
-        }
+        )}
       </ul>
     </nav>
   );

@@ -25,12 +25,15 @@ const SignInForm = () => {
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
+    setLoading(true);
     try {
       const signedInUser = await signIn(formData);
       setUser(signedInUser);
       navigate('/');
     } catch (err) {
       setMessage(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 

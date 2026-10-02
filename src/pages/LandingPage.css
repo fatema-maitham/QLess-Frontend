@@ -235,7 +235,7 @@
 /* move the hero image a little to the left (desktop only) */
 @media (min-width: 901px) {
   .lp-hero__visual img {
-    transform: translateY(-80px) scale(0.75);
+    transform: translateY(-10px);
   }
 }
 

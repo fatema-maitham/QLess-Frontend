@@ -11,7 +11,13 @@ export const TRUST_POINTS = ["Free for visitors", "No app needed", "Verified bus
 export const PARTNER_LOGOS = [
   { name: "BBK", src: "/logos/bbk.png" },
   { name: "NBB", src: "/logos/nbb.png" },
-  // { name: "Company name", src: "/logos/company.png" },
+  { name: "ila", src: "/logos/ila.png" },
+  { name: "alsalam", src: "/logos/alsalam.png" },
+  { name: "stc", src: "/logos/stc.png" },
+  { name: "zain", src: "/logos/zain.png" },
+  { name: "batelco", src: "/logos/batelco.png" },
+  { name: "ewa", src: "/logos/EWA.webp" },
+  { name: "bahrainpost", src: "/logos/bahrainpost.svg" },
 ];
 
 // SAMPLE reviews. Replace with real reviews before going public.

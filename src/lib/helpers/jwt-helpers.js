@@ -1,8 +1,12 @@
-export function getUserFromToken(){
-    // pull the raw token from local storage
-    const token = localStorage.getItem('token');
-
-   return parseToken(token)
+export function getUserFromToken() {
+  const token = getToken();
+  const user = window.localStorage.getItem('user');
+  if (!token || !user) return null;
+  try {
+    return JSON.parse(user);
+  } catch {
+    return null;
+  }
 }
 
 export function parseToken(token){

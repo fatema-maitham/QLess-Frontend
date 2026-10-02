@@ -21,6 +21,7 @@ const getStrength = (p) => {
 
 const SignUpForm = () => {
   const navigate = useNavigate();
+
   const { setUser } = useContext(UserContext);
   const [role, setRole] = useState('customer');
   const [showPw, setShowPw] = useState(false);

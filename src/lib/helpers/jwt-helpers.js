@@ -5,6 +5,7 @@ export function registerToken(token) {
 
 // Read the token (used for requests that need login)
 export function getToken() {
+
   return localStorage.getItem('token');
 }
 

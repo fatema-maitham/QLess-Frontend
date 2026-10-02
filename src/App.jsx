@@ -11,6 +11,8 @@ import Landing from './components/Landing/Landing'
 // Context
 import { UserContext } from './contexts/UserContext';
 
+const AUTH_PAGES = ['/sign-in', '/sign-up'];
+
 const App = () => {
   const { user } = useContext(UserContext)
 

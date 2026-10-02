@@ -1,4 +1,4 @@
-// Backend address. Change it in a .env file with VITE_API_URL if needed.
+// Backend address. Set VITE_API_URL in the frontend .env file.
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
 
 // GET request with optional query params, e.g. { search: "bank" }
@@ -31,7 +31,9 @@ export async function apiGet(path, { params, signal } = {}) {
     } catch {
       // response had no JSON body
     }
-    throw new Error(message);
+    const error = new Error(message);
+    error.status = res.status;
+    throw error;
   }
 
   return res.json();

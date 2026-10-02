@@ -83,7 +83,7 @@ const AuthLayout = ({ mode, role = 'customer', children }) => {
         <ul className="auth-perks">
           {content.perks.map((perk) => (
             <li key={perk}>
-              <span><CheckIcon /></span>
+              <i><CheckIcon /></i>
               {perk}
             </li>
           ))}

@@ -7,6 +7,15 @@ import { registerToken, saveUser } from '../lib/helpers/jwt-helpers';
 // all the requests in this service.
 const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/auth`;
 
+const readError = (data) => {
+  if (!data || !data.detail) return 'Something went wrong. Please try again.';
+  if (typeof data.detail === 'string') return data.detail;
+  if (Array.isArray(data.detail)) {
+    return data.detail.map((d) => d.msg.replace('Value error, ', '')).join('. ');
+  }
+  return 'Something went wrong. Please try again.';
+};
+
 const signUp = async (formData) => {
   try {
     const res = await fetch(`${BASE_URL}/register`, {

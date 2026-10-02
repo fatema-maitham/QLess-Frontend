@@ -13,6 +13,7 @@
   --peach-soft: #FCEBD3;
     --sans: 'Montserrat', system-ui, sans-serif;
   --ease: cubic-bezier(.2, .8, .2, 1);
+
   font-size: 16px;
 }
 

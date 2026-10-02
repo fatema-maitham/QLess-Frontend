@@ -56,32 +56,28 @@ export default function App() {
         <Route path="/businesses/:businessId" element={<BusinessDetailsPage />} />
         <Route path="/branches/:branchId" element={<BranchDetailsPage />} />
 
-        {/* Owner (Maram) */}
+                {/* Owner (Maram) */}
         <Route
           path="/owner"
           element={
             <ProtectedRoute roles={[ROLES.OWNER]}>
-              <Placeholder title="Owner dashboard" text="Your business, branches and queues will be here." />
+              <OwnerHome />
             </ProtectedRoute>
           }
         />
-
-        {/* Staff (Maram) */}
         <Route
-          path="/staff"
+          path="/owner/business"
           element={
-            <ProtectedRoute roles={[ROLES.STAFF]}>
-              <Placeholder title="Staff" text="Call the next visitor from here." />
+            <ProtectedRoute roles={[ROLES.OWNER]}>
+              <BusinessForm />
             </ProtectedRoute>
           }
         />
-
-        {/* Admin (Maram) */}
         <Route
-          path="/admin"
+          path="/owner/dashboard"
           element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <Placeholder title="Admin dashboard" text="Users, approvals, branches and audit logs will be here." />
+            <ProtectedRoute roles={[ROLES.OWNER]}>
+              <Placeholder title="Owner dashboard" text="Branches, queues and staff will be here." />
             </ProtectedRoute>
           }
         />

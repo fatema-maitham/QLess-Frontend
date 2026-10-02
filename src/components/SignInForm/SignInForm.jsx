@@ -1,8 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router';
-
 import { signIn } from '../../services/authService';
-
 import { UserContext } from '../../contexts/UserContext';
 import AuthLayout from '../Auth/AuthLayout';
 import { MailIcon, LockIcon, EyeIcon, AlertIcon } from '../Auth/AuthIcons';
@@ -13,10 +11,7 @@ const SignInForm = () => {
   const [showPw, setShowPw] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
 
   const handleChange = (evt) => {
     setMessage('');
@@ -27,8 +22,8 @@ const SignInForm = () => {
     evt.preventDefault();
     setLoading(true);
     try {
-      const signedInUser = await signIn(formData);
-      setUser(signedInUser);
+      const user = await signIn(formData);
+      setUser(user);
       navigate('/');
     } catch (err) {
       setMessage(err.message);
@@ -38,40 +33,53 @@ const SignInForm = () => {
   };
 
   return (
-    <main>
-      <h1>Sign In</h1>
-      <p>{message}</p>
-      <form autoComplete='off' onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor='email'>Username:</label>
-          <input
-            type='text'
-            autoComplete='off'
-            id='username'
-            value={formData.username}
-            name='username'
-            onChange={handleChange}
-            required
-          />
+    <AuthLayout mode="signin">
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <h1>Welcome back</h1>
+        <p className="auth-sub">Sign in to check your queue or manage your branches.</p>
+
+        {message && (
+          <div className="auth-alert" role="alert"><AlertIcon /><span>{message}</span></div>
+        )}
+
+        <div className="auth-field">
+          <label htmlFor="email">Email</label>
+          <div className="auth-inp">
+            <MailIcon className="lead-ic" />
+            <input id="email" name="email" type="email" placeholder="you@example.com" autoComplete="email"
+              value={formData.email} onChange={handleChange} required />
+          </div>
         </div>
-        <div>
-          <label htmlFor='password'>Password:</label>
-          <input
-            type='password'
-            autoComplete='off'
-            id='password'
-            value={formData.password}
-            name='password'
-            onChange={handleChange}
-            required
-          />
+
+        <div className="auth-field">
+          <label htmlFor="password">Password</label>
+          <div className="auth-inp">
+            <LockIcon className="lead-ic" />
+            <input id="password" name="password" type={showPw ? 'text' : 'password'}
+              placeholder="Your password" autoComplete="current-password"
+              value={formData.password} onChange={handleChange} required />
+            <button type="button" className="auth-eye" onClick={()=> setShowPw(!showPw)}
+              aria-label={showPw ? 'Hide password' : 'Show password'}>
+              <EyeIcon open={showPw} />
+            </button>
+          </div>
         </div>
-        <div>
-          <button>Sign In</button>
-          <button onClick={() => navigate('/')}>Cancel</button>
+
+        <div className="auth-row">
+          <label className="auth-check"><input type="checkbox" defaultChecked />Keep me signed in</label>
+          <a className="auth-link" href="#">Forgot password?</a>
         </div>
+
+        <button className="btn btn-primary" type="submit" disabled={loading} style={{ marginTop: 14 }}>
+          {loading ? 'Signing in…' : 'Sign in'}
+        </button>
+
+        <div className="auth-or">or</div>
+        <p className="auth-switch">
+          New to QLess? <Link className="auth-link" to="/sign-up" state={{ slide: true }}>Create an account</Link>
+        </p>
       </form>
-    </main>
+    </AuthLayout>
   );
 };
 

@@ -49,7 +49,7 @@ const SignUpForm = () => {
     try {
       const user = await signUp({ name, email, password, role, phone: phone || null });
       setUser(user);
-      navigate('/');
+      navigate(homeFor(user));
     } catch (err) {
       setMessage(err.message);
     } finally {

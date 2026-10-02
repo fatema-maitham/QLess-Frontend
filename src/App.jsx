@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Routes, Route, useLocation } from 'react-router';
+import { Routes, Route, Navigate, useLocation } from 'react-router';
 
 // Fatema's pages
 import LandingPage from './components/Landing/LandingPage';
@@ -12,10 +12,12 @@ import NotFound from './components/NotFound/NotFound';
 import NavBar from './components/NavBar/NavBar';
 import SignUpForm from './components/SignUpForm/SignUpForm';
 import SignInForm from './components/SignInForm/SignInForm';
-import Dashboard from './components/Dashboard/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import Placeholder from './components/Placeholder/Placeholder';
 
-// Context
+// Context + helpers
 import { UserContext } from './contexts/UserContext';
+import { ROLES, homeFor } from './lib/helpers/roles';
 
 import './App.css';
 
@@ -31,21 +33,66 @@ export default function App() {
     <div className="app">
       {showNav && <NavBar />}
       <Routes>
-        {/* Home: signed in → dashboard, visitor → landing page */}
-        <Route path="/" element={user ? <Dashboard /> : <LandingPage />} />
+        {/* Home: visitor → landing page, signed in → their own home */}
+        <Route
+          path="/"
+          element={user ? <Navigate to={homeFor(user)} replace /> : <LandingPage />}
+        />
 
-        {/* Auth (Maram) */}
-        <Route path="/sign-up" element={<SignUpForm />} />
-        <Route path="/sign-in" element={<SignInForm />} />
+        {/* Auth (Maram): signed-in users don't need these pages */}
+        <Route
+          path="/sign-up"
+          element={user ? <Navigate to={homeFor(user)} replace /> : <SignUpForm />}
+        />
+        <Route
+          path="/sign-in"
+          element={user ? <Navigate to={homeFor(user)} replace /> : <SignInForm />}
+        />
 
-        {/* Browse (Fatema) */}
+        {/* Browse (Fatema): open to everyone */}
         <Route path="/businesses" element={<BrowsePage />} />
         <Route path="/businesses/:businessId" element={<BusinessDetailsPage />} />
         <Route path="/branches/:branchId" element={<BranchDetailsPage />} />
 
+        {/* Owner (Maram) */}
+        <Route
+          path="/owner"
+          element={
+            <ProtectedRoute roles={[ROLES.OWNER]}>
+              <Placeholder title="Owner dashboard" text="Your business, branches and queues will be here." />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Staff (Maram) */}
+        <Route
+          path="/staff"
+          element={
+            <ProtectedRoute roles={[ROLES.STAFF]}>
+              <Placeholder title="Staff" text="Call the next visitor from here." />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin (Maram) */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roles={[ROLES.ADMIN]}>
+              <Placeholder title="Admin dashboard" text="Users, approvals, branches and audit logs will be here." />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Wrong role */}
+        <Route
+          path="/no-access"
+          element={<Placeholder title="No access" text="You don't have permission to open that page." />}
+        />
+
         {/* Next steps:
         <Route path="/queues/:queueId" element={<JoinQueuePage />} />
-        <Route path="/business/register" element={<BusinessRegister />} />
+        <Route path="/owner/business/new" element={<BusinessRegister />} />
         */}
 
         <Route path="*" element={<NotFound />} />

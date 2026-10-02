@@ -237,7 +237,7 @@ export default function BrowsePage() {
             <div className="browse__grid">
               {results.items.map((business) => {
                 const category = categoryName(business);
-                const logo = business.logo_url || business.logo;
+                const logo = business.image;
 
                 return (
                   <Link

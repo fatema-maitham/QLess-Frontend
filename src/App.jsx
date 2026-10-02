@@ -14,6 +14,8 @@ import SignUpForm from './components/SignUpForm/SignUpForm';
 import SignInForm from './components/SignInForm/SignInForm';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Placeholder from './components/Placeholder/Placeholder';
+import OwnerHome from './components/Business/OwnerHome';
+import BusinessForm from './components/Business/BusinessForm';
 
 // Context + helpers
 import { UserContext } from './contexts/UserContext';

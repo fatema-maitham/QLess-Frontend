@@ -117,6 +117,9 @@
 /* =========================================================
    1. Hero
    ========================================================= */
+/* =========================================================
+   1. Hero
+   ========================================================= */
 .lp-hero {
   padding: var(--space-4) var(--gutter) 0;
 }
@@ -133,7 +136,7 @@
   padding: clamp(3rem, 6vw, 5rem);
   overflow: hidden;
   border-radius: 28px;
-  background: var(--color-surface-inverse);
+  background: var(--color-surface);
 }
 
 .lp-hero__content {
@@ -166,7 +169,7 @@
   font-size: var(--text-xs);
   font-weight: var(--weight-bold);
   letter-spacing: 0.18em;
-  color: var(--color-accent);
+  color: var(--color-text);
 }
 
 .lp-hero__dot {
@@ -174,7 +177,7 @@
   height: 8px;
   border-radius: 50%;
   background: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(248, 113, 58, 0.25);
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
 }
 
 .lp-hero__title {
@@ -182,7 +185,7 @@
   font-weight: var(--weight-extrabold);
   line-height: 1;
   letter-spacing: -0.045em;
-  color: var(--color-text-inverse);
+  color: var(--color-text);
 }
 
 .lp-hero__title span {
@@ -194,7 +197,7 @@
   margin-top: var(--space-8);
   font-size: var(--text-lg);
   line-height: 1.7;
-  color: var(--color-text-inverse-muted);
+  color: var(--color-text-muted);
 }
 
 .lp-hero__actions {
@@ -204,13 +207,17 @@
   margin-top: var(--space-8);
 }
 
+/* "For businesses" button: black outline, fills black on hover */
 .lp-btn-light {
-  border-color: rgba(251, 250, 248, 0.85);
-  color: var(--color-text-inverse);
+  border-color: var(--color-text);
+  background: transparent;
+  color: var(--color-text);
 }
 
 .lp-btn-light:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-text);
+  background: var(--color-text);
+  color: var(--color-text-inverse);
 }
 
 /* your image */
@@ -232,7 +239,7 @@
   object-position: center;
 }
 
-/* move the hero image a little to the left (desktop only) */
+/* nudge the hero image up a little (desktop only) */
 @media (min-width: 901px) {
   .lp-hero__visual img {
     transform: translateY(-10px);

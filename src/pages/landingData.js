@@ -3,34 +3,71 @@
 // Later, replace these with data from the backend.
 // ============================================================
 
-// Words typed in the hero headline
-export const TYPED_PLACES = [
-  "clinics",
-  "banks",
-  "ministries",
-  "restaurants",
-  "salons",
-  "universities",
-];
+/* ---------- Hero ---------- */
+export const TRUST_POINTS = ["Free for visitors", "No app needed", "Verified businesses"];
 
-// Logos in the moving strip. Files go in /public/logos/
+/* ---------- Trusted by ---------- */
+// Logo files go in /public/logos/
 export const PARTNER_LOGOS = [
   { name: "BBK", src: "/logos/bbk.png" },
   { name: "NBB", src: "/logos/nbb.png" },
-  // Add more like this:
-  // { name: "Company name", src: "/logos/company.svg" },
+  // { name: "Company name", src: "/logos/company.png" },
 ];
 
-// Live board in the hero
-export const HERO_QUEUE = {
-  branch: "City Centre Branch",
-  service: "General services",
-  startNumber: 104, // first "Now serving" number
-  yourNumber: 107,  // the visitor's ticket
-  counters: 3,
+// SAMPLE reviews. Replace with real reviews before going public.
+export const REVIEWS = [
+  {
+    before: "",
+    highlight: "Our waiting room is finally calm.",
+    after: " Patients wait in their cars or a nearby café and come in right on time.",
+    name: "Huda A.",
+    place: "Noor Clinic",
+  },
+  {
+    before: "Visitors used to crowd the counters every morning. Now ",
+    highlight: "everyone knows their number and when to come back.",
+    after: "",
+    name: "Khalid R.",
+    place: "City Services Centre",
+  },
+  {
+    before: "Setting up our branches and services took one afternoon. ",
+    highlight: "Our staff picked it up straight away.",
+    after: "",
+    name: "Layla S.",
+    place: "Harbor Bank",
+  },
+  {
+    before: "",
+    highlight: "Fewer people leave without being served,",
+    after: " because nobody has to stand and wait anymore.",
+    name: "Ahmed J.",
+    place: "Campus Help Desk",
+  },
+  {
+    before: "I joined the queue from home, finished my errands and ",
+    highlight: "walked in exactly when it was my turn.",
+    after: "",
+    name: "Mariam K.",
+    place: "Visitor",
+  },
+  {
+    before: "When we close early, we post one announcement and ",
+    highlight: "everyone in the queue sees it instantly.",
+    after: "",
+    name: "Yousif H.",
+    place: "Paws Vet Clinic",
+  },
+];
+
+/* ---------- Moving queue (scroll section) ---------- */
+export const QUEUE_SCROLL = {
+  yourNumber: 107,
+  firstNumber: 104, // the person being served when the section starts
+  counter: 2,
 };
 
-// Three steps for visitors
+/* ---------- Steps ---------- */
 export const STEPS = [
   {
     title: "Join the queue",
@@ -46,72 +83,114 @@ export const STEPS = [
   },
 ];
 
-// Stacking cards
+/* ---------- Two sides ---------- */
+export const AUDIENCES = {
+  visitors: {
+    tag: "For visitors",
+    title: "Wait less. Live more.",
+    text: "Take a ticket from anywhere and get on with your day.",
+    points: [
+      "Join from anywhere, no app needed",
+      "See your number and place in line live",
+      "Get an alert before your turn",
+      "Know exactly which counter to go to",
+    ],
+    button: { label: "Find a place", to: "/businesses" },
+  },
+  business: {
+    tag: "For businesses",
+    title: "Run every branch from one place.",
+    text: "Everything your front desk needs, without the crowded lobby.",
+    points: [
+      "Branches, services and opening hours",
+      "Staff accounts to call the next visitor",
+      "Announcements for delays or closures",
+      "Verified by our team before going live",
+    ],
+    button: { label: "Register your business", to: "/business/register" },
+  },
+};
+
+/* ---------- Features grid ---------- */
 export const FEATURES = [
   {
-    id: "join",
-    tab: "Join",
-    tone: "mist",
-    eyebrow: "For visitors",
-    title: "Join from anywhere",
-    text: "Browse approved places, pick a branch and service, and take a ticket without stepping inside.",
-    link: { label: "Find a place", to: "/businesses" },
+    icon: "bell",
+    title: "Live notifications",
+    text: "Visitors get a heads-up when they're close and a clear alert when it's their turn.",
   },
   {
-    id: "track",
-    tab: "Track",
-    tone: "peach",
-    eyebrow: "Live updates",
-    title: "Know your place, live",
-    text: "Your position and wait time update in real time, so you always know when to leave.",
-    link: { label: "Join a queue", to: "/register" },
+    icon: "calendar",
+    title: "Bookings",
+    text: "Let visitors book a time in advance and manage bookings next to walk-ins.",
   },
   {
-    id: "notify",
-    tab: "Notify",
-    tone: "dark",
-    eyebrow: "Smart alerts",
-    title: "Get called right on time",
-    text: "A heads-up when you're close, and a clear alert when it's your turn.",
-    link: { label: "Create an account", to: "/register" },
+    icon: "buildings",
+    title: "Multi-branch",
+    text: "Each branch has its own services, opening hours and queues.",
   },
   {
-    id: "manage",
-    tab: "Manage",
-    tone: "paper",
-    eyebrow: "For businesses",
-    title: "Run every branch from one place",
-    text: "Call the next visitor, see who's waiting, and manage services, hours and staff.",
-    link: { label: "Register your business", to: "/business/register" },
+    icon: "users",
+    title: "Staff console",
+    text: "Staff call the next visitor, check people in and mark visits complete.",
   },
   {
-    id: "verify",
-    tab: "Verify",
-    tone: "orange",
-    eyebrow: "Trust and safety",
-    title: "Every business is verified",
-    text: "New businesses are reviewed before their queues go live, and every admin action is logged.",
-    link: { label: "Register your business", to: "/business/register" },
+    icon: "megaphone",
+    title: "Announcements",
+    text: "Tell visitors about delays, closures or changes in seconds.",
+  },
+  {
+    icon: "star",
+    title: "Reviews and favourites",
+    text: "Visitors rate their visit and save the places they go to often.",
   },
 ];
 
-// Made for every place (icon names match INDUSTRY_ICONS in LandingPage.jsx)
+/* ---------- Why QLess ---------- */
+export const VALUES = [
+  {
+    icon: "smile",
+    title: "Easy to use",
+    text: "Visitors join in a few taps, and staff learn the console in minutes.",
+  },
+  {
+    icon: "scales",
+    title: "Fair for everyone",
+    text: "First come, first served, with clear numbers, so nobody gets skipped.",
+  },
+  {
+    icon: "stack",
+    title: "Works for any branch",
+    text: "From one small clinic to a network of service centres.",
+  },
+  {
+    icon: "chat",
+    title: "Built on feedback",
+    text: "Reviews from visitors help businesses improve every day.",
+  },
+];
+
+/* ---------- Numbers (count up) ---------- */
+// SAMPLE numbers. Later: load real ones from the admin stats API.
+export const STATS = [
+  { value: 313, suffix: "+", label: "visitors trust QLess" },
+  { value: 25, suffix: "", label: "businesses on QLess" },
+  { value: 60, suffix: "+", label: "branches with live queues" },
+  { value: 5, suffix: " min", label: "average wait" },
+];
+
+/* ---------- Industries ---------- */
 export const INDUSTRIES = [
-  { name: "Healthcare", icon: "healthcare" },
-  { name: "Government", icon: "government" },
+  { name: "Government services", icon: "government" },
   { name: "Banks", icon: "banks" },
-  { name: "Restaurants", icon: "restaurants" },
-  { name: "Veterinary", icon: "veterinary" },
+  { name: "Hospitals and clinics", icon: "healthcare" },
+  { name: "Medical labs", icon: "labs" },
   { name: "Pharmacies", icon: "pharmacies" },
-  { name: "Salons and beauty", icon: "salons" },
+  { name: "Telecom stores", icon: "telecom" },
+  { name: "Utility offices", icon: "utilities" },
   { name: "Universities", icon: "universities" },
-  { name: "Events", icon: "events" },
-  { name: "Retail", icon: "retail" },
-  { name: "Car services", icon: "car" },
-  { name: "Post and logistics", icon: "post" },
 ];
 
-// Places on QLess (later: GET /api/businesses)
+/* ---------- Places (later: GET /api/businesses) ---------- */
 export const PLACES = [
   {
     id: 1,
@@ -139,11 +218,11 @@ export const PLACES = [
   },
   {
     id: 4,
-    name: "Bloom Salon",
-    category: "Beauty",
-    city: "Riffa",
-    description: "Haircuts, styling and nail care for walk-ins and regulars.",
-    waiting: 2,
+    name: "Campus Help Desk",
+    category: "Education",
+    city: "Sakhir",
+    description: "Registration, student ID cards and fee payments.",
+    waiting: 5,
   },
   {
     id: 5,
@@ -155,15 +234,15 @@ export const PLACES = [
   },
   {
     id: 6,
-    name: "Campus Help Desk",
-    category: "Education",
-    city: "Sakhir",
-    description: "Registration, student ID cards and fee payments.",
-    waiting: 5,
+    name: "Link Telecom Store",
+    category: "Telecom",
+    city: "Riffa",
+    description: "New lines, SIM cards, bill payments and device repairs.",
+    waiting: 6,
   },
 ];
 
-// Questions answered
+/* ---------- FAQ ---------- */
 export const FAQS = [
   {
     q: "Do visitors need to download an app?",
@@ -188,5 +267,43 @@ export const FAQS = [
   {
     q: "Is QLess free for visitors?",
     a: "Yes. Visitors can join queues and follow their place at no cost.",
+  },
+];
+
+/* ---------- Footer ---------- */
+export const FOOTER_LINKS = [
+  {
+    title: "Product",
+    links: [
+      { label: "Find a place", to: "/businesses" },
+      { label: "Join a queue", to: "/register" },
+      { label: "Bookings", to: "/register" },
+      { label: "For businesses", to: "/business/register" },
+    ],
+  },
+  {
+    title: "Industries",
+    links: [
+      { label: "Government", to: "/businesses?category=Government%20services" },
+      { label: "Banks", to: "/businesses?category=Banks" },
+      { label: "Healthcare", to: "/businesses?category=Hospitals%20and%20clinics" },
+      { label: "Telecom", to: "/businesses?category=Telecom%20stores" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", to: "/about" },
+      { label: "FAQ", to: "/#faq" },
+      { label: "Contact", to: "/contact" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { label: "Help centre", to: "/help" },
+      { label: "Privacy policy", to: "/privacy" },
+      { label: "Terms of use", to: "/terms" },
+    ],
   },
 ];

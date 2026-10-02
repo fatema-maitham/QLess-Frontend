@@ -14,6 +14,8 @@ import SignUpForm from './components/SignUpForm/SignUpForm';
 import SignInForm from './components/SignInForm/SignInForm';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Placeholder from './components/Placeholder/Placeholder';
+import OwnerHome from './components/Business/OwnerHome';
+import BusinessForm from './components/Business/BusinessForm';
 
 // Context + helpers
 import { UserContext } from './contexts/UserContext';
@@ -27,7 +29,8 @@ const NO_NAV = ['/', '/sign-in', '/sign-up'];
 export default function App() {
   const { user } = useContext(UserContext);
   const location = useLocation();
-  const showNav = user && !NO_NAV.includes(location.pathname);
+  const showNav =
+    user && !NO_NAV.includes(location.pathname) && !location.pathname.startsWith('/owner');
 
   return (
     <div className="app">
@@ -54,32 +57,28 @@ export default function App() {
         <Route path="/businesses/:businessId" element={<BusinessDetailsPage />} />
         <Route path="/branches/:branchId" element={<BranchDetailsPage />} />
 
-        {/* Owner (Maram) */}
+                {/* Owner (Maram) */}
         <Route
           path="/owner"
           element={
             <ProtectedRoute roles={[ROLES.OWNER]}>
-              <Placeholder title="Owner dashboard" text="Your business, branches and queues will be here." />
+              <OwnerHome />
             </ProtectedRoute>
           }
         />
-
-        {/* Staff (Maram) */}
         <Route
-          path="/staff"
+          path="/owner/business"
           element={
-            <ProtectedRoute roles={[ROLES.STAFF]}>
-              <Placeholder title="Staff" text="Call the next visitor from here." />
+            <ProtectedRoute roles={[ROLES.OWNER]}>
+              <BusinessForm />
             </ProtectedRoute>
           }
         />
-
-        {/* Admin (Maram) */}
         <Route
-          path="/admin"
+          path="/owner/dashboard"
           element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <Placeholder title="Admin dashboard" text="Users, approvals, branches and audit logs will be here." />
+            <ProtectedRoute roles={[ROLES.OWNER]}>
+              <Placeholder title="Owner dashboard" text="Branches, queues and staff will be here." />
             </ProtectedRoute>
           }
         />

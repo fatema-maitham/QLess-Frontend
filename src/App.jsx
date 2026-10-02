@@ -2,8 +2,8 @@ import { useContext } from 'react';
 import { Routes, Route, useLocation } from 'react-router';
 
 // Fatema's pages
-import LandingPage from './pages/LandingPage';
-import NotFound from './pages/NotFound';
+import LandingPage from './components/Landing/LandingPage';
+import NotFound from './components/NotFound/NotFound';
 
 // Maram's pages
 import NavBar from './components/NavBar/NavBar';
@@ -28,16 +28,13 @@ export default function App() {
     <div className="app">
       {showNav && <NavBar />}
       <Routes>
-        {/* Signed in → dashboard, visitor → Fatema's landing page */}
         <Route path="/" element={user ? <Dashboard /> : <LandingPage />} />
-
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/sign-in" element={<SignInForm />} />
 
         {/* Add new pages here, for example:
         <Route path="/business/register" element={<BusinessRegister />} />
         <Route path="/businesses" element={<Businesses />} />
-        <Route path="/businesses/:id" element={<BusinessDetails />} />
         */}
 
         <Route path="*" element={<NotFound />} />

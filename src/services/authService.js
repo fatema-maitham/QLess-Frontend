@@ -16,60 +16,25 @@ const readError = (data) => {
   return 'Something went wrong. Please try again.';
 };
 
-const signUp = async (formData) => {
+const handleAuth = async (url, body) => {
+  let res;
   try {
-    const res = await fetch(`${BASE_URL}/register`, {
+    res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(body),
     });
-
-    const data = await res.json();
-
-    if (data.detail) {
-      throw new Error(data.detail);
-    }
-
-    if (data.token) {
-      // first save the raw token in local storage
-      registerToken(data.token)
-      // then extract the payload (second part of the token)
-      return parseToken(data.token)
-    }
-
-    throw new Error('Invalid response from server');
-  } catch (err) {
-    console.log(err);
-    throw new Error(err, { cause: err });
+  } catch {
+    throw new Error('Cannot reach the server. Is the backend running?');
   }
-};
 
-const signIn = async (formData) => {
-  try {
-    const res = await fetch(`${BASE_URL}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(readError(data));
+  if (!data?.token || !data?.user) throw new Error('Invalid response from server');
 
-    const data = await res.json();
-
-    if (data.detail) {
-      throw new Error(data.detail);
-    }
-
-    if (data.token) {
-      // first save the raw token in local storage
-      registerToken(data.token)
-
-      return parseToken(data.token)
-    }
-
-    throw new Error('Invalid response from server');
-  } catch (err) {
-    console.log(err);
-    throw new Error(err, { cause: err });
-  }
+  registerToken(data.token);
+  saveUser(data.user);
+  return data.user;
 };
 
 export {

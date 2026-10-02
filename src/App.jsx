@@ -29,7 +29,8 @@ const NO_NAV = ['/', '/sign-in', '/sign-up'];
 export default function App() {
   const { user } = useContext(UserContext);
   const location = useLocation();
-  const showNav = user && !NO_NAV.includes(location.pathname);
+  const showNav =
+    user && !NO_NAV.includes(location.pathname) && !location.pathname.startsWith('/owner');
 
   return (
     <div className="app">

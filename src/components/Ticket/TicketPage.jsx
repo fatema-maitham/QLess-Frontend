@@ -16,6 +16,8 @@ import useQueueSocket from "../../hooks/useQueueSocket";
 import { LIVE_STATUSES, TICKET_STATUS, aheadText, clockTime, minutesText } from "./ticketHelpers";
 import { alertCalled, askForNotifications, canAskForNotifications } from "./alerts";
 import CalledAlert from "./CalledAlert";
+import useNoShowStatus from "../../hooks/useNoShowStatus";
+import NoShowBanner from "../NoShow/NoShowBanner";
 import "./Ticket.css";
 
 const BACKUP_REFRESH_MS = 15000; // only used while the live connection is down
@@ -161,6 +163,8 @@ export default function TicketPage() {
     const id = setInterval(refreshTicket, BACKUP_REFRESH_MS);
     return () => clearInterval(id);
   }, [isLive, connected, refreshTicket]);
+  // Only needed on a no-show ticket: is the customer warned or restricted now?
+  const noShow = useNoShowStatus(ticket?.status === "no_show");
 
   const graceMinutes = page.queue?.no_show_grace_minutes ?? 5;
   const timer = useCheckInTimer(ticket?.called_at, graceMinutes, ticket?.status === "called");
@@ -452,11 +456,18 @@ export default function TicketPage() {
               while.
             </p>
             <TimesList ticket={ticket} />
-            <div className="tk-actions">
-              <Link className="btn btn--primary tk-btn-wide" to={`/queues/${ticket.queue_id}`}>
-                Join again
-              </Link>
-            </div>
+            {noShow && noShow.state !== "ok" && (
+              <div className="tk-ns">
+                <NoShowBanner status={noShow} />
+              </div>
+            )}
+            {noShow?.state !== "restricted" && (
+              <div className="tk-actions">
+                <Link className="btn btn--primary tk-btn-wide" to={`/queues/${ticket.queue_id}`}>
+                  Join again
+                </Link>
+              </div>
+            )}
           </section>
         )}
 

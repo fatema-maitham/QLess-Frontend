@@ -35,6 +35,9 @@ import OwnerProfile from "./components/Owner/OwnerProfile";
 import { UserContext } from "./contexts/UserContext";
 import { ROLES, homeFor } from "./lib/helpers/roles";
 
+import OwnerQueues from "./components/Control/OwnerQueues";
+import StaffQueues from "./components/Control/StaffQueues";
+
 import "./App.css";
 
 // Pages that have their own full-screen layout (no NavBar)
@@ -176,7 +179,7 @@ export default function App() {
 
           <Route
             path="/owner/queues"
-            element={<h1>Live queues</h1>}
+            element={<OwnerQueues />}
           />
 
           <Route
@@ -184,6 +187,16 @@ export default function App() {
             element={<OwnerProfile />}
           />
         </Route>
+
+        {/* Staff */}
+        <Route
+          path="/staff"
+          element={
+            <ProtectedRoute roles={[ROLES.STAFF]}>
+              <StaffQueues />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Wrong role */}
         <Route

@@ -772,30 +772,55 @@
 }
 
 
-/* Final owner styling */
-
+/* Final owner-page scrolling fix */
 html,
 body,
 #root {
   height: 100%;
-  overflow: hidden !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
 }
 
 .owner.app {
-  height: 100dvh;
-  overflow: hidden !important;
+  height: 100vh !important;
+  min-height: 0 !important;
+  overflow: visible !important;
 }
 
 .owner .main {
-  height: 100%;
-  min-height: 0;
-  overflow: hidden !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
 }
 
-.owner .content {
-  height: 100%;
-  min-height: 0;
-  overflow: hidden !important;
+.owner .main > .content {
+  height: auto !important;
+  min-height: 100% !important;
+  flex: 1 0 auto !important;
+  overflow: visible !important;
+}
+
+@media (max-width: 820px) {
+  .owner.app {
+    height: auto !important;
+    min-height: 100dvh !important;
+  }
+
+  .owner .main {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .owner .main > .content {
+    min-height: 0 !important;
+  }
+}
+
+
+/* Small space after the last item */
+.owner .main > .content {
+  padding-bottom: 72px !important;
 }
 
 .owner .main > .content {
@@ -1149,4 +1174,108 @@ body,
 /* More space between About and Business availability */
 .owner .pdesc + .owner-availability {
   margin-top: 20px !important;
+}
+
+
+/* Allow scrolling only when content needs it */
+html,
+body,
+#root {
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.owner.app {
+  height: 100vh;
+  min-height: 0;
+  overflow: visible;
+}
+
+.owner .main {
+  height: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.owner .content {
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+}
+
+@media (max-width: 820px) {
+  .owner.app {
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .owner .main {
+    height: auto;
+    overflow: visible;
+  }
+}
+
+
+.owner .main > .content {
+  align-self: flex-start !important;
+  height: auto !important;
+  max-height: none !important;
+  padding-bottom: 40px !important;
+}
+
+/* Keep the page heading and divider in place */
+.owner .page-h {
+  position: sticky;
+  top: 28px;
+  z-index: 20;
+  background: var(--surface);
+  box-shadow: 0 -28px 0 var(--surface);
+}
+
+@media (max-width: 820px) {
+  .owner .page-h {
+    top: 20px;
+    box-shadow: 0 -20px 0 var(--surface);
+  }
+}
+
+
+/* Status on the left; actions on the right */
+.owner .owner-announcements .li {
+  grid-template-columns: 44px minmax(0, 1fr) auto !important;
+}
+
+.owner .owner-announcements .owner-row-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.owner .owner-announcements .owner-row-actions {
+  grid-column: 3 !important;
+  justify-self: end;
+  justify-content: flex-end !important;
+}
+
+.owner .owner-announcements button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .owner .owner-announcements .li {
+    grid-template-columns: 44px minmax(0, 1fr) !important;
+  }
+
+  .owner .owner-announcements .owner-row-actions {
+    grid-column: 2 !important;
+  }
+}
+
+
+.owner .stepbar + .page-h {
+  box-shadow: none !important;
 }

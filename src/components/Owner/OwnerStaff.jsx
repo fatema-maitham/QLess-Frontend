@@ -1,45 +1,35 @@
 import { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router';
-
-import {
-  createStaff,
-  deleteStaff,
-} from '../../services/ownerApi';
-
+import { createStaff, deleteStaff } from '../../services/ownerApi';
 import { initial } from './ownerSetup';
 import { Empty } from './OwnerParts';
 import OwnerStaffEdit from './OwnerStaffEdit';
 
 export default function OwnerStaff() {
-  const { branches, reload, toast } =
-    useOutletContext();
-
+  const { branches, reload, toast } = useOutletContext();
   const navigate = useNavigate();
 
   const [editing, setEditing] = useState(null);
   const [filter, setFilter] = useState('all');
   const [open, setOpen] = useState(false);
-
   const [form, setForm] = useState({
     email: '',
     position: '',
     branch: '',
   });
-
   const [saving, setSaving] = useState(false);
+  const [removingId, setRemovingId] = useState(null);
   const [error, setError] = useState('');
+
+  const busy = saving || removingId !== null;
 
   const people = branches
     .flatMap((branch) =>
-      branch.staff.map((staff) => ({
-        ...staff,
-        branch,
-      }))
+      branch.staff.map((staff) => ({ ...staff, branch }))
     )
     .filter(
       (staff) =>
-        filter === 'all' ||
-        String(staff.branch.id) === filter
+        filter === 'all' || String(staff.branch.id) === filter
     );
 
   function openForm() {
@@ -52,18 +42,15 @@ export default function OwnerStaff() {
     setForm({
       email: '',
       position: '',
-      branch:
-        filter !== 'all'
-          ? filter
-          : String(branches[0].id),
+      branch: filter !== 'all' ? filter : String(branches[0].id),
     });
-
     setError('');
     setOpen(true);
   }
 
   async function save(event) {
     event.preventDefault();
+    if (busy) return;
 
     setSaving(true);
     setError('');
@@ -90,12 +77,18 @@ export default function OwnerStaff() {
   }
 
   async function remove(id) {
+    if (busy) return;
+
+    setRemovingId(id);
+
     try {
       await deleteStaff(id);
       await reload();
       toast('Staff member removed');
     } catch (err) {
-      toast(err.message);
+      toast(err.message || 'Could not remove the staff member.');
+    } finally {
+      setRemovingId(null);
     }
   }
 
@@ -103,7 +96,6 @@ export default function OwnerStaff() {
     <section>
       <div className="page-h">
         <h1>Staff</h1>
-
         <span className="sp" />
 
         {branches.length > 1 && (
@@ -111,9 +103,7 @@ export default function OwnerStaff() {
             className="sel"
             aria-label="Filter by branch"
             value={filter}
-            onChange={(event) =>
-              setFilter(event.target.value)
-            }
+            onChange={(event) => setFilter(event.target.value)}
           >
             <option value="all">All branches</option>
 
@@ -128,6 +118,7 @@ export default function OwnerStaff() {
         <button
           className="btn btn-primary"
           type="button"
+          disabled={busy}
           onClick={openForm}
         >
           + Add staff
@@ -137,54 +128,36 @@ export default function OwnerStaff() {
       {open && (
         <form className="addform" onSubmit={save}>
           <div className="f wide">
-            <label htmlFor="staff-email">
-              Their QLess email
-            </label>
-
+            <label htmlFor="staff-email">Their QLess email</label>
             <input
               id="staff-email"
               type="email"
               value={form.email}
               onChange={(event) =>
-                setForm({
-                  ...form,
-                  email: event.target.value,
-                })
+                setForm({ ...form, email: event.target.value })
               }
               required
             />
           </div>
 
           <div className="f">
-            <label htmlFor="staff-position">
-              Position
-            </label>
-
+            <label htmlFor="staff-position">Position</label>
             <input
               id="staff-position"
               value={form.position}
               onChange={(event) =>
-                setForm({
-                  ...form,
-                  position: event.target.value,
-                })
+                setForm({ ...form, position: event.target.value })
               }
             />
           </div>
 
           <div className="f">
-            <label htmlFor="staff-branch">
-              Branch
-            </label>
-
+            <label htmlFor="staff-branch">Branch</label>
             <select
               id="staff-branch"
               value={form.branch}
               onChange={(event) =>
-                setForm({
-                  ...form,
-                  branch: event.target.value,
-                })
+                setForm({ ...form, branch: event.target.value })
               }
             >
               {branches.map((branch) => (
@@ -199,7 +172,7 @@ export default function OwnerStaff() {
             <button
               className="btn btn-primary"
               type="submit"
-              disabled={saving}
+              disabled={busy}
             >
               {saving ? 'Saving…' : 'Add staff'}
             </button>
@@ -207,6 +180,7 @@ export default function OwnerStaff() {
             <button
               className="btn btn-ghost"
               type="button"
+              disabled={busy}
               onClick={() => {
                 setOpen(false);
                 setError('');
@@ -224,32 +198,16 @@ export default function OwnerStaff() {
         {people.length ? (
           people.map((staff) => (
             <div className="li" key={staff.id}>
-              <span className="ic">
-                {initial(staff.user?.name)}
-              </span>
+              <span className="ic">{initial(staff.user?.name)}</span>
 
               <div>
                 <div className="owner-row-title">
                   <b>{staff.user?.name}</b>
-
-                  <span
-                    className={
-                      staff.is_active
-                        ? 'st open'
-                        : 'st off'
-                    }
-                  >
-                    {staff.is_active
-                      ? 'Active'
-                      : 'Inactive'}
-                  </span>
                 </div>
 
                 <small>
                   {staff.user?.email} · {staff.branch.name}
-                  {staff.position
-                    ? ` · ${staff.position}`
-                    : ''}
+                  {staff.position ? ` · ${staff.position}` : ''}
                 </small>
               </div>
 
@@ -257,6 +215,7 @@ export default function OwnerStaff() {
                 <button
                   className="owner-edit"
                   type="button"
+                  disabled={busy}
                   onClick={() => setEditing(staff)}
                 >
                   Edit
@@ -265,9 +224,11 @@ export default function OwnerStaff() {
                 <button
                   className="del"
                   type="button"
+                  disabled={busy}
+                  aria-busy={removingId === staff.id}
                   onClick={() => remove(staff.id)}
                 >
-                  Remove
+                  {removingId === staff.id ? 'Removing…' : 'Remove'}
                 </button>
               </span>
             </div>

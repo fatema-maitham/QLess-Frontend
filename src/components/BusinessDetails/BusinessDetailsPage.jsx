@@ -15,6 +15,7 @@ import {
   getBusinessBranches,
   getBusinessReviews,
 } from "../../services/businessService";
+import ReviewsSection from "../Reviews/ReviewsSection";
 import "../Details/Details.css";
 
 export default function BusinessDetailsPage() {
@@ -207,6 +208,11 @@ export default function BusinessDetailsPage() {
             </div>
           )}
         </section>
+        <ReviewsSection
+          businessId={businessId}
+          reviews={reviews}
+          onReviewsChanged={() => setReloadKey((key) => key + 1)}
+        />
       </div>
     </main>
   );

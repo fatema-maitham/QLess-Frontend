@@ -4,16 +4,9 @@ import { getBranchQueues } from "../../services/branchService";
 import QueueControl from "./QueueControl";
 import "./Control.css";
 
-/**
- * Pick a branch and a queue, then control it.
- * - branches: [{ id, name }] the user can manage
- * - title / subtitle: page heading
- * The choice is kept in the URL (?branch=1&queue=2) so a refresh keeps it.
- */
 export default function ControlPage({
   branches,
-  title,
-  subtitle,
+  title = "Live Queues",
   onQueueChange,
 }) {
   const [params, setParams] = useSearchParams();
@@ -73,111 +66,102 @@ export default function ControlPage({
     list[0];
 
   useEffect(() => {
-    if (onQueueChange) {
-      onQueueChange(current || null);
-    }
+    onQueueChange?.(current || null);
   }, [current, onQueueChange]);
 
-  const pickBranch = (id) => {
+  function pickBranch(id) {
     setParams({ branch: String(id) });
-  };
+  }
 
-  const pickQueue = (id) => {
+  function pickQueue(id) {
     setParams({
       branch: branchId,
       queue: String(id),
     });
-  };
+  }
 
   return (
-    <div className="cp-page">
-      <header className="cp-page__head">
-        <div>
-          <h1>{title}</h1>
-          {subtitle && <p>{subtitle}</p>}
-        </div>
+    <section className="cp-page">
+      <div className="page-h cp-page-head">
+        <h1>{title}</h1>
+
+        <span className="sp" />
 
         {branches.length > 1 && (
-          <label className="cp-select">
-            <span>Branch</span>
-
-            <select
-              value={branchId}
-              onChange={(event) =>
-                pickBranch(event.target.value)
-              }
-            >
-              {branches.map((branch) => (
-                <option
-                  key={branch.id}
-                  value={branch.id}
-                >
-                  {branch.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <select
+            className="sel"
+            aria-label="Choose branch"
+            value={branchId}
+            onChange={(event) => pickBranch(event.target.value)}
+          >
+            {branches.map((branch) => (
+              <option key={branch.id} value={branch.id}>
+                {branch.name}
+              </option>
+            ))}
+          </select>
         )}
-      </header>
+      </div>
 
       {!branchId && (
-        <p className="cp-empty">
-          You don't have any branches yet.
-        </p>
+        <div className="empty cp-empty-page">
+          <b>No branches yet</b>
+          <p>Add a branch before running a queue.</p>
+        </div>
       )}
 
       {branchId && queues.status === "error" && (
-        <p className="cp-empty" role="alert">
-          {queues.error}
-        </p>
+        <div className="empty cp-empty-page" role="alert">
+          <b>Could not load queues</b>
+          <p>{queues.error}</p>
+        </div>
       )}
 
       {branchId &&
         queues.status === "ready" &&
         list.length === 0 && (
-          <p className="cp-empty">
-            This branch has no queues yet. Create one in the
-            queue settings first.
-          </p>
+          <div className="empty cp-empty-page">
+            <b>No queues yet</b>
+            <p>Create a queue in the branch settings first.</p>
+          </div>
         )}
 
-      {list.length > 1 && (
-        <div
-          className="cp-tabs"
-          role="tablist"
-          aria-label="Queues"
-        >
-          {list.map((queue) => (
-            <button
-              key={queue.id}
-              type="button"
-              role="tab"
-              aria-selected={current?.id === queue.id}
-              className="cp-tabs__tab"
-              onClick={() => pickQueue(queue.id)}
-            >
-              <span
-                className={`cp-dot cp-dot--${queue.status}`}
-              />
+      {list.length > 0 && (
+        <>
+          <div
+            className="tabs cp-tabs"
+            role="tablist"
+            aria-label="Queues"
+          >
+            {list.map((queue) => (
+              <button
+                key={queue.id}
+                type="button"
+                role="tab"
+                aria-selected={current?.id === queue.id}
+                className={`tab ${current?.id === queue.id ? "on" : ""
+                  }`}
+                onClick={() => pickQueue(queue.id)}
+              >
+                {queue.name}
 
-              {queue.name}
+                {queue.waiting_count > 0 && (
+                  <span className="n">
+                    {queue.waiting_count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
 
-              {queue.waiting_count > 0 && (
-                <span className="cp-tabs__count">
-                  {queue.waiting_count}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+          {current && (
+            <QueueControl
+              key={current.id}
+              queueId={current.id}
+            />
+          )}
+        </>
       )}
-
-      {current && (
-        <QueueControl
-          key={current.id}
-          queueId={current.id}
-        />
-      )}
-    </div>
+    </section>
   );
 }

@@ -1224,3 +1224,19 @@ body,
   max-height: none !important;
   padding-bottom: 40px !important;
 }
+
+/* Keep the page heading and divider in place */
+.owner .page-h {
+  position: sticky;
+  top: 28px;
+  z-index: 20;
+  background: var(--surface);
+  box-shadow: 0 -28px 0 var(--surface);
+}
+
+@media (max-width: 820px) {
+  .owner .page-h {
+    top: 20px;
+    box-shadow: 0 -20px 0 var(--surface);
+  }
+}

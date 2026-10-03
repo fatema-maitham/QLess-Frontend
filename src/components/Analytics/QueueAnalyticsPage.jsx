@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import {
   ArrowLeft,
-  ChartBar,
   CheckCircle,
   Clock,
   Hourglass,
@@ -18,7 +17,7 @@ import "./QueueAnalytics.css";
 
 function formatMinutes(value) {
   if (value === null || value === undefined) {
-    return "No data yet";
+    return "No data";
   }
 
   return `${value} min`;
@@ -28,13 +27,16 @@ function MetricCard({ icon: Icon, label, value, detail }) {
   return (
     <article className="qa-card">
       <span className="qa-card__icon">
-        <Icon size={24} weight="duotone" />
+        <Icon size={21} weight="duotone" />
       </span>
 
       <div className="qa-card__content">
         <span className="qa-card__label">{label}</span>
         <strong className="qa-card__value">{value}</strong>
-        {detail && <span className="qa-card__detail">{detail}</span>}
+
+        {detail && (
+          <span className="qa-card__detail">{detail}</span>
+        )}
       </div>
     </article>
   );
@@ -90,12 +92,12 @@ export default function QueueAnalyticsPage() {
 
   if (page.status === "loading") {
     return (
-      <main className="qa-page" aria-busy="true">
+      <section className="qa-page" aria-busy="true">
         <div className="qa-container">
           <div className="qa-skeleton qa-skeleton--head" />
 
           <div className="qa-grid">
-            {Array.from({ length: 4 }).map((_, index) => (
+            {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
                 className="qa-skeleton qa-skeleton--card"
@@ -103,31 +105,31 @@ export default function QueueAnalyticsPage() {
             ))}
           </div>
         </div>
-      </main>
+      </section>
     );
   }
 
   if (page.status === "error") {
     return (
-      <main className="qa-page">
+      <section className="qa-page">
         <div className="qa-container">
           <div className="qa-message" role="alert">
-            <Warning size={34} weight="duotone" />
+            <Warning size={32} weight="duotone" />
 
-            <h1>We couldn't load queue analytics</h1>
+            <h1>Could not load analytics</h1>
 
             <p>{page.error}</p>
 
             <button
               type="button"
-              className="btn btn--primary"
+              className="btn btn-primary"
               onClick={() => setReloadKey((key) => key + 1)}
             >
               Try again
             </button>
           </div>
         </div>
-      </main>
+      </section>
     );
   }
 
@@ -144,28 +146,20 @@ export default function QueueAnalyticsPage() {
     analytics.cancelled;
 
   return (
-    <main className="qa-page">
+    <section className="qa-page">
       <div className="qa-container">
         <Link
           className="qa-back"
           to={`/owner/queues?branch=${queue.branch_id}&queue=${queue.id}`}
         >
-          <ArrowLeft size={17} weight="bold" />
-          Back to live queues
+          <ArrowLeft size={16} weight="bold" />
+          Live Queues
         </Link>
 
-        <header className="qa-head">
+        <div className="qa-head">
           <div>
-            <div className="qa-eyebrow">
-              <ChartBar size={18} weight="duotone" />
-              Queue analytics
-            </div>
-
-            <h1>{queue.name}</h1>
-
-            <p>
-              Performance and customer activity for this queue.
-            </p>
+            <h1>{queue.name} Analytics</h1>
+            <p>Queue performance and customer activity.</p>
           </div>
 
           <span
@@ -173,7 +167,7 @@ export default function QueueAnalyticsPage() {
           >
             {queue.status}
           </span>
-        </header>
+        </div>
 
         <section
           className="qa-grid"
@@ -211,26 +205,20 @@ export default function QueueAnalyticsPage() {
             icon={Hourglass}
             label="Average wait"
             value={formatMinutes(analytics.average_wait_minutes)}
-            detail="From joining until called"
+            detail="Joining until called"
           />
 
           <MetricCard
             icon={Clock}
             label="Average service"
             value={formatMinutes(analytics.average_service_minutes)}
-            detail="From check-in until completion"
+            detail="Check-in until completion"
           />
         </section>
 
         <section className="qa-section">
           <div className="qa-section__head">
-            <div>
-              <span className="qa-section__eyebrow">
-                Queue breakdown
-              </span>
-
-              <h2>Entry status</h2>
-            </div>
+            <h2>Entry status</h2>
 
             <span className="qa-section__total">
               {analytics.total_entries} total
@@ -243,7 +231,6 @@ export default function QueueAnalyticsPage() {
                 <span className="qa-dot qa-dot--waiting" />
                 <span>Waiting</span>
               </div>
-
               <strong>{analytics.waiting}</strong>
             </div>
 
@@ -252,7 +239,6 @@ export default function QueueAnalyticsPage() {
                 <span className="qa-dot qa-dot--called" />
                 <span>Called</span>
               </div>
-
               <strong>{analytics.called}</strong>
             </div>
 
@@ -261,7 +247,6 @@ export default function QueueAnalyticsPage() {
                 <span className="qa-dot qa-dot--checked" />
                 <span>Checked in</span>
               </div>
-
               <strong>{analytics.checked_in}</strong>
             </div>
 
@@ -270,7 +255,6 @@ export default function QueueAnalyticsPage() {
                 <span className="qa-dot qa-dot--completed" />
                 <span>Completed</span>
               </div>
-
               <strong>{analytics.completed}</strong>
             </div>
 
@@ -279,7 +263,6 @@ export default function QueueAnalyticsPage() {
                 <span className="qa-dot qa-dot--cancelled" />
                 <span>Cancelled</span>
               </div>
-
               <strong>{analytics.cancelled}</strong>
             </div>
 
@@ -288,7 +271,6 @@ export default function QueueAnalyticsPage() {
                 <span className="qa-dot qa-dot--no-show" />
                 <span>No-show</span>
               </div>
-
               <strong>{analytics.no_show}</strong>
             </div>
           </div>
@@ -311,6 +293,6 @@ export default function QueueAnalyticsPage() {
           </div>
         </section>
       </div>
-    </main>
+    </section>
   );
 }

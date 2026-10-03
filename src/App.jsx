@@ -38,7 +38,7 @@ import { ROLES, homeFor } from "./lib/helpers/roles";
 import OwnerQueues from "./components/Control/OwnerQueues";
 import StaffQueues from "./components/Control/StaffQueues";
 import NotificationsPage from "./components/Notifications/NotificationsPage";
-
+import FavoritesPage from "./components/Favorites/FavoritesPage";
 import "./App.css";
 
 // Pages that have their own full-screen layout (no NavBar)
@@ -113,6 +113,15 @@ export default function App() {
           element={
             <ProtectedRoute roles={[ROLES.CUSTOMER]}>
               <MyTicketsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/favorites"
+          element={
+            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+              <FavoritesPage />
             </ProtectedRoute>
           }
         />

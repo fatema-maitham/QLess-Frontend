@@ -1,38 +1,87 @@
 import { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router';
-import { createStaff, deleteStaff } from '../../services/ownerApi';
+
+import {
+  createStaff,
+  deleteStaff,
+} from '../../services/ownerApi';
+
 import { initial } from './ownerSetup';
 import { Empty } from './OwnerParts';
+import OwnerStaffEdit from './OwnerStaffEdit';
 
 export default function OwnerStaff() {
-  const { branches, reload, toast } = useOutletContext();
+  const { branches, reload, toast } =
+    useOutletContext();
+
   const navigate = useNavigate();
+
+  const [editing, setEditing] = useState(null);
   const [filter, setFilter] = useState('all');
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ email: '', position: '', branch: '' });
+
+  const [form, setForm] = useState({
+    email: '',
+    position: '',
+    branch: '',
+  });
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   const people = branches
-    .flatMap((b) => b.staff.map((s) => ({ ...s, branch: b })))
-    .filter((s) => filter === 'all' || String(s.branch.id) === filter);
+    .flatMap((branch) =>
+      branch.staff.map((staff) => ({
+        ...staff,
+        branch,
+      }))
+    )
+    .filter(
+      (staff) =>
+        filter === 'all' ||
+        String(staff.branch.id) === filter
+    );
 
   function openForm() {
-    if (!branches.length) { toast('Add a branch first'); navigate('/owner/branches?add=1'); return; }
-    setForm({ email: '', position: '', branch: filter !== 'all' ? filter : String(branches[0].id) });
+    if (!branches.length) {
+      toast('Add a branch first');
+      navigate('/owner/branches?add=1');
+      return;
+    }
+
+    setForm({
+      email: '',
+      position: '',
+      branch:
+        filter !== 'all'
+          ? filter
+          : String(branches[0].id),
+    });
+
+    setError('');
     setOpen(true);
   }
 
-  async function save(e) {
-    e.preventDefault();
+  async function save(event) {
+    event.preventDefault();
+
     setSaving(true);
     setError('');
+
     try {
-      await createStaff(Number(form.branch), { user_email: form.email.trim(), position: form.position.trim() || null });
+      await createStaff(Number(form.branch), {
+        user_email: form.email.trim(),
+        position: form.position.trim() || null,
+      });
+
       await reload();
       setOpen(false);
-      const b = branches.find((x) => String(x.id) === form.branch);
-      toast(`Staff member added to ${b?.name}`);
+
+      const branch = branches.find(
+        (item) => String(item.id) === form.branch
+      );
+
+      toast(`Staff member added to ${branch?.name}`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -41,55 +90,204 @@ export default function OwnerStaff() {
   }
 
   async function remove(id) {
-    try { await deleteStaff(id); await reload(); toast('Staff member removed'); } catch (err) { toast(err.message); }
+    try {
+      await deleteStaff(id);
+      await reload();
+      toast('Staff member removed');
+    } catch (err) {
+      toast(err.message);
+    }
   }
 
   return (
     <section>
       <div className="page-h">
         <h1>Staff</h1>
+
         <span className="sp" />
+
         {branches.length > 1 && (
-          <select className="sel" aria-label="Filter by branch" value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <select
+            className="sel"
+            aria-label="Filter by branch"
+            value={filter}
+            onChange={(event) =>
+              setFilter(event.target.value)
+            }
+          >
             <option value="all">All branches</option>
-            {branches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+
+            {branches.map((branch) => (
+              <option key={branch.id} value={branch.id}>
+                {branch.name}
+              </option>
+            ))}
           </select>
         )}
-        <button className="btn btn-primary" type="button" onClick={openForm}>+ Add staff</button>
+
+        <button
+          className="btn btn-primary"
+          type="button"
+          onClick={openForm}
+        >
+          + Add staff
+        </button>
       </div>
 
       {open && (
         <form className="addform" onSubmit={save}>
-          <div className="f wide"><label htmlFor="se">Their QLess email</label><input id="se" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required maxLength={120} autoFocus /></div>
-          <div className="f"><label htmlFor="sp">Position</label><input id="sp" value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} maxLength={60} /></div>
-          <div className="f"><label htmlFor="sb">Branch</label>
-            <select id="sb" value={form.branch} onChange={(e) => setForm({ ...form, branch: e.target.value })}>
-              {branches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+          <div className="f wide">
+            <label htmlFor="staff-email">
+              Their QLess email
+            </label>
+
+            <input
+              id="staff-email"
+              type="email"
+              value={form.email}
+              onChange={(event) =>
+                setForm({
+                  ...form,
+                  email: event.target.value,
+                })
+              }
+              required
+            />
+          </div>
+
+          <div className="f">
+            <label htmlFor="staff-position">
+              Position
+            </label>
+
+            <input
+              id="staff-position"
+              value={form.position}
+              onChange={(event) =>
+                setForm({
+                  ...form,
+                  position: event.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="f">
+            <label htmlFor="staff-branch">
+              Branch
+            </label>
+
+            <select
+              id="staff-branch"
+              value={form.branch}
+              onChange={(event) =>
+                setForm({
+                  ...form,
+                  branch: event.target.value,
+                })
+              }
+            >
+              {branches.map((branch) => (
+                <option key={branch.id} value={branch.id}>
+                  {branch.name}
+                </option>
+              ))}
             </select>
           </div>
+
           <div className="fa">
-            <button className="btn btn-primary" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Add staff'}</button>
-            <button className="btn btn-ghost" type="button" onClick={() => { setOpen(false); setError(''); }}>Cancel</button>
+            <button
+              className="btn btn-primary"
+              type="submit"
+              disabled={saving}
+            >
+              {saving ? 'Saving…' : 'Add staff'}
+            </button>
+
+            <button
+              className="btn btn-ghost"
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                setError('');
+              }}
+            >
+              Cancel
+            </button>
           </div>
+
           {error && <p className="form-error">{error}</p>}
         </form>
       )}
 
       <div className="list">
-        {people.length ? people.map((s) => (
-          <div className="li" key={s.id}>
-            <span className="ic">{initial(s.user?.name)}</span>
-            <div><b>{s.user?.name}</b><small>{s.user?.email} · {s.branch.name}{s.position ? ` · ${s.position}` : ''}</small></div>
-            <span className={s.is_active ? 'st open' : 'st off'}>{s.is_active ? 'Active' : 'Inactive'}</span>
-            <button className="del" type="button" onClick={() => remove(s.id)}>Remove</button>
-          </div>
-        )) : (
+        {people.length ? (
+          people.map((staff) => (
+            <div className="li" key={staff.id}>
+              <span className="ic">
+                {initial(staff.user?.name)}
+              </span>
+
+              <div>
+                <div className="owner-row-title">
+                  <b>{staff.user?.name}</b>
+
+                  <span
+                    className={
+                      staff.is_active
+                        ? 'st open'
+                        : 'st off'
+                    }
+                  >
+                    {staff.is_active
+                      ? 'Active'
+                      : 'Inactive'}
+                  </span>
+                </div>
+
+                <small>
+                  {staff.user?.email} · {staff.branch.name}
+                  {staff.position
+                    ? ` · ${staff.position}`
+                    : ''}
+                </small>
+              </div>
+
+              <span className="owner-row-actions">
+                <button
+                  className="owner-edit"
+                  type="button"
+                  onClick={() => setEditing(staff)}
+                >
+                  Edit
+                </button>
+
+                <button
+                  className="del"
+                  type="button"
+                  onClick={() => remove(staff.id)}
+                >
+                  Remove
+                </button>
+              </span>
+            </div>
+          ))
+        ) : (
           <Empty
             title="No staff yet"
-            text={branches.length ? 'Add the people who call visitors at your branches. They need a QLess account first.' : 'Add a branch first, then add staff to it.'}
+            text="Add the people who call visitors at your branches."
           />
         )}
       </div>
+
+      {editing && (
+        <OwnerStaffEdit
+          staff={editing}
+          reload={reload}
+          toast={toast}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </section>
   );
 }

@@ -224,9 +224,11 @@ export default function OwnerStaff() {
                 <button
                   className="del"
                   type="button"
+                  disabled={busy}
+                  aria-busy={removingId === staff.id}
                   onClick={() => remove(staff.id)}
                 >
-                  Remove
+                  {removingId === staff.id ? 'Removing…' : 'Remove'}
                 </button>
               </span>
             </div>

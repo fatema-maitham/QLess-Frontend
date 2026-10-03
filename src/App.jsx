@@ -72,6 +72,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/owner/business"
           element={

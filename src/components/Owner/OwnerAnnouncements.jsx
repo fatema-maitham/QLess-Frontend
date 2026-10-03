@@ -19,7 +19,6 @@ export default function OwnerAnnouncements() {
     business,
     branches,
     announcements,
-    setData,
     reload,
     toast,
   } = useOutletContext();
@@ -239,21 +238,17 @@ export default function OwnerAnnouncements() {
                 </button>
 
                 <button
-                  className="del owner-announcement-toggle"
+                  className="del"
                   type="button"
                   disabled={busy}
-                  aria-busy={
-                    changingId === announcement.id
-                  }
+                  aria-busy={changingId === announcement.id}
                   onClick={() =>
-                    toggleAvailability(announcement)
+                    removeAnnouncement(announcement.id)
                   }
                 >
                   {changingId === announcement.id
-                    ? 'Updating…'
-                    : announcement.is_active
-                      ? 'Deactivate'
-                      : 'Activate'}
+                    ? 'Removing…'
+                    : 'Remove'}
                 </button>
               </div>
             </div>
@@ -306,7 +301,6 @@ function AnnouncementEdit({
 
   async function save(event) {
     event.preventDefault();
-
     if (saving) return;
 
     setError('');
@@ -326,18 +320,14 @@ function AnnouncementEdit({
         title,
         message,
         branch_id:
-          form.branch === 'all'
-            ? null
-            : Number(form.branch),
+          form.branch === 'all' ? null : Number(form.branch),
       });
 
       await reload();
       toast('Announcement updated');
       onClose();
     } catch (err) {
-      setError(
-        err.message || 'Could not update the announcement.'
-      );
+      setError(err.message || 'Could not update the announcement.');
     } finally {
       setSaving(false);
     }
@@ -352,9 +342,7 @@ function AnnouncementEdit({
       error={error}
     >
       <div className="f">
-        <label htmlFor="edit-announcement-title">
-          Title
-        </label>
+        <label htmlFor="edit-announcement-title">Title</label>
         <input
           id="edit-announcement-title"
           name="title"
@@ -366,9 +354,7 @@ function AnnouncementEdit({
       </div>
 
       <div className="f">
-        <label htmlFor="edit-announcement-message">
-          Message
-        </label>
+        <label htmlFor="edit-announcement-message">Message</label>
         <input
           id="edit-announcement-message"
           name="message"
@@ -380,9 +366,7 @@ function AnnouncementEdit({
       </div>
 
       <div className="f">
-        <label htmlFor="edit-announcement-branch">
-          Show at
-        </label>
+        <label htmlFor="edit-announcement-branch">Show at</label>
         <select
           id="edit-announcement-branch"
           name="branch"

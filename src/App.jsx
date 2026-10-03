@@ -16,7 +16,13 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Placeholder from './components/Placeholder/Placeholder';
 import OwnerHome from './components/Business/OwnerHome';
 import BusinessForm from './components/Business/BusinessForm';
-
+import OwnerLayout from './components/Owner/OwnerLayout';
+import OwnerOverview from './components/Owner/OwnerOverview';
+import OwnerBranches from './components/Owner/OwnerBranches';
+import OwnerBranch from './components/Owner/OwnerBranch';
+import OwnerStaff from './components/Owner/OwnerStaff';
+import OwnerAnnouncements from './components/Owner/OwnerAnnouncements';
+import OwnerProfile from './components/Owner/OwnerProfile';
 // Context + helpers
 import { UserContext } from './contexts/UserContext';
 import { ROLES, homeFor } from './lib/helpers/roles';

@@ -19,6 +19,8 @@ import Placeholder from "./components/Placeholder/Placeholder";
 import JoinQueuePage from "./components/Ticket/JoinQueuePage";
 import TicketPage from "./components/Ticket/TicketPage";
 import MyTicketsPage from "./components/Ticket/MyTicketsPage";
+import FavoritesPage from "./components/Favorites/FavoritesPage";
+import MyBookingsPage from "./components/Bookings/MyBookingsPage";
 
 // Owner pages
 import OwnerHome from "./components/Business/OwnerHome";
@@ -30,15 +32,21 @@ import OwnerBranch from "./components/Owner/OwnerBranch";
 import OwnerStaff from "./components/Owner/OwnerStaff";
 import OwnerAnnouncements from "./components/Owner/OwnerAnnouncements";
 import OwnerProfile from "./components/Owner/OwnerProfile";
+import OwnerQueues from "./components/Control/OwnerQueues";
+
+// Staff
+import StaffQueues from "./components/Control/StaffQueues";
+
+// Bookings
+import BranchBookingsPage from "./components/Bookings/BranchBookingsPage";
+
+// Notifications
+import NotificationsPage from "./components/Notifications/NotificationsPage";
 
 // Context + helpers
 import { UserContext } from "./contexts/UserContext";
 import { ROLES, homeFor } from "./lib/helpers/roles";
 
-import OwnerQueues from "./components/Control/OwnerQueues";
-import StaffQueues from "./components/Control/StaffQueues";
-import NotificationsPage from "./components/Notifications/NotificationsPage";
-import FavoritesPage from "./components/Favorites/FavoritesPage";
 import "./App.css";
 
 // Pages that have their own full-screen layout (no NavBar)
@@ -47,6 +55,7 @@ const NO_NAV = ["/sign-in", "/sign-up"];
 export default function App() {
   const { user } = useContext(UserContext);
   const location = useLocation();
+
   const showNav =
     !NO_NAV.includes(location.pathname) &&
     !location.pathname.startsWith("/owner");
@@ -56,26 +65,38 @@ export default function App() {
       {showNav && <NavBar />}
 
       <Routes>
-        {/* Home: visitor → landing page, signed in → their own home */}
+        {/* Home */}
         <Route
           path="/"
           element={
-            user ? <Navigate to={homeFor(user)} replace /> : <LandingPage />
+            user ? (
+              <Navigate to={homeFor(user)} replace />
+            ) : (
+              <LandingPage />
+            )
           }
         />
 
-        {/* Auth: signed-in users don't need these pages */}
+        {/* Auth */}
         <Route
           path="/sign-up"
           element={
-            user ? <Navigate to={homeFor(user)} replace /> : <SignUpForm />
+            user ? (
+              <Navigate to={homeFor(user)} replace />
+            ) : (
+              <SignUpForm />
+            )
           }
         />
 
         <Route
           path="/sign-in"
           element={
-            user ? <Navigate to={homeFor(user)} replace /> : <SignInForm />
+            user ? (
+              <Navigate to={homeFor(user)} replace />
+            ) : (
+              <SignInForm />
+            )
           }
         />
 
@@ -90,38 +111,32 @@ export default function App() {
           }
         />
 
-        {/* Browse: open to everyone */}
+        {/* Public browsing */}
         <Route path="/businesses" element={<BrowsePage />} />
+
         <Route
           path="/businesses/:businessId"
           element={<BusinessDetailsPage />}
         />
+
         <Route
           path="/branches/:branchId"
           element={<BranchDetailsPage />}
         />
 
-        {/* Join queue: open to everyone, joining asks guests to sign in */}
+        {/* Join queue */}
         <Route
           path="/queues/:queueId"
           element={<JoinQueuePage />}
         />
 
-        {/* Customer tickets */}
+        {/* ================= CUSTOMER ================= */}
+
         <Route
           path="/my-tickets"
           element={
             <ProtectedRoute roles={[ROLES.CUSTOMER]}>
               <MyTicketsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/favorites"
-          element={
-            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
-              <FavoritesPage />
             </ProtectedRoute>
           }
         />
@@ -135,7 +150,27 @@ export default function App() {
           }
         />
 
-        {/* Owner */}
+        <Route
+          path="/favorites"
+          element={
+            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+              <FavoritesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Customer bookings */}
+        <Route
+          path="/my-bookings"
+          element={
+            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+              <MyBookingsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ================= OWNER ================= */}
+
         <Route
           path="/owner"
           element={
@@ -154,7 +189,7 @@ export default function App() {
           }
         />
 
-        {/* Owner dashboard */}
+        {/* Owner dashboard layout */}
         <Route
           element={
             <ProtectedRoute roles={[ROLES.OWNER]}>
@@ -198,7 +233,8 @@ export default function App() {
           />
         </Route>
 
-        {/* Staff */}
+        {/* ================= STAFF ================= */}
+
         <Route
           path="/staff"
           element={
@@ -208,7 +244,19 @@ export default function App() {
           }
         />
 
-        {/* Notifications: any signed-in user */}
+        {/* ================= BRANCH BOOKINGS ================= */}
+
+        <Route
+          path="/branches/:branchId/bookings"
+          element={
+            <ProtectedRoute roles={[ROLES.OWNER, ROLES.STAFF]}>
+              <BranchBookingsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ================= NOTIFICATIONS ================= */}
+
         <Route
           path="/notifications"
           element={
@@ -217,6 +265,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         {/* Wrong role */}
         <Route
           path="/no-access"
@@ -228,6 +277,7 @@ export default function App() {
           }
         />
 
+        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

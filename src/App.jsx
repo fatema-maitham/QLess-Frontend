@@ -37,6 +37,7 @@ import { ROLES, homeFor } from "./lib/helpers/roles";
 
 import OwnerQueues from "./components/Control/OwnerQueues";
 import StaffQueues from "./components/Control/StaffQueues";
+import NotificationsPage from "./components/Notifications/NotificationsPage";
 
 import "./App.css";
 
@@ -198,6 +199,15 @@ export default function App() {
           }
         />
 
+        {/* Notifications: any signed-in user */}
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
         {/* Wrong role */}
         <Route
           path="/no-access"

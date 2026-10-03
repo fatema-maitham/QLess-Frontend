@@ -174,20 +174,6 @@
   transition-delay: 420ms;
 }
 
-/* ---------- scroll progress bar ---------- */
-.lp-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  width: 100%;
-  height: 3px;
-  background: var(--color-primary);
-  transform: scaleX(var(--page, 0));
-  transform-origin: left center;
-  pointer-events: none;
-}
-
 .lp-stagger> :nth-child(4n + 2) {
   transition-delay: 80ms;
 }
@@ -201,38 +187,24 @@
 }
 
 /* =========================================================
-   1. Hero
+   1. Hero: centred headline, the live dashboard sits right under it
    ========================================================= */
 .lp-hero {
   --exit: 0;
-  padding: var(--space-4) var(--gutter) 0;
-}
-
-.lp-hero__panel {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  gap: var(--space-12);
-  align-items: center;
-  max-width: 1400px;
-  min-height: 620px;
-  margin: 0 auto;
-  padding: clamp(3rem, 6vw, 5rem);
-  overflow: hidden;
-  border-radius: 28px;
-  background: var(--color-surface);
-  /* shrinks a little as you scroll past it */
-  transform: scale(calc(1 - var(--exit) * 0.06));
-  transform-origin: center top;
+  padding: clamp(3.5rem, 8vw, 6.5rem) var(--gutter) 0;
+  text-align: center;
 }
 
 .lp-hero__content {
-  position: relative;
-  z-index: 1;
-  max-width: 620px;
-  /* text drifts up and fades as you scroll */
-  opacity: calc(1 - var(--exit) * 0.9);
-  transform: translateY(calc(var(--exit) * -60px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  max-width: 900px;
+  margin-inline: auto;
+  /* text drifts up and fades a little as you scroll */
+  opacity: calc(1 - var(--exit) * 0.6);
+  transform: translateY(calc(var(--exit) * -30px));
 }
 
 .lp-hero__content>* {
@@ -247,35 +219,14 @@
   animation-delay: 160ms;
 }
 
-.lp-hero__content> :nth-child(4) {
-  animation-delay: 240ms;
-}
-
-.lp-hero__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-6);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-bold);
-  letter-spacing: 0.18em;
-  color: var(--color-text);
-}
-
-.lp-hero__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  box-shadow: 0 0 0 4px var(--color-primary-soft);
-}
-
 .lp-hero__title {
-  font-size: clamp(3rem, 5.4vw, 4.75rem);
+  max-width: 15ch;
+  font-size: clamp(3rem, 7.2vw, 6rem);
   font-weight: var(--weight-extrabold);
-  line-height: 1;
+  line-height: 1.02;
   letter-spacing: -0.045em;
   color: var(--color-text);
+  text-wrap: balance;
 }
 
 .lp-hero__title span {
@@ -283,18 +234,17 @@
 }
 
 .lp-hero__text {
-  max-width: 44ch;
-  margin-top: var(--space-8);
-  font-size: var(--text-lg);
-  line-height: 1.7;
+  max-width: 52ch;
+  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  line-height: 1.65;
   color: var(--color-text-muted);
 }
 
 .lp-hero__actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-3);
-  margin-top: var(--space-8);
 }
 
 /* "For businesses" button: black outline, fills black on hover */
@@ -310,91 +260,13 @@
   color: var(--color-text-inverse);
 }
 
-/* your image */
-.lp-hero__visual {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  height: 500px;
-  animation: lp-rise 1000ms var(--ease-out) 200ms both;
-}
-
-.lp-hero__visual img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: var(--radius-lg);
-  object-fit: contain;
-  object-position: center;
-}
-
-/* image moves slower than the page (parallax) */
-.lp-hero__visual img {
-  transform: translateY(calc(var(--exit) * 140px - 10px)) scale(calc(1 + var(--exit) * 0.06));
-}
-
-/* hero: tablet */
-@media (max-width: 900px) {
-  .lp-hero__panel {
-    grid-template-columns: 1fr;
-    min-height: 0;
-    gap: var(--space-10);
-    text-align: center;
-  }
-
-  .lp-hero__content {
-    margin: 0 auto;
-  }
-
-  .lp-hero__text {
-    margin-inline: auto;
-  }
-
-  .lp-hero__actions {
-    justify-content: center;
-  }
-
-  .lp-hero__visual {
-    height: 380px;
-  }
-}
-
-/* hero: phone */
-@media (max-width: 600px) {
-  .lp-hero__panel {
-    padding: var(--space-12) var(--space-6);
-    border-radius: 22px;
-  }
-
-  .lp-hero__title {
-    font-size: clamp(2.5rem, 11vw, 3.25rem);
-  }
-
-  .lp-hero__text {
-    font-size: var(--text-base);
-  }
-
-  .lp-hero__actions {
-    flex-direction: column;
-  }
-
-  .lp-hero__actions .btn {
-    width: 100%;
-  }
-
-  .lp-hero__visual {
-    height: 280px;
-  }
-}
-
 /* =========================================================
    Live dashboard (under the logos)
    --enter (0 → 1) tilts the window back, then flat
    ========================================================= */
 .lp-board-section {
   --enter: 1;
-  padding-block: var(--space-8) var(--space-16);
+  padding-block: var(--space-12) var(--space-8);
   perspective: 1600px;
 }
 
@@ -407,6 +279,7 @@
   transform: rotateX(calc((1 - var(--enter)) * 16deg)) scale(calc(0.9 + var(--enter) * 0.1));
   transform-origin: center top;
   will-change: transform;
+  animation: lp-fade 900ms var(--ease-out) 250ms both;
 }
 
 .lp-board__bar {
@@ -709,7 +582,7 @@
   font-weight: var(--weight-extrabold);
   /* fills orange when the line reaches it */
   --on: clamp(0, (var(--enter) - 0.1 - var(--i) * 0.42) * 10, 1);
-  background: color-mix(in srgb, var(--color-primary) calc(var(--on) * 100%), var(--color-bg));
+  background: color-mix(in srgb, var(--color-accent) calc(var(--on) * 100%), var(--color-bg));
   transform: scale(calc(1 + var(--on) * 0.08));
   transition: transform var(--duration-fast) var(--ease-out);
 }
@@ -2218,6 +2091,12 @@ button.lp-ph__btn:active {
   }
 }
 
+@keyframes lp-fade {
+  from {
+    opacity: 0;
+  }
+}
+
 @keyframes lp-progress {
   to {
     width: 100%;
@@ -2297,28 +2176,6 @@ button.lp-ph__btn:active {
     padding-top: 0;
   }
 
-  .lp-hero {
-    padding-bottom: var(--space-16);
-  }
-
-  .lp-hero__grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-10);
-    text-align: center;
-  }
-
-  .lp-hero__text {
-    margin-inline: auto;
-  }
-
-  .lp-hero__actions,
-  .lp-trustrow {
-    justify-content: center;
-  }
-
-  .lp-hero__art {
-    max-width: 460px;
-  }
 
   /* moving queue: smaller cards, counter hidden */
   .lp-qs__stage {
@@ -2468,7 +2325,7 @@ button.lp-ph__btn:active {
    ========================================================= */
 @media (max-width: 600px) {
   .lp-hero {
-    padding-top: var(--space-10);
+    padding-top: var(--space-12);
   }
 
   .lp-hero__title {
@@ -2476,7 +2333,7 @@ button.lp-ph__btn:active {
   }
 
   .lp-hero__text {
-    font-size: var(--text-lg);
+    font-size: var(--text-base);
   }
 
   .lp-hero__actions {
@@ -2581,19 +2438,13 @@ button.lp-ph__btn:active {
 
   .lp-role,
   .lp-board,
-  .lp-hero__panel,
   .lp-hero__content,
-  .lp-hero__visual img,
   .lp-band,
   .lp-word>span,
   .lp-inds>.lp-reveal {
     transform: none;
     filter: none;
     opacity: 1;
-  }
-
-  .lp-progress {
-    display: none;
   }
 
   .lp-marquee {

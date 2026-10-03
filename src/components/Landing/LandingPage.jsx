@@ -313,22 +313,6 @@ function SectionHead({ eyebrow, title, text, id, children }) {
   );
 }
 
-// Thin orange bar at the top that fills as you scroll down the page
-function ScrollProgress({ reduced }) {
-  const barRef = useRef(null);
-
-  const update = useRef(() => {
-    const bar = barRef.current;
-    if (!bar) return;
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.setProperty("--page", max > 0 ? clamp01(window.scrollY / max).toFixed(4) : 0);
-  }).current;
-
-  useScrollFrame(update, !reduced);
-
-  return <div ref={barRef} className="lp-progress" aria-hidden="true" />;
-}
-
 /* =========================================================
    1. Hero
    ========================================================= */
@@ -338,34 +322,23 @@ function Hero({ reduced }) {
 
   return (
     <section ref={heroRef} className="lp-hero">
-      <div className="lp-hero__panel">
-        <div className="lp-hero__content">
+      <div className="lp-hero__content">
+        <h1 className="lp-hero__title">
+          Your time is worth more <span>than a line.</span>
+        </h1>
 
-          <h1 className="lp-hero__title">
-            Your time is
-            <br />
-            worth more
-            <br />
-            <span>than a line.</span>
-          </h1>
+        <p className="lp-hero__text">
+          QLess holds your place while you get on with your day. Join from your phone, watch
+          your place move live and arrive right when it's your turn.
+        </p>
 
-          <p className="lp-hero__text">
-            QLess holds your place while you get on with your day. We'll tell
-            you when it's your turn.
-          </p>
-
-          <div className="lp-hero__actions">
-            <Link className="btn btn--primary" to="/businesses">
-              Find a place
-            </Link>
-            <Link className="btn lp-btn-light" to="/business/register">
-              For businesses
-            </Link>
-          </div>
-        </div>
-
-        <div className="lp-hero__visual">
-          <img src="/hero.png" alt="QLess hero" />
+        <div className="lp-hero__actions">
+          <Link className="btn btn--primary" to="/businesses">
+            Find a place
+          </Link>
+          <Link className="btn lp-btn-light" to="/business/register">
+            For businesses
+          </Link>
         </div>
       </div>
     </section>
@@ -373,7 +346,7 @@ function Hero({ reduced }) {
 }
 
 /* =========================================================
-   Live dashboard (under the logos)
+   Live dashboard (right under the hero text)
    Rows move every few seconds, like a real branch.
    The window tilts back and settles flat as you scroll to it.
    ========================================================= */
@@ -1320,10 +1293,9 @@ export default function LandingPage() {
 
   return (
     <main className="lp">
-      <ScrollProgress reduced={reduced} />
       <Hero reduced={reduced} />
-      <LogoStrip />
       <LiveBoard reduced={reduced} />
+      <LogoStrip />
       <Steps reduced={reduced} />
       <Roles reduced={reduced} />
       <Features reduced={reduced} />

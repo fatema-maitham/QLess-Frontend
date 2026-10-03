@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router";
 import {
   ArrowLeft,
@@ -12,10 +12,13 @@ import {
 } from "@phosphor-icons/react";
 import { getQueue } from "../../services/queueService";
 import { checkIn, getTicket, leaveQueue, setOnTheWay } from "../../services/ticketService";
+import useQueueSocket from "../../hooks/useQueueSocket";
 import { LIVE_STATUSES, TICKET_STATUS, aheadText, clockTime, minutesText } from "./ticketHelpers";
+import { alertCalled, askForNotifications, canAskForNotifications } from "./alerts";
+import CalledAlert from "./CalledAlert";
 import "./Ticket.css";
 
-const REFRESH_MS = 10000; // step 6 (realtime) will replace this with live updates
+const BACKUP_REFRESH_MS = 15000; // only used while the live connection is down
 const MAX_DOTS = 5;
 
 // Dots for the people ahead, then a "You" pill
@@ -83,9 +86,36 @@ export default function TicketPage() {
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
+  const [calledOpen, setCalledOpen] = useState(false);
+  const [askAlerts, setAskAlerts] = useState(canAskForNotifications);
+
+  // The last status we saw, so we notice the moment it changes to "called"
+  const lastStatus = useRef(null);
 
   const ticket = page.ticket;
   const isLive = ticket && LIVE_STATUSES.includes(ticket.status);
+
+  // Show a new version of the ticket, and ring if the customer was just called
+  const showTicket = useCallback((fresh) => {
+    const before = lastStatus.current;
+    lastStatus.current = fresh.status;
+
+    if (before && before !== "called" && fresh.status === "called") {
+      setCalledOpen(true);
+      alertCalled(fresh);
+    }
+    if (fresh.status !== "called") setCalledOpen(false);
+
+    setPage((prev) => ({ ...prev, ticket: fresh }));
+  }, []);
+
+  const refreshTicket = useCallback(() => {
+    return getTicket(entryId)
+      .then(showTicket)
+      .catch(() => {
+        // keep showing the last ticket if a refresh fails
+      });
+  }, [entryId, showTicket]);
 
   // First load: the ticket + its queue (for the check-in time)
   useEffect(() => {
@@ -96,6 +126,7 @@ export default function TicketPage() {
     async function load() {
       const ticket = await getTicket(entryId, { signal });
       const queue = await getQueue(ticket.queue_id, { signal }).catch(() => null);
+      lastStatus.current = ticket.status;
       setPage({ status: "ready", ticket, queue });
     }
 
@@ -107,20 +138,29 @@ export default function TicketPage() {
     return () => controller.abort();
   }, [entryId, reloadKey]);
 
-  // Keep the ticket fresh while it is still going
+  // Live updates: someone joined, left, was called, or the queue paused
+  const handleQueueMessage = useCallback(
+    (message) => {
+      // "Now serving" can change straight away
+      if (message.current_number !== undefined) {
+        setPage((prev) =>
+          prev.ticket ? { ...prev, ticket: { ...prev.ticket, current_number: message.current_number } } : prev
+        );
+      }
+      // Position and wait come from the server, so ask for the fresh ticket
+      refreshTicket();
+    },
+    [refreshTicket]
+  );
+
+  const connected = useQueueSocket(ticket?.queue_id, handleQueueMessage, { enabled: Boolean(isLive) });
+
+  // Backup: if the live connection is down, check every 15 seconds
   useEffect(() => {
-    if (!isLive) return;
-
-    const id = setInterval(() => {
-      getTicket(entryId)
-        .then((fresh) => setPage((prev) => ({ ...prev, ticket: fresh })))
-        .catch(() => {
-          // keep showing the last ticket if a refresh fails
-        });
-    }, REFRESH_MS);
-
+    if (!isLive || connected) return;
+    const id = setInterval(refreshTicket, BACKUP_REFRESH_MS);
     return () => clearInterval(id);
-  }, [entryId, isLive]);
+  }, [isLive, connected, refreshTicket]);
 
   const graceMinutes = page.queue?.no_show_grace_minutes ?? 5;
   const timer = useCheckInTimer(ticket?.called_at, graceMinutes, ticket?.status === "called");
@@ -131,7 +171,7 @@ export default function TicketPage() {
     setActionError("");
     try {
       const fresh = await action();
-      setPage((prev) => ({ ...prev, ticket: fresh }));
+      showTicket(fresh);
     } catch (err) {
       setActionError(err.message);
     } finally {
@@ -141,6 +181,11 @@ export default function TicketPage() {
 
   const handleOnTheWay = () => run(() => setOnTheWay(entryId, !ticket.on_the_way));
   const handleCheckIn = () => run(() => checkIn(entryId));
+
+  const handleTurnOnAlerts = async () => {
+    await askForNotifications();
+    setAskAlerts(false);
+  };
 
   const openLeave = () => dialogRef.current?.showModal();
   const closeLeave = () => dialogRef.current?.close();
@@ -202,9 +247,9 @@ export default function TicketPage() {
             My tickets
           </Link>
           {isLive && (
-            <span className="tk-live">
+            <span className={`tk-live ${connected ? "" : "is-off"}`} role="status">
               <span className="tk-live__dot" />
-              Live
+              {connected ? "Live" : "Reconnecting"}
             </span>
           )}
         </div>
@@ -229,7 +274,9 @@ export default function TicketPage() {
 
           <div className="tk-card__foot">
             <span>Now serving</span>
-            <strong>{ticket.current_number || "—"}</strong>
+            <strong key={ticket.current_number} className="tk-bump">
+              {ticket.current_number || "—"}
+            </strong>
           </div>
         </section>
 
@@ -244,8 +291,10 @@ export default function TicketPage() {
         {ticket.status === "waiting" && (
           <>
             <section className="tk-panel" aria-labelledby="place-title">
-              <h2 id="place-title" className="tk-panel__title">
-                {aheadText(ticket.people_ahead)}
+              <h2 id="place-title" className="tk-panel__title" aria-live="polite">
+                <span key={ticket.people_ahead} className="tk-bump">
+                  {aheadText(ticket.people_ahead)}
+                </span>
               </h2>
               <PlaceTrack ahead={ticket.people_ahead || 0} />
 
@@ -266,6 +315,16 @@ export default function TicketPage() {
                 </div>
               </dl>
             </section>
+
+            {askAlerts && (
+              <div className="tk-notify">
+                <BellRinging size={22} weight="duotone" />
+                <p>Get an alert when it's your turn, even if this tab is in the background.</p>
+                <button type="button" className="btn btn--outline tk-notify__btn" onClick={handleTurnOnAlerts}>
+                  Turn on
+                </button>
+              </div>
+            )}
 
             {ticket.on_the_way && (
               <div className="tk-banner" role="status">
@@ -400,6 +459,16 @@ export default function TicketPage() {
             </div>
           </section>
         )}
+
+        {/* "You're called!" pop-up */}
+        <CalledAlert
+          open={calledOpen}
+          ticket={ticket}
+          graceMinutes={graceMinutes}
+          busy={busy}
+          onCheckIn={handleCheckIn}
+          onClose={() => setCalledOpen(false)}
+        />
 
         {/* Leave confirm */}
         <dialog ref={dialogRef} className="tk-sheet" aria-labelledby="leave-title">

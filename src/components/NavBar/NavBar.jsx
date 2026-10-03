@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Link } from 'react-router';
 import { UserContext } from '../../contexts/UserContext';
 import { removeToken } from '../../lib/helpers/jwt-helpers';
+import NotificationBell from "../Notifications/NotificationBell";
 
 const NavBar = () => {
   const { user, setUser } = useContext(UserContext);
@@ -19,6 +20,7 @@ const NavBar = () => {
           <>
             <li>Hello {user.name}</li>
             <li><Link to="/">Dashboard</Link></li>
+            <li><NotificationBell /></li>
             <li><Link to="/" onClick={handleSignOut}>Sign Out</Link></li>
           </>
         ) : (

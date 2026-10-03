@@ -499,11 +499,11 @@
   height: 38px;
   padding: 0 14px;
 
-  border: 1.5px solid var(--orange-btn);
+  border: 1.5px solid var(--ink);
   border-radius: 10px;
 
-  background: transparent;
-  color: var(--orange-btn);
+  background: var(--ink);
+  color: #fff;
 
   font-size: 13px;
   font-weight: 700;
@@ -511,14 +511,14 @@
 
   transition:
     background-color 0.18s ease,
-    color 0.18s ease,
+    border-color 0.18s ease,
     transform 0.18s ease;
 }
 
 .cp-analytics-btn:hover {
-  background: var(--orange-btn);
+  background: #302d2e;
+  border-color: #302d2e;
   color: #fff;
-
   transform: translateY(-1px);
 }
 
@@ -529,4 +529,18 @@
 .cp-analytics-btn:focus-visible {
   outline: 2px solid var(--orange-btn);
   outline-offset: 2px;
+}
+
+.cp-analytics-btn,
+.cp-analytics-btn:link,
+.cp-analytics-btn:visited {
+  color: #fff !important;
+}
+
+.cp-analytics-btn svg {
+  color: #fff !important;
+}
+
+.cp-analytics-btn:hover {
+  color: #fff !important;
 }

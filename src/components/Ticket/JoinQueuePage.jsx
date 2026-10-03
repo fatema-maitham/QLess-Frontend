@@ -7,6 +7,8 @@ import { getQueue } from "../../services/queueService";
 import { getBranch } from "../../services/branchService";
 import { getBusiness } from "../../services/businessService";
 import { getMyTickets, joinQueue } from "../../services/ticketService";
+import useNoShowStatus from "../../hooks/useNoShowStatus";
+import NoShowBanner from "../NoShow/NoShowBanner";
 import { minutesText } from "./ticketHelpers";
 import "./Ticket.css";
 
@@ -22,6 +24,7 @@ export default function JoinQueuePage() {
   const location = useLocation();
   const { user } = useContext(UserContext);
   const isCustomer = getRole(user) === ROLES.CUSTOMER;
+  const noShow = useNoShowStatus(isCustomer);
 
   const [page, setPage] = useState({ status: "loading", error: "" });
   const [joining, setJoining] = useState(false);
@@ -147,6 +150,8 @@ export default function JoinQueuePage() {
         <p>This queue is full right now. Please try again in a little while.</p>
       </div>
     );
+  } else if (noShow?.state === "restricted") {
+    action = <NoShowBanner status={noShow} />;
   } else if (user && !isCustomer) {
     action = (
       <div className="tk-join__note">
@@ -157,6 +162,11 @@ export default function JoinQueuePage() {
   } else {
     action = (
       <>
+        {noShow?.state === "warning" && (
+          <div className="tk-join__warn">
+            <NoShowBanner status={noShow} />
+          </div>
+        )}
         {joinError && (
           <div className="tk-alert" role="alert">
             <Warning size={20} weight="duotone" />
@@ -172,6 +182,7 @@ export default function JoinQueuePage() {
           {joining ? "Joining…" : user ? "Join queue" : "Sign in to join"}
         </button>
       </>
+
     );
   }
 

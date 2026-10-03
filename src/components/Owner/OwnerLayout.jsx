@@ -4,6 +4,7 @@ import { UserContext } from '../../contexts/UserContext';
 import { removeToken } from '../../lib/helpers/jwt-helpers';
 import { loadOwnerData } from '../../services/ownerApi';
 import { firstUnready, initial } from './ownerSetup';
+import NotificationBell from "../Notifications/NotificationBell";
 import './Owner.css';
 
 const ICONS = {
@@ -147,6 +148,8 @@ export default function OwnerLayout() {
 
       <header className="top">
         <Search branches={data.branches} />
+        <NotificationBell />
+
         <div className="who">
           <span>{data.business?.name}{data.business && ' · '}<b>{name}</b></span>
           <div className="av">{initial(name)}</div>

@@ -63,7 +63,7 @@ export default function App() {
         <Route path="/businesses/:businessId" element={<BusinessDetailsPage />} />
         <Route path="/branches/:branchId" element={<BranchDetailsPage />} />
 
-                {/* Owner (Maram) */}
+        {/* Owner (Maram) */}
         <Route
           path="/owner"
           element={
@@ -81,15 +81,22 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
-          path="/owner/dashboard"
           element={
             <ProtectedRoute roles={[ROLES.OWNER]}>
-              <Placeholder title="Owner dashboard" text="Branches, queues and staff will be here." />
+              <OwnerLayout />
             </ProtectedRoute>
           }
-        />
-
+        >
+          <Route path="/owner/dashboard" element={<OwnerOverview />} />
+          <Route path="/owner/branches" element={<OwnerBranches />} />
+          <Route path="/owner/branches/:id" element={<OwnerBranch />} />
+          <Route path="/owner/staff" element={<OwnerStaff />} />
+          <Route path="/owner/announcements" element={<OwnerAnnouncements />} />
+          <Route path="/owner/queues" element={<h1>Live queues</h1>} />
+          <Route path="/owner/profile" element={<OwnerProfile />} />
+        </Route>
         {/* Wrong role */}
         <Route
           path="/no-access"

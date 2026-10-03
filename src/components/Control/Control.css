@@ -671,3 +671,16 @@
     animation: none;
   }
 }
+
+.cp-owner-tools {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.cp-owner-tools__analytics {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+}

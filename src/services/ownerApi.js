@@ -86,3 +86,22 @@ export async function loadOwnerData() {
   const full = await Promise.all(branches.map(loadBranch));
   return { business, branches: full, announcements };
 }
+
+
+export const updateService = (id, data) =>
+  request(`/services/${id}`, {
+    method: 'PATCH',
+    body: data,
+  });
+
+export const updateStaff = (id, data) =>
+  request(`/staff/${id}`, {
+    method: 'PATCH',
+    body: data,
+  });
+
+export const updateAnnouncement = (id, data) =>
+  request(`/announcements/${id}`, {
+    method: 'PATCH',
+    body: data,
+  });

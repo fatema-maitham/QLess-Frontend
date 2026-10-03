@@ -549,3 +549,604 @@
 .owner [data-view="overview"] .tile {
   flex: 1;
 }
+
+.owner .edit-action {
+  background: var(--peach-soft);
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 15px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.owner .edit-action:hover {
+  background: var(--peach);
+}
+
+.owner .acts {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.owner .owner-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.owner .owner-detail-section {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 36px;
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--bg);
+}
+
+.owner .owner-branch-details {
+  width: 100%;
+}
+
+.owner .owner-detail-intro {
+  padding: 0 0 16px;
+  border: 0;
+}
+
+.owner .owner-detail-save {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 0 16px;
+}
+
+.owner .owner-availability {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px;
+  border: 1px solid #e7c8bc;
+  border-radius: 20px;
+  background: #fff9f6;
+}
+
+.owner .owner-availability p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.owner .main {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none;
+}
+
+.owner .main::-webkit-scrollbar {
+  display: none;
+}
+
+.owner .content {
+  overflow: visible !important;
+}
+
+.owner .owner-branch-details {
+  width: 100%;
+  max-width: none;
+}
+
+.owner .owner-detail-intro {
+  padding: 12px 0 24px;
+  border: 0;
+}
+
+.owner .owner-detail-intro > span {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  font-weight: 800;
+  color: var(--orange-dk);
+}
+
+.owner .owner-detail-intro h2 {
+  font-size: 27px;
+  letter-spacing: -0.04em;
+  margin: 8px 0;
+}
+
+.owner .owner-detail-intro p {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 5px 0 0;
+}
+
+.owner .owner-detail-section {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  gap: 36px;
+  padding: 32px 34px;
+  margin-bottom: 16px;
+  background: var(--bg);
+  border: 0;
+  border-radius: 24px;
+}
+
+.owner .owner-detail-section h3 {
+  font-size: 17px;
+  margin: 0 0 8px;
+}
+
+.owner .owner-detail-section p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 250px;
+}
+
+.owner .owner-detail-fields {
+  display: grid;
+  gap: 18px;
+}
+
+.owner .owner-detail-fields input {
+  width: 100%;
+  height: 68px;
+  min-height: 68px;
+  background: white;
+  border-radius: 18px;
+}
+
+.owner .owner-detail-save {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: 8px 0 32px;
+}
+
+.owner .owner-availability {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  padding: 24px 34px;
+  border: 1px solid #e7c8bc;
+  border-radius: 24px;
+  background: #fff9f6;
+}
+
+.owner .owner-availability h3 {
+  font-size: 17px;
+  margin: 0 0 5px;
+}
+
+.owner .owner-availability p {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.owner .owner-availability button {
+  flex-shrink: 0;
+  margin-left: auto;
+  background: #fff1eb;
+  color: #9b432c;
+  border: 1px solid #e7c8bc;
+}
+
+.owner .owner-availability button:hover {
+  background: #fce4da;
+}
+
+@media (max-width: 760px) {
+  .owner .owner-detail-section {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 24px;
+  }
+
+  .owner .owner-detail-fields input {
+    height: 52px;
+    min-height: 52px;
+  }
+
+  .owner .owner-availability {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 24px;
+  }
+
+  .owner .owner-availability button {
+    margin-left: 0;
+  }
+}
+
+
+/* Final owner styling */
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden !important;
+}
+
+.owner.app {
+  height: 100dvh;
+  overflow: hidden !important;
+}
+
+.owner .main {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+.owner .content {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+.owner .main > .content {
+  zoom: 1;
+}
+
+/* Edit button */
+
+.owner .owner-edit,
+.owner .edit-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--peach-soft);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.owner .owner-edit:hover,
+.owner .edit-action:hover {
+  background: var(--peach);
+}
+
+/* Right-side actions */
+
+.owner .owner-row-actions,
+.owner .acts {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+/* Services, staff and announcements rows */
+
+.owner .li {
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 16px;
+  padding: 20px;
+}
+
+.owner .owner-row-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.owner .li small {
+  display: block;
+  color: var(--muted);
+}
+
+/* Branch details */
+
+.owner .owner-branch-details {
+  width: 100%;
+  max-width: none;
+  overflow: hidden;
+}
+
+.owner .owner-detail-intro {
+  padding: 0 0 16px;
+  border: 0;
+}
+
+.owner .owner-detail-intro > span {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  font-weight: 800;
+  color: var(--orange-dk);
+}
+
+.owner .owner-detail-intro h2 {
+  margin: 4px 0;
+  font-size: 23px;
+}
+
+.owner .owner-detail-intro p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.owner .owner-detail-section {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 36px;
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--bg);
+}
+
+.owner .owner-detail-section h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.owner .owner-detail-section p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.owner .owner-detail-fields {
+  display: grid;
+  gap: 12px;
+}
+
+.owner .owner-detail-fields input {
+  width: 100%;
+  min-height: 48px;
+  background: white;
+}
+
+.owner .owner-detail-save {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 0 16px;
+}
+
+/* Availability */
+
+.owner .owner-availability {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  padding: 18px 24px;
+  border: 1px solid #e7c8bc;
+  border-radius: 20px;
+  background: #fff9f6;
+}
+
+.owner .owner-availability h3 {
+  margin: 0 0 5px;
+  font-size: 17px;
+}
+
+.owner .owner-availability p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.owner .owner-availability button {
+  flex-shrink: 0;
+  margin-left: auto;
+  background: #fff1eb;
+  color: #9b432c;
+  border: 1px solid #e7c8bc;
+}
+
+/* Edit modal */
+
+.owner .owner-edit-dialog {
+  width: min(560px, calc(100% - 28px));
+  max-height: 90vh;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  color: var(--ink);
+  background: var(--surface);
+  box-shadow: 0 24px 100px #1e1a182b;
+}
+
+.owner .owner-edit-dialog::backdrop {
+  background: #1e1a1866;
+  backdrop-filter: blur(4px);
+}
+
+.owner .owner-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.owner .owner-modal-head h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.owner .owner-modal-close {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.owner .owner-modal-description {
+  margin: 10px 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.owner .owner-modal-fields {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  margin: 18px 0;
+  border: 0;
+}
+
+.owner .owner-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+@media (max-width: 760px) {
+  .owner .owner-detail-section {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .owner .owner-availability {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .owner .owner-availability button {
+    margin-left: 0;
+  }
+}
+
+
+.owner .owner-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+/* Readable content text */
+
+.owner .content {
+  font-size: 16px;
+}
+
+.owner .li b {
+  font-size: 16px;
+}
+
+.owner .li small {
+  font-size: 14px;
+}
+
+.owner .li .st {
+  font-size: 13px;
+}
+
+.owner .owner-row-title {
+  font-size: 16px;
+}
+
+.owner .owner-detail-section h3 {
+  font-size: 18px;
+}
+
+.owner .owner-detail-section p {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.owner .owner-detail-intro p {
+  font-size: 15px;
+}
+
+.owner .owner-detail-fields label {
+  font-size: 15px;
+}
+
+.owner .owner-detail-fields input {
+  font-size: 16px;
+}
+
+.owner .owner-availability h3 {
+  font-size: 18px;
+}
+
+.owner .owner-availability p {
+  font-size: 15px;
+}
+
+.owner .btn {
+  font-size: 15px;
+}
+
+.owner .owner-edit,
+.owner .del {
+  font-size: 14px;
+}
+
+.owner .tabs .tab {
+  font-size: 15px;
+}
+
+
+/* Branch Details only */
+
+.owner .owner-branch-details {
+  margin-top: -4px;
+}
+
+.owner .owner-branch-details .owner-detail-fields input {
+  height: 42px;
+  min-height: 42px;
+  padding: 0 14px;
+  font-size: 16px;
+}
+
+.owner .owner-branch-details .owner-detail-section {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  margin-bottom: 20px !important;
+}
+
+.owner .owner-branch-details .owner-detail-fields {
+  gap: 8px !important;
+}
+
+.owner .owner-branch-details .owner-detail-intro {
+  padding-bottom: 16px !important;
+}
+
+.owner .tabs {
+  margin-bottom: 8px !important;
+}
+
+/* More space between About and Business availability */
+.owner .pdesc + .owner-availability {
+  margin-top: 20px !important;
+}

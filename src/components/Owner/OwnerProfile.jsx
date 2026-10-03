@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router';
 import { getCategories, updateBusiness } from '../../services/ownerApi';
 import { BizLogo } from './OwnerParts';
+import OwnerAvailability from './OwnerAvailability';
 
 export default function OwnerProfile() {
   const { business, branches, reload, toast } = useOutletContext();
@@ -64,8 +65,9 @@ export default function OwnerProfile() {
         <div className="hero-t">
           <div className="hero-chips">
             {business.category?.name && <span className="chip-c">{business.category.name}</span>}
-            <span className="chip-ok"><i />Approved</span>
-          </div>
+            <span className={business.is_active ? 'chip-ok' : 'st off'}>
+            {business.is_active ? 'Approved · Active' : 'Inactive'}
+            </span>          </div>
           <b>{business.name}</b>
           <small>On QLess since {since}</small>
         </div>
@@ -110,6 +112,14 @@ export default function OwnerProfile() {
           </div>
         </form>
       )}
-    </section>
+      {!editing && (
+        <OwnerAvailability
+            entity={business}
+            kind="business"
+            reload={reload}
+            toast={toast}
+            />
+            )}
+        </section>
   );
 }

@@ -34,6 +34,9 @@ import OwnerAnnouncements from "./components/Owner/OwnerAnnouncements";
 import OwnerProfile from "./components/Owner/OwnerProfile";
 import OwnerQueues from "./components/Control/OwnerQueues";
 
+// Queue analytics
+import QueueAnalyticsPage from "./components/Analytics/QueueAnalyticsPage";
+
 // Staff
 import StaffQueues from "./components/Control/StaffQueues";
 
@@ -65,7 +68,8 @@ export default function App() {
       {showNav && <NavBar />}
 
       <Routes>
-        {/* Home */}
+        {/* ================= HOME ================= */}
+
         <Route
           path="/"
           element={
@@ -77,7 +81,8 @@ export default function App() {
           }
         />
 
-        {/* Auth */}
+        {/* ================= AUTH ================= */}
+
         <Route
           path="/sign-up"
           element={
@@ -111,8 +116,12 @@ export default function App() {
           }
         />
 
-        {/* Public browsing */}
-        <Route path="/businesses" element={<BrowsePage />} />
+        {/* ================= PUBLIC BROWSING ================= */}
+
+        <Route
+          path="/businesses"
+          element={<BrowsePage />}
+        />
 
         <Route
           path="/businesses/:businessId"
@@ -124,7 +133,8 @@ export default function App() {
           element={<BranchDetailsPage />}
         />
 
-        {/* Join queue */}
+        {/* ================= JOIN QUEUE ================= */}
+
         <Route
           path="/queues/:queueId"
           element={<JoinQueuePage />}
@@ -159,7 +169,6 @@ export default function App() {
           }
         />
 
-        {/* Customer bookings */}
         <Route
           path="/my-bookings"
           element={
@@ -227,6 +236,12 @@ export default function App() {
             element={<OwnerQueues />}
           />
 
+          {/* Queue analytics - owner only */}
+          <Route
+            path="/owner/queues/:queueId/analytics"
+            element={<QueueAnalyticsPage />}
+          />
+
           <Route
             path="/owner/profile"
             element={<OwnerProfile />}
@@ -266,7 +281,8 @@ export default function App() {
           }
         />
 
-        {/* Wrong role */}
+        {/* ================= NO ACCESS ================= */}
+
         <Route
           path="/no-access"
           element={
@@ -277,8 +293,12 @@ export default function App() {
           }
         />
 
-        {/* 404 */}
-        <Route path="*" element={<NotFound />} />
+        {/* ================= 404 ================= */}
+
+        <Route
+          path="*"
+          element={<NotFound />}
+        />
       </Routes>
     </div>
   );

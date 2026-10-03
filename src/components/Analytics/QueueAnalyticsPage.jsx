@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import {
   ArrowLeft,
-  ChartBar,
   CheckCircle,
   Clock,
   Hourglass,
@@ -17,26 +16,42 @@ import {
 import "./QueueAnalytics.css";
 
 function formatMinutes(value) {
-  if (value === null || value === undefined) {
-    return "No data yet";
-  }
-
+  if (value === null || value === undefined) return "—";
   return `${value} min`;
 }
 
-function MetricCard({ icon: Icon, label, value, detail }) {
+function MetricCard({ icon: Icon, label, value }) {
   return (
-    <article className="qa-card">
-      <span className="qa-card__icon">
-        <Icon size={24} weight="duotone" />
+    <article className="qa-metric">
+      <span className="qa-metric__icon">
+        <Icon size={19} weight="duotone" />
       </span>
 
-      <div className="qa-card__content">
-        <span className="qa-card__label">{label}</span>
-        <strong className="qa-card__value">{value}</strong>
-        {detail && <span className="qa-card__detail">{detail}</span>}
+      <div>
+        <span className="qa-metric__label">{label}</span>
+        <strong className="qa-metric__value">{value}</strong>
       </div>
     </article>
+  );
+}
+
+function PerformanceRow({ label, value, total, type }) {
+  const percentage =
+    total > 0 ? Math.min((value / total) * 100, 100) : 0;
+
+  return (
+    <div className="qa-performance-row">
+      <span className="qa-performance-row__label">{label}</span>
+
+      <div className="qa-performance-row__track">
+        <span
+          className={`qa-performance-row__fill qa-performance-row__fill--${type}`}
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+
+      <strong>{value}</strong>
+    </div>
   );
 }
 
@@ -90,44 +105,39 @@ export default function QueueAnalyticsPage() {
 
   if (page.status === "loading") {
     return (
-      <main className="qa-page" aria-busy="true">
-        <div className="qa-container">
-          <div className="qa-skeleton qa-skeleton--head" />
+      <section className="qa-page" aria-busy="true">
+        <div className="qa-loading-head" />
 
-          <div className="qa-grid">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div
-                key={index}
-                className="qa-skeleton qa-skeleton--card"
-              />
-            ))}
-          </div>
+        <div className="qa-metrics">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="qa-loading-card" />
+          ))}
         </div>
-      </main>
+
+        <div className="qa-loading-panel" />
+      </section>
     );
   }
 
   if (page.status === "error") {
     return (
-      <main className="qa-page">
-        <div className="qa-container">
-          <div className="qa-message" role="alert">
-            <Warning size={34} weight="duotone" />
+      <section className="qa-page">
+        <div className="qa-error" role="alert">
+          <Warning size={30} weight="duotone" />
 
-            <h1>We couldn't load queue analytics</h1>
+          <h2>Could not load analytics</h2>
 
-            <p>{page.error}</p>
+          <p>{page.error}</p>
 
-            <button
-              type="button"
-              className="btn btn--primary"
-              onClick={() => setReloadKey((key) => key + 1)}
-            >
-              Try again
-            </button>
-          </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setReloadKey((key) => key + 1)}
+          >
+            Try again
+          </button>
         </div>
-      </main>
+      </section>
     );
   }
 
@@ -138,179 +148,179 @@ export default function QueueAnalyticsPage() {
     analytics.called +
     analytics.checked_in;
 
-  const finished =
-    analytics.completed +
-    analytics.no_show +
-    analytics.cancelled;
-
   return (
-    <main className="qa-page">
-      <div className="qa-container">
+    <section className="qa-page">
+      {/* Page heading */}
+      <div className="page-h qa-page-head">
+        <h1>Analytics</h1>
+
+        <span className="sp" />
+
+        <span
+          className={`qa-status qa-status--${queue.status}`}
+        >
+          {queue.status}
+        </span>
+      </div>
+
+      {/* Queue heading */}
+      <div className="qa-queue-head">
+        <div>
+          <h2>{queue.name}</h2>
+          <p>Performance overview</p>
+        </div>
+
         <Link
           className="qa-back"
           to={`/owner/queues?branch=${queue.branch_id}&queue=${queue.id}`}
         >
-          <ArrowLeft size={17} weight="bold" />
-          Back to live queues
+          <ArrowLeft size={15} weight="bold" />
+          Live Queues
         </Link>
+      </div>
 
-        <header className="qa-head">
-          <div>
-            <div className="qa-eyebrow">
-              <ChartBar size={18} weight="duotone" />
-              Queue analytics
-            </div>
+      {/* Main metrics */}
+      <div className="qa-metrics">
+        <MetricCard
+          icon={CheckCircle}
+          label="Served"
+          value={analytics.completed}
+        />
 
-            <h1>{queue.name}</h1>
+        <MetricCard
+          icon={Hourglass}
+          label="Avg. wait"
+          value={formatMinutes(analytics.average_wait_minutes)}
+        />
 
-            <p>
-              Performance and customer activity for this queue.
-            </p>
-          </div>
+        <MetricCard
+          icon={UserMinus}
+          label="No-shows"
+          value={analytics.no_show}
+        />
 
-          <span
-            className={`qa-status qa-status--${queue.status}`}
-          >
-            {queue.status}
-          </span>
-        </header>
+        <MetricCard
+          icon={Users}
+          label="Total entries"
+          value={analytics.total_entries}
+        />
+      </div>
 
-        <section
-          className="qa-grid"
-          aria-label="Queue overview"
-        >
-          <MetricCard
-            icon={Users}
-            label="Total entries"
-            value={analytics.total_entries}
-            detail="All customers who joined"
-          />
-
-          <MetricCard
-            icon={Users}
-            label="Currently active"
-            value={active}
-            detail="Waiting, called or checked in"
-          />
-
-          <MetricCard
-            icon={CheckCircle}
-            label="Completed"
-            value={analytics.completed}
-            detail="Successfully served"
-          />
-
-          <MetricCard
-            icon={UserMinus}
-            label="No-shows"
-            value={analytics.no_show}
-            detail={`${analytics.no_show_rate}% no-show rate`}
-          />
-
-          <MetricCard
-            icon={Hourglass}
-            label="Average wait"
-            value={formatMinutes(analytics.average_wait_minutes)}
-            detail="From joining until called"
-          />
-
-          <MetricCard
-            icon={Clock}
-            label="Average service"
-            value={formatMinutes(analytics.average_service_minutes)}
-            detail="From check-in until completion"
-          />
-        </section>
-
-        <section className="qa-section">
-          <div className="qa-section__head">
+      {/* Main analytics area */}
+      <div className="qa-main-grid">
+        <section className="qa-panel qa-performance">
+          <div className="qa-panel__head">
             <div>
-              <span className="qa-section__eyebrow">
-                Queue breakdown
-              </span>
-
-              <h2>Entry status</h2>
+              <h2>Queue performance</h2>
+              <p>Entry status breakdown</p>
             </div>
 
-            <span className="qa-section__total">
+            <span className="qa-total">
               {analytics.total_entries} total
             </span>
           </div>
 
-          <div className="qa-breakdown">
-            <div className="qa-breakdown__row">
-              <div>
-                <span className="qa-dot qa-dot--waiting" />
-                <span>Waiting</span>
-              </div>
+          <div className="qa-performance__body">
+            <PerformanceRow
+              label="Completed"
+              value={analytics.completed}
+              total={analytics.total_entries}
+              type="completed"
+            />
 
-              <strong>{analytics.waiting}</strong>
-            </div>
+            <PerformanceRow
+              label="Waiting"
+              value={analytics.waiting}
+              total={analytics.total_entries}
+              type="waiting"
+            />
 
-            <div className="qa-breakdown__row">
-              <div>
-                <span className="qa-dot qa-dot--called" />
-                <span>Called</span>
-              </div>
+            <PerformanceRow
+              label="Called"
+              value={analytics.called}
+              total={analytics.total_entries}
+              type="called"
+            />
 
-              <strong>{analytics.called}</strong>
-            </div>
+            <PerformanceRow
+              label="Checked in"
+              value={analytics.checked_in}
+              total={analytics.total_entries}
+              type="checked"
+            />
 
-            <div className="qa-breakdown__row">
-              <div>
-                <span className="qa-dot qa-dot--checked" />
-                <span>Checked in</span>
-              </div>
+            <PerformanceRow
+              label="Cancelled"
+              value={analytics.cancelled}
+              total={analytics.total_entries}
+              type="cancelled"
+            />
 
-              <strong>{analytics.checked_in}</strong>
-            </div>
+            <PerformanceRow
+              label="No-show"
+              value={analytics.no_show}
+              total={analytics.total_entries}
+              type="no-show"
+            />
+          </div>
 
-            <div className="qa-breakdown__row">
-              <div>
-                <span className="qa-dot qa-dot--completed" />
-                <span>Completed</span>
-              </div>
+          <div className="qa-performance__footer">
+            <Clock size={16} weight="duotone" />
 
-              <strong>{analytics.completed}</strong>
-            </div>
+            <span>Average service time</span>
 
-            <div className="qa-breakdown__row">
-              <div>
-                <span className="qa-dot qa-dot--cancelled" />
-                <span>Cancelled</span>
-              </div>
-
-              <strong>{analytics.cancelled}</strong>
-            </div>
-
-            <div className="qa-breakdown__row">
-              <div>
-                <span className="qa-dot qa-dot--no-show" />
-                <span>No-show</span>
-              </div>
-
-              <strong>{analytics.no_show}</strong>
-            </div>
+            <strong>
+              {formatMinutes(analytics.average_service_minutes)}
+            </strong>
           </div>
         </section>
 
-        <section className="qa-summary">
-          <div>
+        {/* Right summary */}
+        <aside className="qa-panel qa-glance">
+          <div className="qa-panel__head">
+            <div>
+              <h2>At a glance</h2>
+              <p>Current queue activity</p>
+            </div>
+          </div>
+
+          <div className="qa-glance__main">
             <span>Active entries</span>
             <strong>{active}</strong>
           </div>
 
-          <div>
-            <span>Finished entries</span>
-            <strong>{finished}</strong>
+          <div className="qa-glance__rows">
+            <div>
+              <span>
+                <i className="qa-dot qa-dot--waiting" />
+                Waiting
+              </span>
+              <strong>{analytics.waiting}</strong>
+            </div>
+
+            <div>
+              <span>
+                <i className="qa-dot qa-dot--called" />
+                Called
+              </span>
+              <strong>{analytics.called}</strong>
+            </div>
+
+            <div>
+              <span>
+                <i className="qa-dot qa-dot--checked" />
+                Checked in
+              </span>
+              <strong>{analytics.checked_in}</strong>
+            </div>
           </div>
 
-          <div>
+          <div className="qa-glance__rate">
             <span>No-show rate</span>
             <strong>{analytics.no_show_rate}%</strong>
           </div>
-        </section>
+        </aside>
       </div>
-    </main>
+    </section>
   );
 }

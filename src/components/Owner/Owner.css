@@ -1240,3 +1240,37 @@ body,
     box-shadow: 0 -20px 0 var(--surface);
   }
 }
+
+
+/* Status on the left; actions on the right */
+.owner .owner-announcements .li {
+  grid-template-columns: 44px minmax(0, 1fr) auto !important;
+}
+
+.owner .owner-announcements .owner-row-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.owner .owner-announcements .owner-row-actions {
+  grid-column: 3 !important;
+  justify-self: end;
+  justify-content: flex-end !important;
+}
+
+.owner .owner-announcements button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .owner .owner-announcements .li {
+    grid-template-columns: 44px minmax(0, 1fr) !important;
+  }
+
+  .owner .owner-announcements .owner-row-actions {
+    grid-column: 2 !important;
+  }
+}

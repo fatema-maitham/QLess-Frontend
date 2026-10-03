@@ -988,3 +988,14 @@
     animation: none;
   }
 }
+
+
+/* No-show warning above the Join button (step 9) */
+.tk-join__warn {
+  margin-bottom: var(--space-4);
+}
+
+/* No-show banner on My tickets and on a no-show ticket (step 9) */
+.tk-ns {
+  margin-top: var(--space-6);
+}

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { CaretRight, Ticket } from "@phosphor-icons/react";
 import { getMyTickets } from "../../services/ticketService";
+import useNoShowStatus from "../../hooks/useNoShowStatus";
+import NoShowBanner from "../NoShow/NoShowBanner";
 import { TICKET_STATUS, aheadText, clockTime, shortDate } from "./ticketHelpers";
 import "./Ticket.css";
 
@@ -41,6 +43,7 @@ export default function MyTicketsPage() {
   const [tab, setTab] = useState("active");
   const [page, setPage] = useState({ status: "loading", error: "" });
   const [reloadKey, setReloadKey] = useState(0);
+  const noShow = useNoShowStatus();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -68,6 +71,12 @@ export default function MyTicketsPage() {
         <header className="tk-head">
           <h1>My tickets</h1>
           <p>Your places in line, and the queues you joined before.</p>
+
+          {noShow && noShow.state !== "ok" && (
+            <div className="tk-ns">
+              <NoShowBanner status={noShow} />
+            </div>
+          )}
         </header>
 
         <div className="tk-tabs" role="tablist" aria-label="Tickets">

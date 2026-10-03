@@ -4,6 +4,7 @@ import { signIn } from '../../services/authService';
 import { UserContext } from '../../contexts/UserContext';
 import AuthLayout from '../Auth/AuthLayout';
 import { MailIcon, LockIcon, EyeIcon, AlertIcon } from '../Auth/AuthIcons';
+import { homeFor } from '../../lib/helpers/roles';
 
 const SignInForm = () => {
   const navigate = useNavigate();
@@ -29,8 +30,8 @@ const SignInForm = () => {
     try {
       const user = await signIn({ email, password });
       setUser(user);
-      navigate('/');
-    } catch (err) {
+      navigate(homeFor(user));
+        } catch (err) {
       setMessage(err.message);
     } finally {
       setLoading(false);

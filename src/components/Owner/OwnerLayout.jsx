@@ -159,7 +159,7 @@ export default function OwnerLayout() {
         <Item to="/owner/branches" icon="branches">Branches{needsSetup && <span className="soon">Setup</span>}</Item>
         <Item to="/owner/staff" icon="staff">Staff</Item>
         <Item to="/owner/announcements" icon="announcements">Announcements</Item>
-        <Item to="/owner/queues" icon="queues">Live queues <span className="soon">Soon</span></Item>
+        <Item to="/owner/queues" icon="queues">Live queues</Item>
         <p className="grp">Business</p>
         <Item to="/owner/profile" icon="profile">Business profile</Item>
 

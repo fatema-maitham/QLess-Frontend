@@ -5,6 +5,7 @@ import {
 } from "react";
 
 import {
+  ChartBar,
   CheckCircle,
   Megaphone,
   Pause,
@@ -14,7 +15,6 @@ import {
   UserMinus,
   Warning,
 } from "@phosphor-icons/react";
-
 import {
   getQueue,
   setQueueStatus,
@@ -28,6 +28,7 @@ import {
 
 import useQueueSocket from "../../hooks/useQueueSocket";
 import { clockTime } from "../Ticket/ticketHelpers";
+import { Link } from "react-router";
 
 const BACKUP_REFRESH_MS = 15000;
 
@@ -435,6 +436,14 @@ export default function QueueControl({ queueId }) {
         </div>
 
         <div className="cp-toolbar-actions">
+          <Link
+            to={`/owner/queues/${queue.id}/analytics`}
+            className="btn cp-analytics-btn"
+          >
+            <ChartBar size={16} />
+            View analytics
+          </Link>
+
           {(STATUS_ACTIONS[queue.status] || []).map(
             ({ to, label, Icon }) => (
               <button

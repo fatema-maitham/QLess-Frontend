@@ -489,3 +489,44 @@
     justify-content: flex-start;
   }
 }
+
+.cp-analytics-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  height: 38px;
+  padding: 0 14px;
+
+  border: 1.5px solid var(--orange-btn);
+  border-radius: 10px;
+
+  background: transparent;
+  color: var(--orange-btn);
+
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.cp-analytics-btn:hover {
+  background: var(--orange-btn);
+  color: #fff;
+
+  transform: translateY(-1px);
+}
+
+.cp-analytics-btn:active {
+  transform: translateY(0);
+}
+
+.cp-analytics-btn:focus-visible {
+  outline: 2px solid var(--orange-btn);
+  outline-offset: 2px;
+}

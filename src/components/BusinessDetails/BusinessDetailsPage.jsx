@@ -16,6 +16,7 @@ import {
   getBusinessReviews,
 } from "../../services/businessService";
 import ReviewsSection from "../Reviews/ReviewsSection";
+import FavoriteButton from "../Favorites/FavoriteButton";
 import "../Details/Details.css";
 
 export default function BusinessDetailsPage() {
@@ -126,6 +127,8 @@ export default function BusinessDetailsPage() {
             )}
 
             <h1 className="dt__title">{business.name}</h1>
+
+            <FavoriteButton businessId={business.id} />
 
             {business.description && <p className="dt__desc">{business.description}</p>}
 

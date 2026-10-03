@@ -24,3 +24,8 @@ export function setQueueStatus(queueId, status) {
 export function deleteQueue(queueId) {
   return apiDelete(`/queues/${queueId}`);
 }
+
+// Owner: analytics for one queue
+export function getQueueAnalytics(queueId, { signal } = {}) {
+  return apiGet(`/queues/${queueId}/analytics`, { signal });
+}

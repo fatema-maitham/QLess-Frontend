@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useOutletContext } from 'react-router';
 import {
   createAnnouncement,
+  deleteAnnouncement,
   updateAnnouncement,
 } from '../../services/ownerApi';
 import { Empty } from './OwnerParts';

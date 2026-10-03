@@ -23,6 +23,13 @@ import MyTicketsPage from "./components/Ticket/MyTicketsPage";
 // Owner pages
 import OwnerHome from "./components/Business/OwnerHome";
 import BusinessForm from "./components/Business/BusinessForm";
+import OwnerLayout from "./components/Owner/OwnerLayout";
+import OwnerOverview from "./components/Owner/OwnerOverview";
+import OwnerBranches from "./components/Owner/OwnerBranches";
+import OwnerBranch from "./components/Owner/OwnerBranch";
+import OwnerStaff from "./components/Owner/OwnerStaff";
+import OwnerAnnouncements from "./components/Owner/OwnerAnnouncements";
+import OwnerProfile from "./components/Owner/OwnerProfile";
 
 // Context + helpers
 import { UserContext } from "./contexts/UserContext";
@@ -36,30 +43,65 @@ const NO_NAV = ["/sign-in", "/sign-up"];
 export default function App() {
   const { user } = useContext(UserContext);
   const location = useLocation();
-  const showNav = !NO_NAV.includes(location.pathname) && !location.pathname.startsWith("/owner");
+  const showNav =
+    !NO_NAV.includes(location.pathname) &&
+    !location.pathname.startsWith("/owner");
 
   return (
     <div className="app">
       {showNav && <NavBar />}
+
       <Routes>
         {/* Home: visitor → landing page, signed in → their own home */}
-        <Route path="/" element={user ? <Navigate to={homeFor(user)} replace /> : <LandingPage />} />
+        <Route
+          path="/"
+          element={
+            user ? <Navigate to={homeFor(user)} replace /> : <LandingPage />
+          }
+        />
 
         {/* Auth: signed-in users don't need these pages */}
-        <Route path="/sign-up" element={user ? <Navigate to={homeFor(user)} replace /> : <SignUpForm />} />
-        <Route path="/sign-in" element={user ? <Navigate to={homeFor(user)} replace /> : <SignInForm />} />
+        <Route
+          path="/sign-up"
+          element={
+            user ? <Navigate to={homeFor(user)} replace /> : <SignUpForm />
+          }
+        />
+
+        <Route
+          path="/sign-in"
+          element={
+            user ? <Navigate to={homeFor(user)} replace /> : <SignInForm />
+          }
+        />
+
         <Route
           path="/dashboard"
-          element={user ? <Navigate to={homeFor(user)} replace /> : <Navigate to="/sign-in" replace />}
+          element={
+            user ? (
+              <Navigate to={homeFor(user)} replace />
+            ) : (
+              <Navigate to="/sign-in" replace />
+            )
+          }
         />
 
         {/* Browse: open to everyone */}
         <Route path="/businesses" element={<BrowsePage />} />
-        <Route path="/businesses/:businessId" element={<BusinessDetailsPage />} />
-        <Route path="/branches/:branchId" element={<BranchDetailsPage />} />
+        <Route
+          path="/businesses/:businessId"
+          element={<BusinessDetailsPage />}
+        />
+        <Route
+          path="/branches/:branchId"
+          element={<BranchDetailsPage />}
+        />
 
         {/* Join queue: open to everyone, joining asks guests to sign in */}
-        <Route path="/queues/:queueId" element={<JoinQueuePage />} />
+        <Route
+          path="/queues/:queueId"
+          element={<JoinQueuePage />}
+        />
 
         {/* Customer tickets */}
         <Route
@@ -70,6 +112,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/tickets/:entryId"
           element={
@@ -88,6 +131,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/owner/business"
           element={
@@ -96,19 +140,60 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Owner dashboard */}
         <Route
-          path="/owner/dashboard"
           element={
             <ProtectedRoute roles={[ROLES.OWNER]}>
-              <Placeholder title="Owner dashboard" text="Branches, queues and staff will be here." />
+              <OwnerLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route
+            path="/owner/dashboard"
+            element={<OwnerOverview />}
+          />
+
+          <Route
+            path="/owner/branches"
+            element={<OwnerBranches />}
+          />
+
+          <Route
+            path="/owner/branches/:id"
+            element={<OwnerBranch />}
+          />
+
+          <Route
+            path="/owner/staff"
+            element={<OwnerStaff />}
+          />
+
+          <Route
+            path="/owner/announcements"
+            element={<OwnerAnnouncements />}
+          />
+
+          <Route
+            path="/owner/queues"
+            element={<h1>Live queues</h1>}
+          />
+
+          <Route
+            path="/owner/profile"
+            element={<OwnerProfile />}
+          />
+        </Route>
 
         {/* Wrong role */}
         <Route
           path="/no-access"
-          element={<Placeholder title="No access" text="You don't have permission to open that page." />}
+          element={
+            <Placeholder
+              title="No access"
+              text="You don't have permission to open that page."
+            />
+          }
         />
 
         <Route path="*" element={<NotFound />} />

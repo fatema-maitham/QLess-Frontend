@@ -8,6 +8,7 @@ import {
   getBranchQueues,
   getBranchServices,
 } from "../../services/branchService";
+import BookServiceForm from "../Bookings/BookServiceForm";
 import "../Details/Details.css";
 
 const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -302,6 +303,9 @@ export default function BranchDetailsPage() {
                 </ul>
               )}
             </section>
+            {/* Book Service */}
+            {/* Book Service */}
+            <BookServiceForm services={services} />
           </div>
 
           {/* Opening hours */}
@@ -340,6 +344,6 @@ export default function BranchDetailsPage() {
           </aside>
         </div>
       </div>
-    </main>
+    </main >
   );
 }

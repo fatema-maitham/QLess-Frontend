@@ -1,12 +1,25 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import { ArrowRight, CheckCircle, Plus, Quotes } from "@phosphor-icons/react";
+import {
+  ArrowRight,
+  Bell,
+  Buildings,
+  CalendarCheck,
+  CheckCircle,
+  ClockCounterClockwise,
+  LockSimple,
+  Megaphone,
+  Plus,
+  ShieldCheck,
+  Star,
+  UserGear,
+  UsersThree,
+} from "@phosphor-icons/react";
 import ColorIcon from "./ColorIcon";
 import {
   PARTNER_LOGOS,
   REVIEWS,
   STEPS,
-  AUDIENCES,
   FEATURES,
   VALUES,
   STATS,
@@ -28,6 +41,101 @@ const INDUSTRIES = [
   { name: "Universities", icon: "universities" },
 ];
 
+// Simple line icons for the Features cards (names match landingData.js)
+const FEATURE_ICONS = {
+  bell: Bell,
+  calendar: CalendarCheck,
+  buildings: Buildings,
+  users: UsersThree,
+  megaphone: Megaphone,
+  star: Star,
+};
+
+// "Who it's for" stacking cards. tone sets the card colour in CSS.
+const ROLES = [
+  {
+    id: "visitors",
+    tone: "light",
+    tag: "For visitors",
+    title: "Join from anywhere and arrive on time.",
+    text: "No crowded waiting rooms. Visitors always know their number, how many people are ahead and when to come back.",
+    points: ["Join with a QR code or link", "Live place in line and wait time", "A message when it's almost your turn"],
+    button: { label: "Find a place", to: "/businesses" },
+  },
+  {
+    id: "staff",
+    tone: "peach",
+    tag: "For staff",
+    title: "Call the next visitor in one tap.",
+    text: "A focused screen for front-line teams, with the queue, the next number and the service always in view.",
+    points: ["Call next, complete or mark no-show", "Pause or resume the queue", "Only sees the branches they work at"],
+  },
+  {
+    id: "owners",
+    tone: "ink",
+    tag: "For business owners",
+    title: "Every branch in one dashboard.",
+    text: "Set up branches, services and opening hours, invite staff and post announcements yourself.",
+    points: ["Branches, services and hours", "Staff invitations", "Announcements on every ticket"],
+    button: { label: "Register your business", to: "/business/register" },
+  },
+  {
+    id: "admins",
+    tone: "orange",
+    tag: "For administrators",
+    title: "Oversight you can trust.",
+    text: "Approve new businesses, manage users and review a full record of every change on the platform.",
+    points: ["Business approvals", "User and role management", "Searchable audit log"],
+  },
+];
+
+/* ---------- Live dashboard (example data) ---------- */
+const BOARD_SERVICES = ["General services", "Payments", "Documents"];
+
+const BOARD_START = {
+  rows: [
+    { number: "A104", service: "General services", counter: "Counter 2", status: "called" },
+    { number: "A105", service: "Payments", counter: "—", status: "waiting" },
+    { number: "A106", service: "General services", counter: "—", status: "waiting" },
+    { number: "A103", service: "Documents", counter: "Counter 1", status: "served" },
+  ],
+  next: 107,
+  counter: 2,
+  waiting: 6,
+  served: 48,
+  average: 9,
+};
+
+const BOARD_STATUS = {
+  called: "Called",
+  waiting: "Waiting",
+  served: "Served",
+};
+
+/* ---------- Privacy and security ---------- */
+const TRUST = [
+  {
+    icon: ShieldCheck,
+    title: "Verified businesses",
+    text: "An admin reviews every new business before it can open a queue.",
+  },
+  {
+    icon: UserGear,
+    title: "Role-based access",
+    text: "Admins, owners and staff each see only what their role allows.",
+  },
+  {
+    icon: ClockCounterClockwise,
+    title: "Full audit log",
+    text: "Approvals and changes are recorded with who made them and when.",
+  },
+  {
+    icon: LockSimple,
+    title: "Minimal visitor data",
+    text: "Visitors share only what the queue needs to call them.",
+  },
+];
+
 /* =========================================================
    Hooks
    ========================================================= */
@@ -44,6 +152,54 @@ function useReducedMotion() {
   }, []);
 
   return reduced;
+}
+
+const clamp01 = (value) => Math.min(1, Math.max(0, value));
+
+// Runs `update` on scroll and resize, at most once per frame
+function useScrollFrame(update, enabled) {
+  useEffect(() => {
+    if (!enabled) return;
+    let frame = 0;
+
+    const onScroll = () => {
+      if (!frame) {
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          update();
+        });
+      }
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, [update, enabled]);
+}
+
+/*
+  Sets two CSS variables on an element while you scroll:
+  --enter  0 → 1  as the element comes up into the screen
+  --exit   0 → 1  as the element scrolls away off the top
+  LandingPage.css uses them to drive the scroll animations.
+*/
+function useScrollVars(ref, reduced) {
+  const update = useRef(() => {
+    const el = ref.current;
+    if (!el) return;
+    const box = el.getBoundingClientRect();
+    const screen = window.innerHeight;
+    el.style.setProperty("--enter", clamp01((screen - box.top) / (screen * 0.65)).toFixed(3));
+    el.style.setProperty("--exit", clamp01(-box.top / box.height).toFixed(3));
+  }).current;
+
+  useScrollFrame(update, !reduced);
 }
 
 // true once the element has scrolled into view
@@ -98,6 +254,26 @@ function useCountUp(target, start, reduced, duration = 1800) {
   return value;
 }
 
+// Stacking cards: as the next card slides over a card,
+// the card underneath shrinks and darkens a little.
+// Sets --stack (0 to 1) on each card for LandingPage.css.
+function useStackCards(listRef, reduced) {
+  const update = useRef(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const cards = Array.from(list.children);
+    cards.forEach((card, i) => {
+      const next = cards[i + 1];
+      if (!next) return;
+      const a = card.getBoundingClientRect();
+      const b = next.getBoundingClientRect();
+      card.style.setProperty("--stack", clamp01((a.bottom - b.top) / a.height).toFixed(3));
+    });
+  }).current;
+
+  useScrollFrame(update, !reduced);
+}
+
 // Fades content up once when it scrolls into view
 function Reveal({ as: Tag = "div", className = "", children }) {
   const [ref, inView] = useInView();
@@ -109,6 +285,17 @@ function Reveal({ as: Tag = "div", className = "", children }) {
   );
 }
 
+// Splits a title into words that slide up one after another
+function SplitWords({ text }) {
+  return text.split(" ").map((word, i) => (
+    <Fragment key={`${word}-${i}`}>
+      <span className="lp-word">
+        <span>{word}</span>
+      </span>{" "}
+    </Fragment>
+  ));
+}
+
 function SectionHead({ eyebrow, title, text, id, children }) {
   return (
     <Reveal className="lp-section__head lp-section__head--center">
@@ -116,20 +303,41 @@ function SectionHead({ eyebrow, title, text, id, children }) {
         {eyebrow}
         {children}
       </p>
-      <h2 id={id} className="lp-h2">
-        {title}
+      <h2 id={id} className="lp-h2" aria-label={title}>
+        <span aria-hidden="true">
+          <SplitWords text={title} />
+        </span>
       </h2>
       {text && <p className="lp-section__text">{text}</p>}
     </Reveal>
   );
 }
 
+// Thin orange bar at the top that fills as you scroll down the page
+function ScrollProgress({ reduced }) {
+  const barRef = useRef(null);
+
+  const update = useRef(() => {
+    const bar = barRef.current;
+    if (!bar) return;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.setProperty("--page", max > 0 ? clamp01(window.scrollY / max).toFixed(4) : 0);
+  }).current;
+
+  useScrollFrame(update, !reduced);
+
+  return <div ref={barRef} className="lp-progress" aria-hidden="true" />;
+}
+
 /* =========================================================
    1. Hero
    ========================================================= */
-function Hero() {
+function Hero({ reduced }) {
+  const heroRef = useRef(null);
+  useScrollVars(heroRef, reduced);
+
   return (
-    <section className="lp-hero">
+    <section ref={heroRef} className="lp-hero">
       <div className="lp-hero__panel">
         <div className="lp-hero__content">
 
@@ -165,16 +373,175 @@ function Hero() {
 }
 
 /* =========================================================
+   Live dashboard (under the logos)
+   Rows move every few seconds, like a real branch.
+   The window tilts back and settles flat as you scroll to it.
+   ========================================================= */
+
+function useLiveBoard(reduced) {
+  const [board, setBoard] = useState(BOARD_START);
+
+  useEffect(() => {
+    if (reduced) return;
+
+    const id = setInterval(() => {
+      setBoard((prev) => {
+        const called = prev.rows.find((row) => row.status === "called");
+        const waiting = prev.rows.filter((row) => row.status === "waiting");
+        const counter = (prev.counter % 3) + 1;
+
+        const rows = [
+          { ...waiting[0], status: "called", counter: `Counter ${counter}` },
+          ...waiting.slice(1),
+          {
+            number: `A${prev.next}`,
+            service: BOARD_SERVICES[prev.next % 3],
+            counter: "—",
+            status: "waiting",
+          },
+          { ...called, status: "served" },
+        ];
+
+        return {
+          rows,
+          next: prev.next + 1,
+          counter,
+          served: prev.served + 1,
+          waiting: Math.min(9, Math.max(3, prev.waiting + (Math.random() < 0.5 ? -1 : 1))),
+          average: 7 + Math.floor(Math.random() * 4),
+        };
+      });
+    }, 3400);
+
+    return () => clearInterval(id);
+  }, [reduced]);
+
+  return board;
+}
+
+function LiveBoard({ reduced }) {
+  const sectionRef = useRef(null);
+  useScrollVars(sectionRef, reduced);
+  const board = useLiveBoard(reduced);
+
+  const stats = [
+    { label: "Waiting now", value: board.waiting },
+    { label: "Average wait", value: `${board.average} min` },
+    { label: "Served today", value: board.served },
+    { label: "Counters open", value: 3 },
+  ];
+
+  return (
+    <section ref={sectionRef} className="lp-board-section" aria-label="Example of the QLess live queue">
+      <div className="lp-container">
+        <div className="lp-board">
+          <div className="lp-board__bar">
+            <span className="lp-board__dots" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+            <span>QLess · City Centre Branch · Live queue</span>
+          </div>
+
+          <div className="lp-board__app">
+            <nav className="lp-board__side" aria-hidden="true">
+              <span className="is-on">Live queue</span>
+              <span>Branches</span>
+              <span>Services</span>
+              <span>Opening hours</span>
+              <span>Staff</span>
+              <span>Announcements</span>
+              <small>Example data</small>
+            </nav>
+
+            <div className="lp-board__main">
+              <div className="lp-board__head">
+                <b>General services</b>
+                <span className="lp-board__live">Live</span>
+              </div>
+
+              <div className="lp-board__stats">
+                {stats.map((stat) => (
+                  <div key={stat.label} className="lp-board__stat">
+                    <small>{stat.label}</small>
+                    <b key={stat.value}>{stat.value}</b>
+                  </div>
+                ))}
+              </div>
+
+              <ul className="lp-board__rows" aria-live="polite">
+                {board.rows.map((row, i) => (
+                  <li
+                    key={`${row.number}-${row.status}`}
+                    className={`lp-board__row is-${row.status} ${i === 0 ? "is-new" : ""}`}
+                  >
+                    <b>{row.number}</b>
+                    <span>{row.service}</span>
+                    <span className="lp-board__counter">{row.counter}</span>
+                    <em className={`lp-board__tag lp-board__tag--${row.status}`}>
+                      {BOARD_STATUS[row.status]}
+                    </em>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* =========================================================
+   Privacy and security
+   ========================================================= */
+
+function Trust() {
+  return (
+    <section id="privacy" className="lp-section lp-section--tight" aria-labelledby="trust-heading">
+      <div className="lp-container lp-trust2">
+        <Reveal className="lp-trust2__intro">
+          <p className="lp-eyebrow">Privacy and security</p>
+          <h2 id="trust-heading" className="lp-h2">
+            Trusted with public and private services
+          </h2>
+          <p className="lp-section__text">
+            Visitors share only what the queue needs. Every business is reviewed before it goes
+            live, and every change is recorded.
+          </p>
+        </Reveal>
+
+        <div className="lp-trust2__grid lp-stagger">
+          {TRUST.map(({ icon: Icon, title, text }) => (
+            <Reveal key={title} className="lp-trust2__item">
+              <span className="lp-feat__icon">
+                <Icon size={26} weight="duotone" />
+              </span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* =========================================================
    2. Three steps
    ========================================================= */
 
-function Steps() {
+function Steps({ reduced }) {
+  const stepsRef = useRef(null);
+  useScrollVars(stepsRef, reduced);
+
   return (
-    <section className="lp-section" aria-labelledby="steps-title">
+    <section id="how" className="lp-section" aria-labelledby="steps-title">
       <div className="lp-container">
         <SectionHead id="steps-title" eyebrow="How it works" title="Three steps for visitors" />
 
-        <ol className="lp-steps lp-stagger">
+        <ol ref={stepsRef} className="lp-steps lp-stagger">
           {STEPS.map((step, i) => (
             <Reveal as="li" key={step.title} className="lp-step">
               <span className="lp-step__dot">{i + 1}</span>
@@ -189,55 +556,113 @@ function Steps() {
 }
 
 /* =========================================================
-   3. Visitors and businesses
+   3. Who it's for (stacking cards)
    ========================================================= */
 
-function SideCard({ data, variant, icon }) {
+// Small example screens shown on the right of each card
+function RoleMini({ id }) {
+  if (id === "visitors") {
+    return (
+      <div className="lp-mini">
+        <span className="lp-mini__label">Your number</span>
+        <span className="lp-mini__big">A107</span>
+        <span className="lp-mini__bar">
+          <i />
+        </span>
+        <span className="lp-mini__note">3 ahead · about 12 min</span>
+      </div>
+    );
+  }
+
+  if (id === "staff") {
+    return (
+      <div className="lp-mini">
+        <span className="lp-mini__label">Counter 2</span>
+        <MiniRow number="A104" text="General services" tag="Called" tone="called" />
+        <MiniRow number="A105" text="Payments" tag="Waiting" tone="waiting" />
+        <MiniRow number="A106" text="General services" tag="Waiting" tone="waiting" />
+      </div>
+    );
+  }
+
+  if (id === "owners") {
+    return (
+      <div className="lp-mini">
+        <span className="lp-mini__label">Branches</span>
+        <MiniRow text="Main Branch" tag="Open" tone="open" />
+        <MiniRow text="City Centre" tag="Open" tone="open" />
+        <MiniRow text="North Branch" tag="Closed" tone="closed" />
+      </div>
+    );
+  }
+
   return (
-    <article className={`lp-side lp-side--${variant}`}>
-      <span className="lp-side__icon">
-        <ColorIcon name={icon} size={64} />
-      </span>
-      <span className="lp-side__tag">{data.tag}</span>
-      <h3>{data.title}</h3>
-      <p>{data.text}</p>
-
-      <ul className="lp-side__points">
-        {data.points.map((point) => (
-          <li key={point}>
-            <CheckCircle size={22} weight="fill" className="lp-check" />
-            {point}
-          </li>
-        ))}
-      </ul>
-
-      <Link
-        className={`btn ${variant === "business" ? "btn--primary" : "lp-btn-dark"} lp-side__btn`}
-        to={data.button.to}
-      >
-        {data.button.label}
-      </Link>
-    </article>
+    <div className="lp-mini">
+      <span className="lp-mini__label">Pending approvals</span>
+      <MiniRow text="Green Leaf Clinic" sub="Submitted today" tag="Review" tone="waiting" />
+      <div className="lp-mini__actions">
+        <span className="lp-mini__btn lp-mini__btn--dark">Approve</span>
+        <span className="lp-mini__btn">Reject</span>
+      </div>
+    </div>
   );
 }
 
-function Audiences() {
+function MiniRow({ number, text, sub, tag, tone }) {
   return (
-    <section className="lp-section lp-section--tight" aria-labelledby="audience-title">
+    <div className="lp-mini__row">
+      {number && <b>{number}</b>}
+      <span className="lp-mini__text">
+        {text}
+        {sub && <small>{sub}</small>}
+      </span>
+      <span className={`lp-mini__tag lp-mini__tag--${tone}`}>{tag}</span>
+    </div>
+  );
+}
+
+function Roles({ reduced }) {
+  const listRef = useRef(null);
+  useStackCards(listRef, reduced);
+
+  return (
+    <section className="lp-section lp-section--tight" aria-labelledby="roles-title">
       <div className="lp-container">
         <SectionHead
-          id="audience-title"
+          id="roles-title"
           eyebrow="Who it's for"
-          title="Built for both sides of the counter"
+          title="Built for every side of the counter"
         />
 
-        <div className="lp-audience__grid lp-stagger">
-          <Reveal>
-            <SideCard data={AUDIENCES.visitors} variant="visitors" icon="visitor" />
-          </Reveal>
-          <Reveal>
-            <SideCard data={AUDIENCES.business} variant="business" icon="business" />
-          </Reveal>
+        <div ref={listRef} className="lp-roles">
+          {ROLES.map((role) => (
+            <article key={role.id} className={`lp-role lp-role--${role.tone}`}>
+              <div className="lp-role__body">
+                <span className="lp-role__tag">{role.tag}</span>
+                <h3>{role.title}</h3>
+                <p>{role.text}</p>
+
+                <ul className="lp-role__points">
+                  {role.points.map((point) => (
+                    <li key={point}>
+                      <CheckCircle size={22} weight="fill" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+
+                {role.button && (
+                  <Link className="btn lp-role__btn" to={role.button.to}>
+                    {role.button.label}
+                  </Link>
+                )}
+              </div>
+
+              <div className="lp-role__visual" aria-hidden="true">
+                <RoleMini id={role.id} />
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>
@@ -248,31 +673,256 @@ function Audiences() {
    4. Features
    ========================================================= */
 
-function Features() {
+/*
+  Interactive phone: the feature list sits on both sides of a phone.
+  Click a feature (or wait 6 seconds) and the phone shows that screen.
+*/
+const FEATURE_TIME = 6000;
+
+function PhoneScreen({ icon, serving, onCallNext }) {
+  if (icon === "bell") {
+    return (
+      <div className="lp-ph__lock">
+        <div className="lp-ph__time">6:08</div>
+        <div className="lp-ph__date">Friday, 2 October</div>
+        <div className="lp-ph__ntf">
+          <i>Q</i>
+          <div>
+            <b>QLess</b>
+            <span>You joined the queue at City Centre Branch. Your number is A107.</span>
+          </div>
+        </div>
+        <div className="lp-ph__ntf">
+          <i>Q</i>
+          <div>
+            <b>QLess</b>
+            <span>2 people are ahead of you. About 8 minutes left.</span>
+          </div>
+        </div>
+        <div className="lp-ph__ntf lp-ph__ntf--hot">
+          <i>Q</i>
+          <div>
+            <b>It's almost your turn</b>
+            <span>Please head to counter 2.</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (icon === "calendar") {
+    return (
+      <>
+        <PhoneHead title="Book a time" sub="Pearl Bank · Manama Branch" />
+        <div className="lp-ph__days">
+          <span>Thu 1</span>
+          <span className="is-on">Fri 2</span>
+          <span>Sat 3</span>
+          <span>Sun 4</span>
+        </div>
+        <div className="lp-ph__slots">
+          <span>9:00</span>
+          <span className="is-off">9:30</span>
+          <span>10:00</span>
+          <span className="is-on">10:30</span>
+          <span>11:00</span>
+          <span className="is-off">11:30</span>
+        </div>
+        <div className="lp-ph__card">
+          <small>Open an account · 20 min</small>
+          <b>Friday at 10:30 AM</b>
+        </div>
+        <span className="lp-ph__btn">Confirm booking</span>
+      </>
+    );
+  }
+
+  if (icon === "buildings") {
+    return (
+      <>
+        <PhoneHead title="Your branches" sub="3 branches · 4 services" />
+        {[
+          { name: "Manama Branch", load: "70", info: "7 waiting · 8:00 AM – 4:00 PM", open: true },
+          { name: "Riffa Branch", load: "40", info: "4 waiting · 9:00 AM – 9:00 PM", open: true },
+          { name: "Seef Branch", load: "0", info: "Opens tomorrow at 8:00 AM", open: false },
+        ].map((branch) => (
+          <div key={branch.name} className="lp-ph__card">
+            <div className="lp-ph__row">
+              <b>{branch.name}</b>
+              <em className={branch.open ? "lp-ph__ok" : "lp-ph__off"}>
+                {branch.open ? "Open" : "Closed"}
+              </em>
+            </div>
+            <span className={`lp-ph__load lp-ph__load--${branch.load}`}>
+              <i />
+            </span>
+            <small>{branch.info}</small>
+          </div>
+        ))}
+      </>
+    );
+  }
+
+  if (icon === "users") {
+    const next = [1, 2, 3].map((k) => serving + k);
+    const names = ["Sara M.", "Ali H.", "Noor K.", "Yousif A.", "Mariam S.", "Hasan J."];
+    return (
+      <>
+        <PhoneHead title="Counter 2" sub="General services" />
+        <div className="lp-ph__serve">
+          <small>Now serving</small>
+          <b key={serving}>A{serving}</b>
+        </div>
+        {next.map((n) => (
+          <div key={n} className="lp-ph__person">
+            <span className="lp-ph__avatar">{names[n % names.length].charAt(0)}</span>
+            <b>A{n}</b>
+            <span>{names[n % names.length]}</span>
+          </div>
+        ))}
+        {/* real button: try it */}
+        <button type="button" className="lp-ph__btn" onClick={onCallNext}>
+          Call next
+        </button>
+      </>
+    );
+  }
+
+  if (icon === "megaphone") {
+    return (
+      <>
+        <PhoneHead title="City Centre Branch" sub="Your ticket" />
+        <div className="lp-ph__banner">
+          <b>Closing early today</b>
+          The branch closes at 2:00 PM. Everyone in the queue will still be served.
+        </div>
+        <div className="lp-ph__card lp-ph__card--ticket">
+          <div>
+            <small>Your number</small>
+            <b className="lp-ph__big">A107</b>
+          </div>
+          <span>
+            <b>3 ahead</b>
+            ~12 min
+          </span>
+        </div>
+      </>
+    );
+  }
+
+  // star: reviews and favourites
   return (
-    <section className="lp-section" aria-labelledby="features-title">
+    <>
+      <PhoneHead title="Pearl Bank" sub="Banking · Manama" />
+      <div className="lp-ph__rating">
+        <b>4.8</b>
+        <span className="lp-ph__stars" aria-hidden="true">★★★★★</span>
+        <small>128 reviews</small>
+      </div>
+      <div className="lp-ph__card">
+        <span className="lp-ph__stars lp-ph__stars--small">★★★★★</span>
+        <span>"I waited at home and walked in right on time. So easy."</span>
+        <small>Fatima A. · 2 days ago</small>
+      </div>
+      <span className="lp-ph__btn lp-ph__btn--outline">♥ Saved to favourites</span>
+    </>
+  );
+}
+
+function PhoneHead({ title, sub }) {
+  return (
+    <div className="lp-ph__head">
+      <i>Q</i>
+      <div>
+        <b>{title}</b>
+        <small>{sub}</small>
+      </div>
+    </div>
+  );
+}
+
+function Features({ reduced }) {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [serving, setServing] = useState(104);
+  const count = FEATURES.length;
+
+  // Move to the next feature every 6 seconds until someone clicks one
+  useEffect(() => {
+    if (paused || reduced || count === 0) return;
+    const id = setTimeout(() => setActive((i) => (i + 1) % count), FEATURE_TIME);
+    return () => clearTimeout(id);
+  }, [active, paused, reduced, count]);
+
+  const choose = (i) => {
+    setActive(i);
+    setPaused(true);
+  };
+
+  const half = Math.ceil(count / 2);
+  const columns = [FEATURES.slice(0, half), FEATURES.slice(half)];
+  const current = FEATURES[active];
+
+  return (
+    <section id="features" className="lp-section" aria-labelledby="features-title">
       <div className="lp-container">
         <SectionHead
           id="features-title"
           eyebrow="Features"
           title="Everything a queue needs"
-          text="Simple for visitors, powerful for your team."
+          text="Tap a feature to see it on the phone."
         />
 
-        <div className="lp-feats lp-stagger">
-          {FEATURES.map((feature) => {
-            return (
-              <Reveal key={feature.title}>
-                <article className="lp-feat">
-                  <span className="lp-feat__icon">
-                    <ColorIcon name={feature.icon} size={56} />
-                  </span>
-                  <h3>{feature.title}</h3>
-                  <p>{feature.text}</p>
-                </article>
-              </Reveal>
-            );
-          })}
+        <div className={`lp-orbit ${paused || reduced ? "is-paused" : ""}`}>
+          {columns.map((column, c) => (
+            <div key={c} className={`lp-orbit__col ${c === 0 ? "lp-orbit__col--left" : ""}`}>
+              {column.map((feature, j) => {
+                const i = c * half + j;
+                const Icon = FEATURE_ICONS[feature.icon] || Star;
+                const on = i === active;
+                return (
+                  <button
+                    key={feature.title}
+                    type="button"
+                    className={`lp-orbit__item ${on ? "is-on" : ""}`}
+                    aria-pressed={on}
+                    onClick={() => choose(i)}
+                  >
+                    <span className="lp-feat__icon">
+                      <Icon size={24} weight="duotone" />
+                    </span>
+                    <b>{feature.title}</b>
+                    <span className="lp-orbit__text">{feature.text}</span>
+                    {on && (
+                      <span className="lp-orbit__progress" key={active}>
+                        <i />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+
+          <div className="lp-orbit__phone" aria-live="polite">
+            <span className="lp-orbit__glow" aria-hidden="true" />
+            <div className={`lp-ph ${current?.icon === "bell" ? "is-dark" : ""}`}>
+              <span className="lp-ph__island" aria-hidden="true" />
+              <div className="lp-ph__status" aria-hidden="true">
+                <span>9:41</span>
+                <span>QLess</span>
+              </div>
+              <div className="lp-ph__screen" key={active}>
+                {current && (
+                  <PhoneScreen
+                    icon={current.icon}
+                    serving={serving}
+                    onCallNext={() => setServing((n) => n + 1)}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -297,9 +947,6 @@ function Values() {
           {VALUES.map((value) => {
             return (
               <Reveal key={value.title} className="lp-value">
-                <span className="lp-value__icon">
-                  <ColorIcon name={value.icon} size={56} />
-                </span>
                 <h3>{value.title}</h3>
                 <p>{value.text}</p>
               </Reveal>
@@ -331,9 +978,11 @@ function StatNumber({ stat, start, reduced }) {
 
 function Numbers({ reduced }) {
   const [ref, inView] = useInView();
+  const sectionRef = useRef(null);
+  useScrollVars(sectionRef, reduced);
 
   return (
-    <section className="lp-numbers" aria-labelledby="numbers-title">
+    <section ref={sectionRef} className="lp-numbers" aria-labelledby="numbers-title">
       <div className="lp-container">
         <div ref={ref} className="lp-band">
           <p className="lp-band__eyebrow">QLess in numbers</p>
@@ -408,7 +1057,9 @@ function Reviews() {
           {REVIEWS.map((review) => (
             <Reveal key={review.name} className="lp-review-wrap">
               <figure className="lp-review">
-                <Quotes size={32} weight="fill" className="lp-review__icon" />
+                <span className="lp-review__mark" aria-hidden="true">
+                  “
+                </span>
                 <blockquote>
                   “{review.before}
                   <mark>{review.highlight}</mark>
@@ -470,9 +1121,31 @@ function Industries() {
    9. Places
    ========================================================= */
 
-function Places() {
+// Makes the "waiting" numbers move a little, like a live queue
+function useLiveWaiting(places, reduced) {
+  const [waiting, setWaiting] = useState(() => places.map((place) => place.waiting));
+
+  useEffect(() => {
+    if (reduced || places.length === 0) return;
+    const id = setInterval(() => {
+      setWaiting((prev) => {
+        const next = [...prev];
+        const i = Math.floor(Math.random() * next.length);
+        const change = Math.random() < 0.5 ? -1 : 1;
+        next[i] = Math.max(1, next[i] + change);
+        return next;
+      });
+    }, 2600);
+    return () => clearInterval(id);
+  }, [places.length, reduced]);
+
+  return waiting;
+}
+
+function Places({ reduced }) {
   // Later: replace PLACES with data from GET /api/businesses
   const places = PLACES;
+  const waiting = useLiveWaiting(places, reduced);
 
   return (
     <section className="lp-section lp-places" aria-labelledby="places-title">
@@ -496,7 +1169,7 @@ function Places() {
           </div>
         ) : (
           <div className="lp-cards lp-stagger">
-            {places.map((place) => (
+            {places.map((place, i) => (
               <Reveal key={place.id}>
                 <article className="lp-card">
                   <div className="lp-card__top">
@@ -508,7 +1181,13 @@ function Places() {
                   </div>
                   <div className="lp-card__tags">
                     <span className="lp-badge">{place.category}</span>
-                    <span className="lp-badge lp-badge--peach">{place.waiting} waiting</span>
+                    <span className="lp-badge lp-badge--peach lp-badge--live">
+                      <i aria-hidden="true" />
+                      <span key={waiting[i]} className="lp-tick">
+                        {waiting[i]}
+                      </span>{" "}
+                      waiting
+                    </span>
                   </div>
                   <p>{place.description}</p>
                   <Link className="lp-card__link" to={`/businesses/${place.id}`}>
@@ -556,9 +1235,12 @@ function Faq() {
    11. Orange section
    ========================================================= */
 
-function OrangeCta() {
+function OrangeCta({ reduced }) {
+  const ctaRef = useRef(null);
+  useScrollVars(ctaRef, reduced);
+
   return (
-    <section className="lp-cta">
+    <section ref={ctaRef} className="lp-cta">
       <div className="lp-container">
         <Reveal className="lp-cta__panel">
           <span className="lp-cta__ring lp-cta__ring--top" aria-hidden="true" />
@@ -638,18 +1320,21 @@ export default function LandingPage() {
 
   return (
     <main className="lp">
-      <Hero />
+      <ScrollProgress reduced={reduced} />
+      <Hero reduced={reduced} />
       <LogoStrip />
-      <Steps />
-      <Audiences />
-      <Features />
+      <LiveBoard reduced={reduced} />
+      <Steps reduced={reduced} />
+      <Roles reduced={reduced} />
+      <Features reduced={reduced} />
       <Values />
       <Numbers reduced={reduced} />
       <Reviews />
       <Industries />
-      <Places />
+      <Trust />
+      <Places reduced={reduced} />
       <Faq />
-      <OrangeCta />
+      <OrangeCta reduced={reduced} />
       <Footer />
     </main>
   );

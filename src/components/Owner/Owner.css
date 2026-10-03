@@ -1216,3 +1216,11 @@ body,
     overflow: visible;
   }
 }
+
+
+.owner .main > .content {
+  align-self: flex-start !important;
+  height: auto !important;
+  max-height: none !important;
+  padding-bottom: 110px !important;
+}

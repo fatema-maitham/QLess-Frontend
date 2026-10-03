@@ -817,6 +817,12 @@ body,
   }
 }
 
+
+/* Small space after the last item */
+.owner .main > .content {
+  padding-bottom: 72px !important;
+}
+
 .owner .main > .content {
   zoom: 1;
 }

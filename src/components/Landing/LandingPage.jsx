@@ -404,9 +404,12 @@ function LiveBoard({ reduced }) {
     { label: "Counters open", value: 3 },
   ];
 
+  // The visitor's ticket on the phone moves with the board: 3 → 2 → 1 ahead
+  const ahead = 3 - ((board.served - BOARD_START.served) % 3);
+
   return (
     <section ref={sectionRef} className="lp-board-section" aria-label="Example of the QLess live queue">
-      <div className="lp-container">
+      <div className="lp-container lp-board-stage">
         <div className="lp-board">
           <div className="lp-board__bar">
             <span className="lp-board__dots" aria-hidden="true">
@@ -459,6 +462,53 @@ function LiveBoard({ reduced }) {
                 ))}
               </ul>
             </div>
+          </div>
+        </div>
+
+        {/* Visitor's phone with their ticket */}
+        <div className="lp-phone" aria-hidden="true">
+          <div className="lp-phone__screen">
+            <span className="lp-phone__island" />
+            <div className="lp-phone__status">
+              <span>9:41</span>
+              <span>QLess</span>
+            </div>
+
+            <div className="lp-phone__app">
+              <i className="lp-phone__logo">Q</i>
+              <div>
+                <b>City Centre Branch</b>
+                <small>General services</small>
+              </div>
+            </div>
+
+            <div className="lp-phone__ticket">
+              <small>Your number</small>
+              <b>A107</b>
+              <span className={`lp-phone__bar lp-phone__bar--${ahead}`}>
+                <i />
+              </span>
+              <span key={ahead} className="lp-phone__ahead">
+                {ahead === 1 ? "You're next!" : `${ahead} ahead of you`} · ~{ahead * 4} min
+              </span>
+            </div>
+
+            <div className="lp-phone__chips">
+              <span>
+                <b>~{ahead * 4} min</b>
+                estimated wait
+              </span>
+              <span>
+                <b>Counter 2</b>
+                when called
+              </span>
+            </div>
+
+            <div className="lp-phone__note">
+              <b>Return by 6:20 PM.</b> You can leave the branch. We'll tell you when to come back.
+            </div>
+
+            <span className="lp-phone__leave">Leave queue</span>
           </div>
         </div>
       </div>

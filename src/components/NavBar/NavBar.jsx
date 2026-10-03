@@ -20,6 +20,9 @@ const NavBar = () => {
           <>
             <li>Hello {user.name}</li>
             <li><Link to="/">Dashboard</Link></li>
+            {user.role === "customer" && (
+              <li><Link to="/favorites">Favorites</Link></li>
+            )}
             <li><NotificationBell /></li>
             <li><Link to="/" onClick={handleSignOut}>Sign Out</Link></li>
           </>

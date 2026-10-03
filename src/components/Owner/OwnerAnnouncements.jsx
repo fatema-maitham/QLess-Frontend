@@ -54,7 +54,6 @@ export default function OwnerAnnouncements() {
 
   async function save(event) {
     event.preventDefault();
-
     if (busy) return;
 
     setError('');
@@ -74,63 +73,33 @@ export default function OwnerAnnouncements() {
         title,
         message,
         branch_id:
-          form.branch === 'all'
-            ? null
-            : Number(form.branch),
+          form.branch === 'all' ? null : Number(form.branch),
       });
 
       await reload();
-
       setForm(EMPTY_FORM);
       setOpen(false);
       toast('Announcement posted');
     } catch (err) {
-      setError(
-        err.message || 'Could not post the announcement.'
-      );
+      setError(err.message || 'Could not post the announcement.');
     } finally {
       setSaving(false);
     }
   }
 
-  async function toggleAvailability(announcement) {
+  async function removeAnnouncement(id) {
     if (busy) return;
 
-    const nextActive = !announcement.is_active;
-
-    setChangingId(announcement.id);
+    setChangingId(id);
     setActionError('');
 
     try {
-      const updated = await updateAnnouncement(
-        announcement.id,
-        { is_active: nextActive }
-      );
-
-      if (updated?.is_active !== nextActive) {
-        throw new Error(
-          'The server did not save the announcement status.'
-        );
-      }
-
-      setData((current) => ({
-        ...current,
-        announcements: current.announcements.map((item) =>
-          item.id === announcement.id
-            ? { ...item, ...updated }
-            : item
-        ),
-      }));
-
-      toast(
-        nextActive
-          ? 'Announcement activated'
-          : 'Announcement deactivated'
-      );
+      await deleteAnnouncement(id);
+      await reload();
+      toast('Announcement removed');
     } catch (err) {
       setActionError(
-        err.message ||
-          'Could not change the announcement status.'
+        err.message || 'Could not remove the announcement.'
       );
     } finally {
       setChangingId(null);
@@ -248,18 +217,6 @@ export default function OwnerAnnouncements() {
               <div>
                 <div className="owner-row-title">
                   <b>{announcement.title}</b>
-
-                  <span
-                    className={
-                      announcement.is_active
-                        ? 'st open'
-                        : 'st off'
-                    }
-                  >
-                    {announcement.is_active
-                      ? 'Showing'
-                      : 'Hidden'}
-                  </span>
                 </div>
 
                 <small>

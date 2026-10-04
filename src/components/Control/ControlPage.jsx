@@ -104,6 +104,11 @@ export default function ControlPage({
             ))}
           </select>
         )}
+        {branchId && (
+          <Link className="btn" to={`/branches/${branchId}/bookings`}>
+            Bookings
+          </Link>
+        )}
 
         {showSettings && branchId && (
           <Link className="btn btn--primary" to={settingsLink}>

@@ -7,7 +7,6 @@
   background: var(--color-glass);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--color-border-subtle);
   font-family: var(--font-sans);
 }
 
@@ -31,6 +30,12 @@
   text-decoration: none;
   color: var(--color-text);
   flex-shrink: 0;
+}
+
+.qnav__logo-img {
+  height: 34px;
+  width: auto;
+  display: block;
 }
 
 .qnav__logo-q {
@@ -80,6 +85,7 @@
   transition: color var(--duration-fast) var(--ease-out);
 }
 
+/* Underline only shows on hover, never at the start */
 .qnav__link::after {
   content: "";
   position: absolute;
@@ -98,13 +104,13 @@
   color: var(--color-text);
 }
 
-.qnav__link:hover::after,
-.qnav__link.is-active::after {
+.qnav__link:hover::after {
   transform: scaleX(1);
 }
 
+/* Current page: orange text, no underline */
 .qnav__link.is-active {
-  color: var(--color-text);
+  color: var(--color-primary);
   font-weight: var(--weight-semibold);
 }
 
@@ -189,18 +195,27 @@
   border-radius: var(--radius-sm);
 }
 
-/* ---------- Phone menu button ---------- */
+/* ---------- Menu button (hamburger) ---------- */
 .qnav__toggle {
   display: none;
   flex-direction: column;
+  justify-content: center;
   gap: 5px;
-  padding: var(--space-2);
+  width: 44px;
+  height: 44px;
+  padding: 0 11px;
   background: none;
   border: 0;
+  border-radius: var(--radius-full);
   cursor: pointer;
 }
 
+.qnav__toggle:hover {
+  background: var(--color-tint);
+}
+
 .qnav__toggle span {
+  display: block;
   width: 22px;
   height: 2px;
   border-radius: 2px;
@@ -222,8 +237,8 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* ---------- Phones and small tablets ---------- */
-@media (max-width: 900px) {
+/* ---------- Tablets and phones: show the hamburger ---------- */
+@media (max-width: 1100px) {
   .qnav__inner {
     padding: 0 var(--gutter);
   }
@@ -242,7 +257,6 @@
     gap: var(--space-6);
     padding: var(--space-6) var(--gutter);
     background: var(--color-bg);
-    border-bottom: 1px solid var(--color-border-subtle);
     box-shadow: var(--shadow-sm);
     opacity: 0;
     transform: translateY(-8px);
@@ -270,21 +284,26 @@
 
   .qnav__link {
     display: block;
-    padding: var(--space-3) 0;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-sm);
     font-size: var(--text-base);
-    border-bottom: 1px solid var(--color-border-subtle);
   }
 
   .qnav__link::after {
     display: none;
   }
 
+  .qnav__link:hover {
+    background: var(--color-tint);
+  }
+
   .qnav__link.is-active {
-    color: var(--color-primary);
+    background: var(--color-primary-soft);
   }
 
   .qnav__actions {
     flex-wrap: wrap;
+    padding: 0 var(--space-4);
   }
 
   .qnav__btn {

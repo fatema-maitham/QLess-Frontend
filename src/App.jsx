@@ -10,6 +10,7 @@ import NotFound from "./components/NotFound/NotFound";
 
 // Auth + shared
 import NavBar from "./components/NavBar/NavBar";
+import Footer from "./components/Footer/Footer"; // NEW
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import Placeholder from "./components/Placeholder/Placeholder";
 import AuthPage from "./components/Auth/AuthPage";
@@ -66,6 +67,9 @@ export default function App() {
   const showNav =
     !NO_NAV.includes(location.pathname) &&
     !location.pathname.startsWith("/owner");
+
+  // NEW: the landing page ("/") already has its own footer
+  const showFooter = showNav;
 
   return (
     <div className="app">
@@ -343,6 +347,9 @@ export default function App() {
           element={<NotFound />}
         />
       </Routes>
+
+      {/* NEW: footer on app pages */}
+      {showFooter && <Footer />}
     </div>
   );
 }

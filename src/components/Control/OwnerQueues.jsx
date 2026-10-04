@@ -8,6 +8,7 @@ export default function OwnerQueues() {
     <ControlPage
       branches={branches}
       title="Live Queues"
+      showSettings
     />
   );
 }

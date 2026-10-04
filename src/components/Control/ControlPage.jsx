@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { getBranchQueues } from "../../services/branchService";
 import QueueControl from "./QueueControl";
 import "./Control.css";
@@ -8,6 +8,7 @@ export default function ControlPage({
   branches,
   title = "Live Queues",
   onQueueChange,
+  showSettings = false,
 }) {
   const [params, setParams] = useSearchParams();
 
@@ -80,6 +81,8 @@ export default function ControlPage({
     });
   }
 
+  const settingsLink = `/owner/branches/${branchId}/queues`;
+
   return (
     <section className="cp-page">
       <div className="page-h cp-page-head">
@@ -100,6 +103,12 @@ export default function ControlPage({
               </option>
             ))}
           </select>
+        )}
+
+        {showSettings && branchId && (
+          <Link className="btn btn--primary" to={settingsLink}>
+            Manage queues
+          </Link>
         )}
       </div>
 
@@ -122,7 +131,13 @@ export default function ControlPage({
         list.length === 0 && (
           <div className="empty cp-empty-page">
             <b>No queues yet</b>
-            <p>Create a queue in the branch settings first.</p>
+            {showSettings ? (
+              <p>
+                <Link to={settingsLink}>Create your first queue</Link>
+              </p>
+            ) : (
+              <p>Ask the owner to create a queue for this branch.</p>
+            )}
           </div>
         )}
 

@@ -394,8 +394,10 @@ export default function TicketPage() {
               <h2 id="turn-title" className="tk-panel__title">
                 It's your turn
               </h2>
-              <p>Please go to the front desk now and check in.</p>
-
+              <p>
+                Please go to {ticket.counter_number ? `counter ${ticket.counter_number}` : "the front desk"} now
+                and check in.
+              </p>
               <label className="tk-timer" htmlFor="checkin-timer">
                 <span>Time to check in</span>
                 <strong>{timeLeft}</strong>

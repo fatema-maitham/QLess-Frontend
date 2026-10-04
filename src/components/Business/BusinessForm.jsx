@@ -16,6 +16,7 @@ const BusinessForm = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
 
   // Load categories and (if any) the existing business
   useEffect(() => {
@@ -49,10 +50,7 @@ const BusinessForm = () => {
     if (name === 'image') setLogoOk(false);
     setFormData({ ...formData, [name]: value });
   };
-
-  const handleLogoFile = async (evt) => {
-    const file = evt.target.files[0];
-    evt.target.value = '';
+  const uploadLogo = async (file) => {
     if (!file) return;
     setMessage('');
     setUploading(true);
@@ -65,6 +63,12 @@ const BusinessForm = () => {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleLogoFile = (evt) => {
+    const file = evt.target.files[0];
+    evt.target.value = '';
+    uploadLogo(file);
   };
 
   const handleSubmit = async (evt) => {
@@ -119,47 +123,73 @@ const BusinessForm = () => {
       <form className="ob-form" onSubmit={handleSubmit} noValidate>
         {message && <div className="ob-alert" role="alert">{message}</div>}
 
-        <div className="ob-field">
-          <label htmlFor="image">Business logo <em>(optional)</em></label>
-          <div className="ob-logo-row">
-            <div className={`ob-logo-box ${formData.name.trim() ? 'has' : ''}`}>
-              {showLogo && (
+                <div className="ob-field">
+          <span className="ob-label">Business logo <em>(optional)</em></span>
+
+          <label
+            htmlFor="image"
+            className={`ob-drop ${dragging ? 'over' : ''} ${uploading ? 'busy' : ''}`}
+            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragging(false);
+              uploadLogo(e.dataTransfer.files[0]);
+            }}
+          >
+            {showLogo ? (
+              <span className="ob-drop-preview">
                 <img
                   src={formData.image}
-                  alt=""
+                  alt="Business logo"
                   onLoad={() => setLogoOk(true)}
                   onError={() => setLogoOk(false)}
                   style={{ display: logoOk ? 'block' : 'none' }}
                 />
+                {!logoOk && letter}
+              </span>
+            ) : (
+              <svg className="ob-cloud" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M7 18a4.5 4.5 0 0 1-.9-8.9 6 6 0 0 1 11.6 1.4A4 4 0 0 1 17 18" />
+                <path d="M12 12v8M9 15l3-3 3 3" />
+              </svg>
+            )}
+
+            <span className="ob-drop-text">
+              {uploading ? (
+                <b>Uploading…</b>
+              ) : showLogo ? (
+                <>
+                  <b>Logo added</b>
+                  <small>Click or drop a new image to change it</small>
+                </>
+              ) : (
+                <>
+                  <b>Drag your logo here, or <u>click to upload</u></b>
+                  <small>PNG or JPG, under 5 MB. Square works best.</small>
+                </>
               )}
-              {!(showLogo && logoOk) && letter}
-            </div>
-                        <div className="ob-field">
-              <div className="ob-upload">
-                <label className="ob-btn ob-btn-ghost big" htmlFor="image">
-                  {uploading ? 'Uploading…' : formData.image ? 'Change logo' : 'Upload logo'}
-                </label>
-                <input
-                  id="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleLogoFile}
-                  disabled={uploading}
-                  hidden
-                />
-                {formData.image && !uploading && (
-                  <button
-                    type="button"
-                    className="ob-link"
-                    onClick={() => setFormData({ ...formData, image: '' })}
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-              <span className="ob-help">PNG or JPG, under 5 MB. A square image works best.</span>
-            </div>
-          </div>
+            </span>
+
+            <input
+              id="image"
+              type="file"
+              accept="image/*"
+              onChange={handleLogoFile}
+              disabled={uploading}
+              hidden
+            />
+          </label>
+
+          {showLogo && !uploading && (
+            <button
+              type="button"
+              className="ob-link"
+              onClick={() => setFormData({ ...formData, image: '' })}
+            >
+              Remove logo
+            </button>
+          )}
         </div>
 
         <div className="ob-two">

@@ -4,6 +4,7 @@ const LINKS = [
   { to: "/admin/queues", label: "Queues" },
   { to: "/admin/reviews", label: "Reviews" },
   { to: "/admin/suspicious-activity", label: "Suspicious activity" },
+  { to: "/admin/categories", label: "Categories" },
 ];
 
 // Tabs to move between the admin monitoring pages

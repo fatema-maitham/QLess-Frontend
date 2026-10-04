@@ -103,6 +103,9 @@ const NavBar = () => {
                         Suspicious activity
                       </NavLink>
                     </li>
+                    <li>
+                      <NavLink to="/admin/categories" className={linkClass}>Categories</NavLink>
+                    </li>
                   </>
                 )}
               </ul>

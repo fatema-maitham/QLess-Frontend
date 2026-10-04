@@ -25,9 +25,9 @@
 /* ===== card ===== */
 .auth-card {
   position: relative;
-  width: min(1120px, 100%);
-  height: min(720px, calc(100vh - 48px));
-  min-height: 640px;
+  width: min(1440px, 100%);
+  height: min(860px, calc(100vh - 48px));
+  min-height: 680px;
   background: var(--surface);
   border-radius: 36px;
   overflow: hidden;
@@ -53,7 +53,7 @@
 .auth-card.active .auth-box.up { visibility: visible; }
 .auth-card.active .auth-box.in { visibility: hidden; }
 
-.auth-form { width: 100%; max-width: 440px; }
+.auth-form { width: 100%; max-width: 540px; }
 .auth-form h1 { font-size: 34px; font-weight: 800; letter-spacing: -.035em; line-height: 1.1; margin: 0 0 4px; }
 .auth-sub { margin: 0 0 20px; color: var(--muted); font-size: 16px; }
 
@@ -187,4 +187,30 @@
 
 @media (prefers-reduced-motion: reduce) {
   .auth-page * { transition-duration: .01s !important; }
+}
+
+
+/* ===== bigger sizes for large screens ===== */
+@media (min-width: 861px) {
+  .auth-form h1 { font-size: 42px; }
+  .auth-sub { font-size: 18px; margin-bottom: 24px; }
+  .auth-field { margin-bottom: 16px; }
+  .auth-field label { font-size: 16px; }
+  .auth-inp input { height: 60px; font-size: 17px; border-radius: 18px; }
+  .auth-check { font-size: 15.5px; }
+  .auth-btn { height: 62px; font-size: 18px; }
+  .auth-role { padding: 14px 16px; }
+  .auth-role .ic { width: 46px; height: 46px; }
+  .auth-role b { font-size: 16.5px; }
+  .auth-role small { font-size: 13.5px; }
+  .auth-hint { font-size: 14px; }
+  .auth-box { padding: 40px 80px; }
+
+  .auth-panel { padding: 64px 84px; }
+  .auth-logo { top: 60px; left: 84px; }
+  .auth-panel.right .auth-logo { right: 84px; }
+  .auth-logo img { width: 240px; }
+  .auth-panel h2 { font-size: clamp(40px, 3.8vw, 58px); }
+  .auth-panel p { font-size: 18.5px; }
+  .auth-ghost { height: 58px; padding: 0 36px; font-size: 17px; }
 }

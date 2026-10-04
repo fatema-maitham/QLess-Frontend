@@ -155,7 +155,7 @@
 
 .auth-logo { position: absolute; top: 52px; left: 64px; display: block; }
 .auth-panel.right .auth-logo { left: auto; right: 64px; }
-.auth-logo img { width: 200px; height: auto; display: block; }
+.auth-logo img { width: 170px; height: auto; display: block; }
 
 .auth-panel h2 { font-size: clamp(34px, 3.4vw, 46px); font-weight: 800; letter-spacing: -.04em; line-height: 1.05; margin: 0 0 14px; }
 .auth-panel h2 span { color: var(--orange); }

@@ -181,15 +181,7 @@ const BusinessForm = () => {
             />
           </label>
 
-          {showLogo && !uploading && (
-            <button
-              type="button"
-              className="ob-link"
-              onClick={() => setFormData({ ...formData, image: '' })}
-            >
-              Remove logo
-            </button>
-          )}
+          
         </div>
 
         <div className="ob-two">

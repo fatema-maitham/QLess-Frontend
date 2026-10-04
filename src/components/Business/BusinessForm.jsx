@@ -216,8 +216,7 @@ const BusinessForm = () => {
         </div>
 
         <div className="ob-submit">
-          <button className="ob-btn ob-btn-primary" type="submit" disabled={saving}>
-            {saving
+          <button className="ob-btn ob-btn-primary" type="submit" disabled={saving || uploading}>            {saving
               ? 'Sending…'
               : !isEdit ? 'Send for approval' : canResubmit ? 'Send again for approval' : 'Save changes'}
             {!saving && (
@@ -232,3 +231,4 @@ const BusinessForm = () => {
 };
 
 export default BusinessForm;
+

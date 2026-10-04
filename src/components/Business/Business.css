@@ -235,20 +235,3 @@
 .ob-drop-text u { color: var(--orange-btn); text-decoration-color: var(--peach); }
 .ob-drop-text small { font-size: 12.5px; color: var(--faint); }
 .ob-field > .ob-link { align-self: flex-start; margin-top: 4px; }
-
-
-/* right side matches the left side: same height and width */
-@media (min-width: 981px) {
-  .ob-page {
-    grid-template-columns: 1fr 1fr;
-    align-items: stretch;
-  }
-  .ob-aside {
-    max-width: none;
-    justify-self: stretch;
-    justify-content: space-between;
-  }
-  .ob-pic { flex: 1; display: flex; }
-  .ob-pic .frame { flex: 1; display: flex; align-items: center; }
-  .ob-pic svg { max-height: none; height: 100%; }
-}

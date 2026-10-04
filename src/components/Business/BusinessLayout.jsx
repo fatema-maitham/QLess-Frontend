@@ -4,6 +4,7 @@ import { UserContext } from '../../contexts/UserContext';
 import { removeToken } from '../../lib/helpers/jwt-helpers';
 import BusinessArt from './BusinessArt';
 import './Business.css';
+import logo from '../../assets/qless-logo.png';
 
 const STEPS = [
   {

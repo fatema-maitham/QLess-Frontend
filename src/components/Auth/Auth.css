@@ -195,3 +195,11 @@
 
 /* safety: on short screens the form scrolls inside the card instead of being cut */
 .auth-box { overflow-y: auto; }
+
+/* make the whole card bigger on laptops and desktops, like the design */
+@media (min-width: 861px) {
+  .auth-card {
+    zoom: 1.18;
+    height: min(700px, calc((100vh - 48px) / 1.18));
+  }
+}

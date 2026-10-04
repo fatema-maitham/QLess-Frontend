@@ -46,6 +46,9 @@ import BranchBookingsPage from "./components/Bookings/BranchBookingsPage";
 // Notifications
 import NotificationsPage from "./components/Notifications/NotificationsPage";
 
+// Admin pages
+import AdminSuspiciousPage from "./components/Admin/AdminSuspiciousPage";
+
 // Context + helpers
 import { UserContext } from "./contexts/UserContext";
 import { ROLES, homeFor } from "./lib/helpers/roles";
@@ -277,6 +280,27 @@ export default function App() {
           element={
             <ProtectedRoute>
               <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ================= ADMIN ================= */}
+
+        {/* Temporary: send /admin here until the admin dashboard is built */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roles={[ROLES.ADMIN]}>
+              <Navigate to="/admin/suspicious-activity" replace />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/suspicious-activity"
+          element={
+            <ProtectedRoute roles={[ROLES.ADMIN]}>
+              <AdminSuspiciousPage />
             </ProtectedRoute>
           }
         />

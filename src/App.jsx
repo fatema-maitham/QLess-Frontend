@@ -36,6 +36,7 @@ import OwnerQueues from "./components/Control/OwnerQueues";
 
 // Queue analytics
 import QueueAnalyticsPage from "./components/Analytics/QueueAnalyticsPage";
+import QueueSettingsPage from "./components/QueueSettings/QueueSettingsPage";
 
 // Staff
 import StaffQueues from "./components/Control/StaffQueues";
@@ -50,6 +51,7 @@ import NotificationsPage from "./components/Notifications/NotificationsPage";
 import AdminSuspiciousPage from "./components/Admin/AdminSuspiciousPage";
 import AdminQueuesPage from "./components/Admin/AdminQueuesPage";
 import AdminReviewsPage from "./components/Admin/AdminReviewsPage";
+import AdminCategoriesPage from "./components/Admin/AdminCategoriesPage";
 
 // Context + helpers
 import { UserContext } from "./contexts/UserContext";
@@ -244,6 +246,11 @@ export default function App() {
             element={<OwnerQueues />}
           />
 
+          <Route
+            path="/owner/branches/:branchId/queues"
+            element={<QueueSettingsPage />}
+          />
+
           {/* Queue analytics - owner only */}
           <Route
             path="/owner/queues/:queueId/analytics"
@@ -324,6 +331,15 @@ export default function App() {
           element={
             <ProtectedRoute roles={[ROLES.ADMIN]}>
               <AdminReviewsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/categories"
+          element={
+            <ProtectedRoute roles={[ROLES.ADMIN]}>
+              <AdminCategoriesPage />
             </ProtectedRoute>
           }
         />

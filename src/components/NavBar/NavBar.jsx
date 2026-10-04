@@ -39,6 +39,22 @@ const NavBar = () => {
               </>
             )}
 
+            {user.role === "admin" && (
+              <>
+                <li>
+                  <Link to="/admin/queues">Queues</Link>
+                </li>
+
+                <li>
+                  <Link to="/admin/reviews">Reviews</Link>
+                </li>
+
+                <li>
+                  <Link to="/admin/suspicious-activity">Suspicious activity</Link>
+                </li>
+              </>
+            )}
+
             <li>
               <NotificationBell />
             </li>

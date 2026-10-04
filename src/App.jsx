@@ -36,7 +36,6 @@ import OwnerQueues from "./components/Control/OwnerQueues";
 
 // Queue analytics
 import QueueAnalyticsPage from "./components/Analytics/QueueAnalyticsPage";
-import QueueSettingsPage from "./components/QueueSettings/QueueSettingsPage";
 
 // Staff
 import StaffQueues from "./components/Control/StaffQueues";
@@ -46,6 +45,11 @@ import BranchBookingsPage from "./components/Bookings/BranchBookingsPage";
 
 // Notifications
 import NotificationsPage from "./components/Notifications/NotificationsPage";
+
+// Admin pages
+import AdminSuspiciousPage from "./components/Admin/AdminSuspiciousPage";
+import AdminQueuesPage from "./components/Admin/AdminQueuesPage";
+import AdminReviewsPage from "./components/Admin/AdminReviewsPage";
 
 // Context + helpers
 import { UserContext } from "./contexts/UserContext";
@@ -237,11 +241,6 @@ export default function App() {
             element={<OwnerQueues />}
           />
 
-          <Route
-            path="/owner/branches/:branchId/queues"
-            element={<QueueSettingsPage />}
-          />
-
           {/* Queue analytics - owner only */}
           <Route
             path="/owner/queues/:queueId/analytics"
@@ -283,6 +282,45 @@ export default function App() {
           element={
             <ProtectedRoute>
               <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ================= ADMIN ================= */}
+
+        {/* Temporary: send /admin here until the admin dashboard is built */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roles={[ROLES.ADMIN]}>
+              <Navigate to="/admin/suspicious-activity" replace />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/suspicious-activity"
+          element={
+            <ProtectedRoute roles={[ROLES.ADMIN]}>
+              <AdminSuspiciousPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/queues"
+          element={
+            <ProtectedRoute roles={[ROLES.ADMIN]}>
+              <AdminQueuesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/reviews"
+          element={
+            <ProtectedRoute roles={[ROLES.ADMIN]}>
+              <AdminReviewsPage />
             </ProtectedRoute>
           }
         />

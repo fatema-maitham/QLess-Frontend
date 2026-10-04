@@ -1,5 +1,5 @@
 # QLess
-
+![QLess Banner](./image/banner.png)
 QLess is a full-stack virtual queue management platform that allows customers to join queues remotely instead of waiting physically at a business.
 
 Customers can browse businesses, choose a branch and service, join a virtual queue, track their position in real time, view their estimated waiting time, and receive notifications when their turn approaches.
@@ -208,11 +208,11 @@ At the same time, businesses can manage customer flow, operate queues, organize 
 
 ### Component Hierarchy Diagram
 
-![QLess Component Hierarchy Diagram](./image/component-hierarchy.png)
+![QLess Component Hierarchy Diagram](./image/QLess-CHD.png)
 
 ### Entity Relationship Diagram
 
-![QLess Entity Relationship Diagram](./image/erd.png)
+![QLess Entity Relationship Diagram](./image/QLess-ERD.png)
 
 ## Frontend
 

@@ -36,6 +36,7 @@ import OwnerQueues from "./components/Control/OwnerQueues";
 
 // Queue analytics
 import QueueAnalyticsPage from "./components/Analytics/QueueAnalyticsPage";
+import QueueSettingsPage from "./components/QueueSettings/QueueSettingsPage";
 
 // Staff
 import StaffQueues from "./components/Control/StaffQueues";
@@ -234,6 +235,11 @@ export default function App() {
           <Route
             path="/owner/queues"
             element={<OwnerQueues />}
+          />
+
+          <Route
+            path="/owner/branches/:branchId/queues"
+            element={<QueueSettingsPage />}
           />
 
           {/* Queue analytics - owner only */}

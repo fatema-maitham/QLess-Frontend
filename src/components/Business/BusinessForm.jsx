@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import BusinessLayout from './BusinessLayout';
-import {
-  getMyBusiness, createAndSubmit, updateBusiness, getCategories,
-} from '../../services/ownerBusinessService';
+import {getMyBusiness, createAndSubmit, updateBusiness, getCategories,} from '../../services/ownerBusinessService';
+import { uploadImage } from '../../services/cloudinaryService';
 
 const EMPTY = { name: '', category_id: '', description: '', phone: '', email: '', image: '' };
 
@@ -16,6 +15,7 @@ const BusinessForm = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   // Load categories and (if any) the existing business
   useEffect(() => {
@@ -43,11 +43,28 @@ const BusinessForm = () => {
     load();
   }, []);
 
-  const handleChange = (evt) => {
+    const handleChange = (evt) => {
     setMessage('');
     const { name, value } = evt.target;
     if (name === 'image') setLogoOk(false);
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleLogoFile = async (evt) => {
+    const file = evt.target.files[0];
+    evt.target.value = '';
+    if (!file) return;
+    setMessage('');
+    setUploading(true);
+    try {
+      const url = await uploadImage(file);
+      setLogoOk(false);
+      setFormData((prev) => ({ ...prev, image: url }));
+    } catch (err) {
+      setMessage(err.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (evt) => {
@@ -117,12 +134,30 @@ const BusinessForm = () => {
               )}
               {!(showLogo && logoOk) && letter}
             </div>
-            <div className="ob-field">
-              <div className="ob-inp">
-                <svg className="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A827B" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg>
-                <input id="image" name="image" type="url" value={formData.image} onChange={handleChange} />
+                        <div className="ob-field">
+              <div className="ob-upload">
+                <label className="ob-btn ob-btn-ghost big" htmlFor="image">
+                  {uploading ? 'Uploading…' : formData.image ? 'Change logo' : 'Upload logo'}
+                </label>
+                <input
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoFile}
+                  disabled={uploading}
+                  hidden
+                />
+                {formData.image && !uploading && (
+                  <button
+                    type="button"
+                    className="ob-link"
+                    onClick={() => setFormData({ ...formData, image: '' })}
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
-              <span className="ob-help">A square image works best. Until then we show your first letter.</span>
+              <span className="ob-help">PNG or JPG, under 5 MB. A square image works best.</span>
             </div>
           </div>
         </div>

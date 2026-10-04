@@ -27,9 +27,16 @@ const OwnerHome = () => {
   const [business, setBusiness] = useState(undefined); // undefined = still loading
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
+    useEffect(() => {
     getMyBusiness()
-      .then(setBusiness)
+      .then((b) => {
+        if (b?.approval_status === 'approved') {
+          const key = `qless-approved-seen-${b.id}`;
+          setFirstTime(!localStorage.getItem(key));
+          localStorage.setItem(key, 'yes');
+        }
+        setBusiness(b);
+      })
       .catch((err) => {
         setMessage(err.message);
         setBusiness(null);
@@ -98,6 +105,8 @@ const OwnerHome = () => {
   }
 
   // Approved → straight to the dashboard
+    // Already saw the approved page before → go to the dashboard
+  if (!firstTime) return <Navigate to="/owner/dashboard" replace />;
   return <Navigate to="/owner/dashboard" replace />;
 };
 

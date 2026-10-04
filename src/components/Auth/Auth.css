@@ -196,10 +196,66 @@
 /* safety: on short screens the form scrolls inside the card instead of being cut */
 .auth-box { overflow-y: auto; }
 
-/* make the whole card bigger on laptops and desktops, like the design */
+/* Each password field fills a complete row */
+.auth-two.auth-password-row {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+/* sign up: comfortable spacing that still fits the card */
 @media (min-width: 861px) {
-  .auth-card {
-    zoom: 1.18;
-    height: min(700px, calc((100vh - 48px) / 1.18));
+  .auth-box.up { padding-block: 28px; }
+  .auth-box.up .auth-sub { margin-bottom: 16px; }
+  .auth-box.up .auth-roles { margin-bottom: 8px; }
+  .auth-box.up .auth-hint { margin-bottom: 10px; }
+  .auth-box.up .auth-field { gap: 6px; margin-bottom: 10px; }
+  .auth-box.up .auth-inp input { height: 50px; }
+  .auth-box.up .auth-btn { margin-top: 6px; height: 54px; }
+}
+
+.auth-strength { margin-top: 4px; }
+
+/* Each password field fills a complete row */
+.auth-two.auth-password-row {
+  grid-template-columns: 1fr;
+  margin-inline: 0;
+  gap: 0;
+}
+
+/* Compact the sign-up form without resizing the card */
+@media (min-width: 861px) {
+  .auth-box.up {
+    padding-block: 18px;
   }
+
+  .auth-box.up .auth-sub {
+    margin-bottom: 12px;
+  }
+
+  .auth-box.up .auth-roles {
+    margin-bottom: 6px;
+  }
+
+  .auth-box.up .auth-role {
+    padding-block: 8px;
+  }
+
+  .auth-box.up .auth-hint {
+    margin-bottom: 6px;
+  }
+
+  .auth-box.up .auth-field {
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .auth-box.up .auth-btn {
+    margin-top: 0;
+    height: 50px;
+  }
+}
+
+
+.auth-strength {
+  margin-top: 4px;
 }

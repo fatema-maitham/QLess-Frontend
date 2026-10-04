@@ -9,15 +9,35 @@ import "./NavBar.css";
 
 const linkClass = ({ isActive }) => `qnav__link ${isActive ? "is-active" : ""}`;
 
+// How far the page is scrolled. Owner.css makes #root scroll instead of
+// the window, so check every place the page can scroll from.
+const getScrollTop = () =>
+  Math.max(
+    window.scrollY,
+    document.documentElement.scrollTop,
+    document.body.scrollTop,
+    document.getElementById("root")?.scrollTop || 0
+  );
+
 const NavBar = () => {
   const { user, setUser } = useContext(UserContext);
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const role = getRole(user);
 
   // Close the phone menu when the page changes
   useEffect(() => {
     setOpen(false);
+  }, [location.pathname]);
+
+  // Turn the bar white after scrolling down a little
+  useEffect(() => {
+    const onScroll = () => setScrolled(getScrollTop() > 10);
+    onScroll();
+    // "capture: true" catches scrolling from #root too, not only the window
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    return () => document.removeEventListener("scroll", onScroll, { capture: true });
   }, [location.pathname]);
 
   const handleSignOut = () => {
@@ -28,7 +48,7 @@ const NavBar = () => {
   const firstName = user?.name ? user.name.split(" ")[0] : "";
 
   return (
-    <header className="qnav">
+    <header className={`qnav ${scrolled || open ? "is-scrolled" : ""}`}>
       <div className="qnav__inner">
         <Link to={user ? homeFor(user) : "/"} className="qnav__logo" aria-label="QLess home">
           <img src={logo} alt="QLess logo" className="qnav__logo-img" />

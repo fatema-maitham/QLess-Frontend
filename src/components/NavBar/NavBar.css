@@ -4,10 +4,17 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--color-glass);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: var(--color-bg);
+  /* same colour as the page: no line */
+  border: 0;
+  box-shadow: none;
   font-family: var(--font-sans);
+}
+
+/* After scrolling: stays the same solid colour, still no line */
+.qnav.is-scrolled {
+  background: var(--color-bg);
+  box-shadow: none;
 }
 
 .qnav__inner {
@@ -26,9 +33,7 @@
 .qnav__logo {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
   text-decoration: none;
-  color: var(--color-text);
   flex-shrink: 0;
 }
 
@@ -36,24 +41,8 @@
   height: 34px;
   width: auto;
   display: block;
-}
-
-.qnav__logo-q {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  display: grid;
-  place-items: center;
-  font-weight: var(--weight-extrabold);
-  font-size: var(--text-lg);
-}
-
-.qnav__logo-text {
-  font-size: var(--text-xl);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-tight);
+  transform: translateY(3px);
+  /* moves the logo a little lower */
 }
 
 /* ---------- Menu ---------- */
@@ -257,7 +246,8 @@
     gap: var(--space-6);
     padding: var(--space-6) var(--gutter);
     background: var(--color-bg);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 12px 24px rgba(27, 25, 26, 0.08);
+    /* only on the open phone menu */
     opacity: 0;
     transform: translateY(-8px);
     pointer-events: none;

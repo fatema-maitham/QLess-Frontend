@@ -1,14 +1,12 @@
 import { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { signIn } from '../../services/authService';
 import { UserContext } from '../../contexts/UserContext';
-import AuthLayout from '../Auth/AuthLayout';
 import { MailIcon, LockIcon, EyeIcon, AlertIcon } from '../Auth/AuthIcons';
 import { homeFor } from '../../lib/helpers/roles';
 
-const SignInForm = () => {
+const SignInForm = ({ onSwitch }) => {
   const navigate = useNavigate();
-
   const { setUser } = useContext(UserContext);
   const [showPw, setShowPw] = useState(false);
   const [message, setMessage] = useState('');
@@ -31,7 +29,7 @@ const SignInForm = () => {
       const user = await signIn({ email, password });
       setUser(user);
       navigate(homeFor(user));
-        } catch (err) {
+    } catch (err) {
       setMessage(err.message);
     } finally {
       setLoading(false);
@@ -39,81 +37,74 @@ const SignInForm = () => {
   };
 
   return (
-    <AuthLayout mode="signin">
-      <form className="auth-form" onSubmit={handleSubmit} noValidate>
-        <h1>Welcome back</h1>
-        <p className="auth-sub">Sign in to your QLess account.</p>
+    <form className="auth-form" onSubmit={handleSubmit} noValidate>
+      <h1>Welcome back</h1>
+      <p className="auth-sub">Sign in to your QLess account.</p>
 
-        {message && (
-          <div className="auth-alert" role="alert">
-            <AlertIcon />
-            <span>{message}</span>
-          </div>
-        )}
-
-        <div className="auth-field">
-          <label htmlFor="email">Email</label>
-          <div className="auth-inp">
-            <MailIcon className="lead-ic" />
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-              value={email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+      {message && (
+        <div className="auth-alert" role="alert">
+          <AlertIcon />
+          <span>{message}</span>
         </div>
+      )}
 
-        <div className="auth-field">
-          <label htmlFor="password">Password</label>
-          <div className="auth-inp">
-            <LockIcon className="lead-ic" />
-            <input
-              id="password"
-              name="password"
-              type={showPw ? 'text' : 'password'}
-              placeholder="Your password"
-              autoComplete="current-password"
-              value={password}
-              onChange={handleChange}
-              required
-            />
-            <button
-              type="button"
-              className="auth-eye"
-              aria-label={showPw ? 'Hide password' : 'Show password'}
-              onClick={() => setShowPw(!showPw)}
-            >
-              <EyeIcon open={showPw} />
-            </button>
-          </div>
+      <div className="auth-field">
+        <label htmlFor="in-email">Email</label>
+        <div className="auth-inp">
+          <MailIcon className="lead-ic" />
+          <input
+            id="in-email"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            value={email}
+            onChange={handleChange}
+            required
+          />
         </div>
+      </div>
 
-        <div className="auth-row">
-          <label className="auth-check">
-            <input type="checkbox" defaultChecked /> Keep me signed in
-          </label>
-          <a className="auth-link" href="#">Forgot password?</a>
+      <div className="auth-field">
+        <label htmlFor="in-password">Password</label>
+        <div className="auth-inp">
+          <LockIcon className="lead-ic" />
+          <input
+            id="in-password"
+            name="password"
+            type={showPw ? 'text' : 'password'}
+            placeholder="Your password"
+            autoComplete="current-password"
+            value={password}
+            onChange={handleChange}
+            required
+          />
+          <button
+            type="button"
+            className="auth-eye"
+            aria-label={showPw ? 'Hide password' : 'Show password'}
+            onClick={() => setShowPw(!showPw)}
+          >
+            <EyeIcon open={showPw} />
+          </button>
         </div>
+      </div>
 
-        <button type="submit" className="btn btn-primary" disabled={!isValid || loading}>
-          {loading ? 'Signing in...' : 'Sign in'}
-        </button>
+      <div className="auth-row">
+        <label className="auth-check">
+          <input type="checkbox" defaultChecked /> Keep me signed in
+        </label>
+      </div>
 
-        <div className="auth-or">or</div>
+      <button type="submit" className="auth-btn" disabled={!isValid || loading}>
+        {loading ? 'Signing in...' : 'Sign in'}
+      </button>
 
-        <p className="auth-switch">
-          New to QLess?{' '}
-          <Link className="auth-link" to="/sign-up" state={{ slide: true }}>
-            Create an account
-          </Link>
-        </p>
-      </form>
-    </AuthLayout>
+      <p className="auth-mobile-switch">
+        New to QLess?{' '}
+        <button type="button" onClick={onSwitch}>Create an account</button>
+      </p>
+    </form>
   );
 };
 

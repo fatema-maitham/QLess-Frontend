@@ -6,6 +6,7 @@ import { loadOwnerData } from '../../services/ownerApi';
 import { firstUnready, initial } from './ownerSetup';
 import NotificationBell from "../Notifications/NotificationBell";
 import './Owner.css';
+import logo from '../../assets/qless-logo.png';
 
 const ICONS = {
   overview: <path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />,
@@ -144,7 +145,7 @@ export default function OwnerLayout() {
 
   return (
     <div className="owner app">
-      <div className="logo"><i>Q</i>QLess</div>
+            <div className="logo"><img src={logo} alt="QLess" /></div>
 
       <header className="top">
         <Search branches={data.branches} />

@@ -76,7 +76,7 @@ const SignUpForm = ({ onSwitch }) => {
           onClick={() => setRole('customer')}
         >
           <span className="ic"><UserIcon color="#1E1A18" size={20} /></span>
-          <span><b>Visitor</b><small>Join queues and track your turn</small></span>
+          <span><b>Visitor</b></span>
         </button>
         <button
           type="button"
@@ -86,12 +86,12 @@ const SignUpForm = ({ onSwitch }) => {
           onClick={() => setRole('owner')}
         >
           <span className="ic"><BuildingIcon size={20} /></span>
-          <span><b>Business owner</b><small>Run queues for your branches</small></span>
+          <span><b>Business owner</b></span>
         </button>
       </div>
 
       <p className="auth-hint">
-        Work at a business? Sign up as a visitor, then ask the owner to add you as staff.
+                Staff? Sign up as a visitor and ask your owner to add you.
       </p>
 
         <div className="auth-two">

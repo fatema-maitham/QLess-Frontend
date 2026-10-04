@@ -76,7 +76,7 @@ export default function OwnerBranches() {
                   <BizLogo business={business} />
                   <div><b>{b.name}</b><small>{b.address || 'No address yet'}</small></div>
                   {!b.is_active
-                    ? <span className="st off">Paused</span>
+                    ? <span className="st off">Inactive</span>
                     : ready ? <span className="st open">Ready</span> : <span className="st warn">Needs setup</span>}
                 </div>
                 <div className="bprog">

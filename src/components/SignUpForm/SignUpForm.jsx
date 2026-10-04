@@ -111,7 +111,7 @@ const SignUpForm = () => {
                 id="name"
                 name="name"
                 type="text"
-                placeholder="Maram Ali"
+                placeholder="Your full name"
                 autoComplete="name"
                 value={name}
                 onChange={handleChange}

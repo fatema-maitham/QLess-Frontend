@@ -94,8 +94,8 @@ const SignUpForm = ({ onSwitch }) => {
         Work at a business? Sign up as a visitor, then ask the owner to add you as staff.
       </p>
 
-      <div className="auth-two">
-        <div className="auth-field">
+        <div className="auth-two">
+          <div className="auth-field">
           <label htmlFor="up-name">Full name</label>
           <div className="auth-inp">
             <UserIcon className="lead-ic" />
@@ -145,7 +145,7 @@ const SignUpForm = ({ onSwitch }) => {
         </div>
       </div>
 
-      <div className="auth-two">
+      <div className="auth-two auth-password-row">
         <div className="auth-field">
           <label htmlFor="up-password">Password</label>
           <div className={`auth-inp ${tooShort ? 'err' : ''}`}>

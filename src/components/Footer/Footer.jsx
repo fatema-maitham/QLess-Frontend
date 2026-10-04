@@ -9,7 +9,6 @@ import "./Footer.css";
 const FOOTER_CONTENT = {
   guest: {
     text: "Join queues from anywhere, track your turn live, and arrive just in time.",
-    cta: { title: "Ready to skip the line?", button: "Create free account", to: "/sign-up" },
     columns: [
       {
         title: "Explore",
@@ -31,7 +30,6 @@ const FOOTER_CONTENT = {
   },
   [ROLES.CUSTOMER]: {
     text: "Your place in line, saved. Track your queues and bookings in one place.",
-    cta: { title: "Need to be somewhere?", button: "Find a queue", to: "/businesses" },
     columns: [
       {
         title: "Explore",
@@ -53,7 +51,6 @@ const FOOTER_CONTENT = {
   },
   [ROLES.OWNER]: {
     text: "Manage your branches, queues and staff, and keep customers moving.",
-    cta: { title: "Keep your queues moving.", button: "Go to dashboard", to: "/owner/dashboard" },
     columns: [
       {
         title: "Manage",
@@ -75,7 +72,6 @@ const FOOTER_CONTENT = {
   },
   [ROLES.STAFF]: {
     text: "Call the next customer, check people in, and keep your branch on time.",
-    cta: { title: "Customers are waiting.", button: "Open my queues", to: "/staff" },
     columns: [
       {
         title: "Work",
@@ -92,7 +88,6 @@ const FOOTER_CONTENT = {
   },
   [ROLES.ADMIN]: {
     text: "Keep the platform safe: watch queue activity and moderate reviews.",
-    cta: { title: "Something look wrong?", button: "Review activity", to: "/admin/suspicious-activity" },
     columns: [
       {
         title: "Monitor",
@@ -157,23 +152,9 @@ const Footer = () => {
   const { user } = useContext(UserContext);
   const content = FOOTER_CONTENT[getRole(user)] || FOOTER_CONTENT.guest;
 
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
-
   return (
     <footer className="qfoot">
       <div className="qfoot__container">
-        {/* Top strip: message + button for this user */}
-        <div className="qfoot__cta">
-          <p className="qfoot__cta-title">{content.cta.title}</p>
-          <Link to={content.cta.to} className="qfoot__cta-btn">
-            {content.cta.button}
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
-        </div>
-
-        {/* Middle: brand + link columns */}
         <div className="qfoot__main">
           <div className="qfoot__brand">
             <Link to="/" className="qfoot__logo" aria-label="QLess home">
@@ -203,16 +184,9 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* Bottom row */}
         <div className="qfoot__bottom">
           <p>© 2026 QLess. All rights reserved.</p>
           <p className="qfoot__motto">Your place. Your time.</p>
-          <button type="button" className="qfoot__top" onClick={scrollToTop}>
-            Back to top
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
         </div>
       </div>
     </footer>

@@ -206,7 +206,7 @@ At the same time, businesses can manage customer flow, operate queues, organize 
 
 ### Wireframes
 
-![QLess Wireframes](./image/wireframes.png)
+![QLess Wireframes](./image/wireframes.png) 
 
 ### Component Hierarchy Diagram
 
@@ -387,7 +387,7 @@ password123
 
 ## Deployed Website
 
-[QLess](ADD_DEPLOYED_WEBSITE_LINK_HERE)
+[QLess]()
 
 ## Attributions
 

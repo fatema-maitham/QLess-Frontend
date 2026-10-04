@@ -25,9 +25,9 @@
 /* ===== card ===== */
 .auth-card {
   position: relative;
-  width: min(1440px, 100%);
-  height: min(860px, calc(100vh - 48px));
-  min-height: 680px;
+  width: min(1120px, 100%);
+  height: min(700px, calc(100vh - 48px));
+  min-height: 620px;
   background: var(--surface);
   border-radius: 36px;
   overflow: hidden;
@@ -44,8 +44,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px 60px;
-  z-index: 1;
+  padding: 40px 64px;
+    z-index: 1;
   transition: right .6s ease 1s, visibility 0s 1s;
 }
 .auth-card.active .auth-box { right: 50%; }
@@ -53,9 +53,10 @@
 .auth-card.active .auth-box.up { visibility: visible; }
 .auth-card.active .auth-box.in { visibility: hidden; }
 
-.auth-form { width: 100%; max-width: 540px; }
-.auth-form h1 { font-size: 34px; font-weight: 800; letter-spacing: -.035em; line-height: 1.1; margin: 0 0 4px; }
-.auth-sub { margin: 0 0 20px; color: var(--muted); font-size: 16px; }
+.auth-form { width: 100%; max-width: 440px; }
+.auth-form h1 { font-size: 36px;
+ font-weight: 800; letter-spacing: -.035em; line-height: 1.1; margin: 0 0 4px; }
+.auth-sub { margin: 0 0 24px; color: var(--muted); font-size: 16px; }
 
 .auth-alert {
   display: flex; gap: 10px; align-items: flex-start;
@@ -71,7 +72,7 @@
 .auth-inp { position: relative; }
 .auth-inp .lead-ic { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; }
 .auth-inp input {
-  width: 100%; height: 52px; padding: 0 44px;
+    width: 100%; height: 54px; padding: 0 46px;
   border: 1.5px solid var(--line); border-radius: 16px; background: var(--surface);
   font-size: 16px; font-weight: 500;
   transition: border-color .2s, box-shadow .2s;

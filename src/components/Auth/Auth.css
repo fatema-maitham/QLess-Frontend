@@ -3,7 +3,7 @@
   --bg: #F5F2EE; --surface: #FFFFFF; --soft: #EDE8E2; --line: #E2DCD4;
   --ink: #1B191A; --muted: #5A524C; --faint: #8A827B;
   --orange: #F8713A; --orange-btn: #E2572A; --orange-dk: #C9481F; --peach: #F9CA87; --peach-soft: #FCEBD3;
-  --panel: #1B191A; --panel-text: #FBFAF8; --panel-muted: #CFC6BE;
+  --panel: #F5BE91; --panel-text: #1B191A; --panel-muted: #5A3A26;
   --sans: var(--font-sans, 'Manrope', system-ui, sans-serif);
   --slide: 1.6s cubic-bezier(.7, 0, .25, 1);
 
@@ -158,12 +158,12 @@
 .auth-logo img { width: 100px; height: auto; display: block; }
 
 .auth-panel h2 { font-size: clamp(34px, 3.4vw, 46px); font-weight: 800; letter-spacing: -.04em; line-height: 1.05; margin: 0 0 14px; }
-.auth-panel h2 span { color: var(--orange); }
+.auth-panel h2 span { color: #B8431C; }
 .auth-panel p { margin: 0 0 26px; color: var(--panel-muted); font-size: 16.5px; line-height: 1.55; max-width: 34ch; }
 .auth-ghost {
   align-self: flex-start;
   height: 52px; padding: 0 30px;
-  border-radius: 999px; border: 1.5px solid rgba(251, 250, 248, .7);
+  border-radius: 999px; border: 1.5px solid var(--panel-text);
   background: transparent; color: var(--panel-text);
   font-weight: 700; font-size: 16px; cursor: pointer;
   transition: background .25s, color .25s, border-color .25s;

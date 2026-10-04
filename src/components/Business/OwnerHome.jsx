@@ -97,23 +97,8 @@ const OwnerHome = () => {
     );
   }
 
-  // Approved
-  return (
-    <BusinessLayout step={3}>
-      <span className="ob-tag ok">Approved</span>
-      <h1>You're live on QLess.</h1>
-      <p className="ob-sub">
-        Visitors can now find your business. Add your first branch so they can join a queue.
-      </p>
-      <BizCard business={business} pill="Live" pillClass="ok" />
-      <div className="ob-actions">
-        <Link className="ob-btn ob-btn-primary" to="/owner/dashboard">
-          Go to my dashboard
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-        </Link>
-      </div>
-    </BusinessLayout>
-  );
+  // Approved → straight to the dashboard
+  return <Navigate to="/owner/dashboard" replace />;
 };
 
 export default OwnerHome;

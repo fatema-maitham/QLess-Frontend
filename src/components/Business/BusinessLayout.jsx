@@ -35,7 +35,7 @@ const BusinessLayout = ({ step = 1, children }) => {
     <div className="ob">
       <header className="ob-top">
         <div className="ob-top-in">
-                    <Link className="ob-logo" to="/"><i>Q</i>QLess</Link>
+                              <Link className="ob-logo" to="/"><img src={logo} alt="QLess home" /></Link>
           <div className="ob-who">
             <span>Signed in as <b>{user?.name}</b></span>
             <button type="button" className="ob-btn ob-btn-ghost" onClick={handleSignOut}>

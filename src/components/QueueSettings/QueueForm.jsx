@@ -7,6 +7,7 @@ const EMPTY = {
   average_service_minutes: "10",
   no_show_grace_minutes: "5",
   max_capacity: "",
+  counter_count: "1",
 };
 
 // Queue from the API -> form values (inputs always hold strings)
@@ -18,6 +19,7 @@ function toFormValues(queue) {
     average_service_minutes: String(queue.average_service_minutes),
     no_show_grace_minutes: String(queue.no_show_grace_minutes),
     max_capacity: queue.max_capacity ? String(queue.max_capacity) : "",
+    counter_count: String(queue.counter_count || 1),
   };
 }
 
@@ -29,6 +31,7 @@ function toPayload(values) {
     average_service_minutes: Number(values.average_service_minutes),
     no_show_grace_minutes: Number(values.no_show_grace_minutes),
     max_capacity: values.max_capacity ? Number(values.max_capacity) : null,
+    counter_count: Number(values.counter_count),
   };
 }
 
@@ -38,12 +41,16 @@ function validate(values) {
   const avg = Number(values.average_service_minutes);
   const grace = Number(values.no_show_grace_minutes);
   const cap = Number(values.max_capacity);
+  const counters = Number(values.counter_count);
 
   if (!values.name.trim()) errors.name = "Give the queue a name.";
   if (!Number.isInteger(avg) || avg < 1) errors.average_service_minutes = "Use a whole number of 1 or more.";
   if (!Number.isInteger(grace) || grace < 0) errors.no_show_grace_minutes = "Use a whole number of 0 or more.";
   if (values.max_capacity && (!Number.isInteger(cap) || cap < 1)) {
     errors.max_capacity = "Use a whole number of 1 or more, or leave it empty.";
+  }
+  if (!Number.isInteger(counters) || counters < 1 || counters > 20) {
+    errors.counter_count = "Use a whole number from 1 to 20.";
   }
 
   return errors;
@@ -149,6 +156,15 @@ export default function QueueForm({ queue, services, saving, serverError, onSubm
           </p>
           {errorText("no_show_grace_minutes")}
         </div>
+      </div>
+
+      <div className="qs-field">
+        <label htmlFor="queue-counter_count">Counters</label>
+        <input type="number" min="1" max="20" step="1" inputMode="numeric" {...fieldProps("counter_count")} />
+        <p className="qs-field__hint" id="queue-counter_count-hint">
+          How many desks serve this queue at the same time. More counters means a shorter wait.
+        </p>
+        {errorText("counter_count")}
       </div>
 
       <div className="qs-field">

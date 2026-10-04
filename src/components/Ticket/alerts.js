@@ -142,6 +142,5 @@ export function alertCalled(ticket) {
   vibrate();
   showSystemNotification(
     `It's your turn! Number ${ticket.queue_number}`,
-    `Please go to the front desk at ${ticket.business_name} now.`
-  );
+    `Please go to ${ticket.counter_number ? `counter ${ticket.counter_number}` : "the front desk"} at ${ticket.business_name} now.`);
 }

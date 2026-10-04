@@ -5,9 +5,9 @@ export function getQueueEntries(queueId, { signal } = {}) {
   return apiGet(`/queues/${queueId}/entries`, { signal });
 }
 
-// Owner/staff: call the next waiting person. Returns { message, queue, entry }
-export function callNext(queueId) {
-  return apiPost(`/queues/${queueId}/call-next`);
+// Owner/staff: call the next waiting person to a counter. Returns { message, queue, entry }
+export function callNext(queueId, counterNumber = 1) {
+  return apiPost(`/queues/${queueId}/call-next`, { counter_number: counterNumber });
 }
 
 // Owner/staff: "checked_in", "completed" or "no_show"

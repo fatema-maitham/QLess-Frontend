@@ -87,6 +87,23 @@ function minutesSince(value, now) {
   return minutes < 1 ? "just now" : `${minutes} min`;
 }
 
+// Remember which counter this person works at, for each queue
+function savedCounter(queueId) {
+  try {
+    return Number(localStorage.getItem(`qless:counter:${queueId}`)) || 1;
+  } catch {
+    return 1;
+  }
+}
+
+function saveCounter(queueId, counter) {
+  try {
+    localStorage.setItem(`qless:counter:${queueId}`, String(counter));
+  } catch {
+    // private mode: the choice just isn't remembered
+  }
+}
+
 function useNow(active) {
   const [now, setNow] = useState(() => Date.now());
 
@@ -106,6 +123,7 @@ function useNow(active) {
 
 function DeskCard({
   entry,
+  showCounter,
   graceMinutes,
   now,
   busy,
@@ -132,6 +150,12 @@ function DeskCard({
 
       <div className="cp-person">
         <b>{entry.customer_name}</b>
+
+        {showCounter && entry.counter_number && (
+          <small className="cp-desk">
+            Counter {entry.counter_number}
+          </small>
+        )}
 
         <span>
           {isCalled ? (
@@ -237,6 +261,9 @@ export default function QueueControl({ queueId }) {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState(null);
   const [confirmId, setConfirmId] = useState(null);
+  const [counter, setCounter] = useState(() =>
+    savedCounter(queueId)
+  );
 
   const refresh = useCallback(
     async ({ signal } = {}) => {
@@ -360,11 +387,26 @@ export default function QueueControl({ queueId }) {
       `Queue is now ${to}.`
     );
 
+  // How many counters this queue has, and which one is mine
+  const counterCount = data.queue?.counter_count || 1;
+  const myCounter = Math.min(counter, counterCount);
+  const counterNumbers = Array.from(
+    { length: counterCount },
+    (_, i) => i + 1
+  );
+
+  function pickCounter(number) {
+    setCounter(number);
+    saveCounter(queueId, number);
+  }
+
   const handleCallNext = () =>
     run(
-      () => callNext(queueId),
+      () => callNext(queueId, myCounter),
       (result) =>
-        `Called number ${result.entry.queue_number}.`
+        counterCount > 1
+          ? `Called number ${result.entry.queue_number} to counter ${result.entry.counter_number}.`
+          : `Called number ${result.entry.queue_number}.`
     );
 
   const MARK_TEXT = {
@@ -475,25 +517,73 @@ export default function QueueControl({ queueId }) {
       )}
 
       <div className="cp-serving">
-        <div>
-          <span>Now serving</span>
-          <strong>
-            {queue.current_number || "—"}
-          </strong>
+        {counterCount > 1 ? (
+          <div className="cp-counters">
+            {counterNumbers.map((number) => {
+              const atCounter = (
+                queue.now_serving || []
+              ).filter(
+                (item) => item.counter_number === number
+              );
+              const latest =
+                atCounter[atCounter.length - 1];
+
+              return (
+                <div
+                  key={number}
+                  className={`cp-counter ${number === myCounter ? "mine" : ""
+                    }`}
+                >
+                  <span>Counter {number}</span>
+                  <strong>
+                    {latest ? latest.queue_number : "—"}
+                  </strong>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div>
+            <span>Now serving</span>
+            <strong>
+              {queue.current_number || "—"}
+            </strong>
+          </div>
+        )}
+
+        <div className="cp-call-wrap">
+          {counterCount > 1 && (
+            <label className="cp-counter-pick">
+              <span>My counter</span>
+              <select
+                className="sel"
+                value={myCounter}
+                onChange={(event) =>
+                  pickCounter(Number(event.target.value))
+                }
+              >
+                {counterNumbers.map((number) => (
+                  <option key={number} value={number}>
+                    Counter {number}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+
+          <button
+            type="button"
+            className="btn btn-primary cp-call"
+            onClick={handleCallNext}
+            disabled={busy || !isOpen || !next}
+          >
+            <Megaphone size={18} weight="fill" />
+
+            {next
+              ? `Call next · ${next.queue_number}`
+              : "Call next"}
+          </button>
         </div>
-
-        <button
-          type="button"
-          className="btn btn-primary cp-call"
-          onClick={handleCallNext}
-          disabled={busy || !isOpen || !next}
-        >
-          <Megaphone size={18} weight="fill" />
-
-          {next
-            ? `Call next · ${next.queue_number}`
-            : "Call next"}
-        </button>
       </div>
 
       <div className="cp-mini-stats">
@@ -522,6 +612,7 @@ export default function QueueControl({ queueId }) {
               <DeskCard
                 key={entry.id}
                 entry={entry}
+                showCounter={counterCount > 1}
                 graceMinutes={
                   queue.no_show_grace_minutes
                 }

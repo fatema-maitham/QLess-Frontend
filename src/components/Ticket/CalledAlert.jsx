@@ -27,8 +27,10 @@ export default function CalledAlert({ open, ticket, graceMinutes, busy, onCheckI
       <p className="tk-called__place">{ticket.business_name}</p>
       <h2 id="called-title">You're called!</h2>
       <strong className="tk-called__number">{ticket.queue_number}</strong>
+      {ticket.counter_number && <p className="tk-called__counter">Counter {ticket.counter_number}</p>}
       <p className="tk-called__text">
-        Please go to the front desk now and check in within {graceMinutes} minutes.
+        Please go to {ticket.counter_number ? `counter ${ticket.counter_number}` : "the front desk"} now and
+        check in within {graceMinutes} minutes.
       </p>
 
       <div className="tk-called__actions">

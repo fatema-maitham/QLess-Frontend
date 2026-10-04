@@ -1279,3 +1279,6 @@ body,
 .owner .stepbar + .page-h {
   box-shadow: none !important;
 }
+
+/* new logo in the top-left corner */
+.owner .logo img { height: 34px; width: auto; display: block; }

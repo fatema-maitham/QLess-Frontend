@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import BusinessLayout from './BusinessLayout';
-import {
-  getMyBusiness, createAndSubmit, updateBusiness, getCategories,
-} from '../../services/ownerBusinessService';
+import {getMyBusiness, createAndSubmit, updateBusiness, getCategories,} from '../../services/ownerBusinessService';
+import { uploadImage } from '../../services/cloudinaryService';
 
 const EMPTY = { name: '', category_id: '', description: '', phone: '', email: '', image: '' };
 
@@ -16,6 +15,8 @@ const BusinessForm = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
 
   // Load categories and (if any) the existing business
   useEffect(() => {
@@ -43,11 +44,31 @@ const BusinessForm = () => {
     load();
   }, []);
 
-  const handleChange = (evt) => {
+    const handleChange = (evt) => {
     setMessage('');
     const { name, value } = evt.target;
     if (name === 'image') setLogoOk(false);
     setFormData({ ...formData, [name]: value });
+  };
+  const uploadLogo = async (file) => {
+    if (!file) return;
+    setMessage('');
+    setUploading(true);
+    try {
+      const url = await uploadImage(file);
+      setLogoOk(false);
+      setFormData((prev) => ({ ...prev, image: url }));
+    } catch (err) {
+      setMessage(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleLogoFile = (evt) => {
+    const file = evt.target.files[0];
+    evt.target.value = '';
+    uploadLogo(file);
   };
 
   const handleSubmit = async (evt) => {
@@ -102,29 +123,65 @@ const BusinessForm = () => {
       <form className="ob-form" onSubmit={handleSubmit} noValidate>
         {message && <div className="ob-alert" role="alert">{message}</div>}
 
-        <div className="ob-field">
-          <label htmlFor="image">Business logo <em>(optional)</em></label>
-          <div className="ob-logo-row">
-            <div className={`ob-logo-box ${formData.name.trim() ? 'has' : ''}`}>
-              {showLogo && (
+                <div className="ob-field">
+          <span className="ob-label">Business logo <em>(optional)</em></span>
+
+          <label
+            htmlFor="image"
+            className={`ob-drop ${dragging ? 'over' : ''} ${uploading ? 'busy' : ''}`}
+            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragging(false);
+              uploadLogo(e.dataTransfer.files[0]);
+            }}
+          >
+            {showLogo ? (
+              <span className="ob-drop-preview">
                 <img
                   src={formData.image}
-                  alt=""
+                  alt="Business logo"
                   onLoad={() => setLogoOk(true)}
                   onError={() => setLogoOk(false)}
                   style={{ display: logoOk ? 'block' : 'none' }}
                 />
+                {!logoOk && letter}
+              </span>
+            ) : (
+              <svg className="ob-cloud" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M7 18a4.5 4.5 0 0 1-.9-8.9 6 6 0 0 1 11.6 1.4A4 4 0 0 1 17 18" />
+                <path d="M12 12v8M9 15l3-3 3 3" />
+              </svg>
+            )}
+
+            <span className="ob-drop-text">
+              {uploading ? (
+                <b>Uploading…</b>
+              ) : showLogo ? (
+                <>
+                  <b>Logo added</b>
+                  <small>Click or drop a new image to change it</small>
+                </>
+              ) : (
+                <>
+                  <b>Drag your logo here, or <u>click to upload</u></b>
+                  <small>PNG or JPG, under 5 MB. Square works best.</small>
+                </>
               )}
-              {!(showLogo && logoOk) && letter}
-            </div>
-            <div className="ob-field">
-              <div className="ob-inp">
-                <svg className="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A827B" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg>
-                <input id="image" name="image" type="url" value={formData.image} onChange={handleChange} />
-              </div>
-              <span className="ob-help">A square image works best. Until then we show your first letter.</span>
-            </div>
-          </div>
+            </span>
+
+            <input
+              id="image"
+              type="file"
+              accept="image/*"
+              onChange={handleLogoFile}
+              disabled={uploading}
+              hidden
+            />
+          </label>
+
+          
         </div>
 
         <div className="ob-two">
@@ -181,15 +238,14 @@ const BusinessForm = () => {
         </div>
 
         <div className="ob-submit">
-          <button className="ob-btn ob-btn-primary" type="submit" disabled={saving}>
-            {saving
+          <button className="ob-btn ob-btn-primary" type="submit" disabled={saving || uploading}>            {saving
               ? 'Sending…'
               : !isEdit ? 'Send for approval' : canResubmit ? 'Send again for approval' : 'Save changes'}
             {!saving && (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
             )}
           </button>
-          <span>Only the name is required.</span>
+          
         </div>
       </form>
     </BusinessLayout>
@@ -197,3 +253,4 @@ const BusinessForm = () => {
 };
 
 export default BusinessForm;
+

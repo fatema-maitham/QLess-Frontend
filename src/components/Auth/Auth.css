@@ -192,25 +192,26 @@
 
 /* ===== bigger sizes for large screens ===== */
 @media (min-width: 861px) {
-  .auth-form h1 { font-size: 42px; }
-  .auth-sub { font-size: 18px; margin-bottom: 24px; }
-  .auth-field { margin-bottom: 16px; }
-  .auth-field label { font-size: 16px; }
-  .auth-inp input { height: 60px; font-size: 17px; border-radius: 18px; }
-  .auth-check { font-size: 15.5px; }
-  .auth-btn { height: 62px; font-size: 18px; }
-  .auth-role { padding: 14px 16px; }
-  .auth-role .ic { width: 46px; height: 46px; }
-  .auth-role b { font-size: 16.5px; }
-  .auth-role small { font-size: 13.5px; }
-  .auth-hint { font-size: 14px; }
-  .auth-box { padding: 40px 80px; }
+  .auth-form h1 { font-size: 38px; }
+  .auth-sub { font-size: 17px; margin-bottom: 20px; }
+  .auth-field { margin-bottom: 12px; }
+  .auth-field label { font-size: 15.5px; }
+  .auth-inp input { height: 54px; font-size: 16.5px; border-radius: 16px; }
+  .auth-check { font-size: 15px; }
+  .auth-btn { height: 58px; font-size: 17.5px; }
+  .auth-role b { font-size: 16px; }
+  .auth-role small { font-size: 13px; }
+  .auth-hint { font-size: 13.5px; }
+  .auth-box { padding: 32px 72px; }
 
-  .auth-panel { padding: 64px 84px; }
-  .auth-logo { top: 60px; left: 84px; }
-  .auth-panel.right .auth-logo { right: 84px; }
-  .auth-logo img { width: 240px; }
-  .auth-panel h2 { font-size: clamp(40px, 3.8vw, 58px); }
-  .auth-panel p { font-size: 18.5px; }
-  .auth-ghost { height: 58px; padding: 0 36px; font-size: 17px; }
+  .auth-panel { padding: 60px 80px; }
+  .auth-logo { top: 56px; left: 80px; }
+  .auth-panel.right .auth-logo { right: 80px; }
+  .auth-logo img { width: 220px; }
+  .auth-panel h2 { font-size: clamp(38px, 3.6vw, 54px); }
+  .auth-panel p { font-size: 18px; }
+  .auth-ghost { height: 56px; padding: 0 34px; font-size: 17px; }
 }
+
+/* safety: on short screens the form scrolls inside the card instead of being cut */
+.auth-box { overflow-y: auto; }

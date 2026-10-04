@@ -14,7 +14,13 @@ import { getQueue } from "../../services/queueService";
 import { checkIn, getTicket, leaveQueue, setOnTheWay } from "../../services/ticketService";
 import useQueueSocket from "../../hooks/useQueueSocket";
 import { LIVE_STATUSES, TICKET_STATUS, aheadText, clockTime, minutesText } from "./ticketHelpers";
-import { alertCalled, askForNotifications, canAskForNotifications } from "./alerts";
+import {
+  alertCalled,
+  askForNotifications,
+  canAskForNotifications,
+  stopRinging,
+  unlockSound,
+} from "./alerts";
 import CalledAlert from "./CalledAlert";
 import useNoShowStatus from "../../hooks/useNoShowStatus";
 import NoShowBanner from "../NoShow/NoShowBanner";
@@ -106,7 +112,10 @@ export default function TicketPage() {
       setCalledOpen(true);
       alertCalled(fresh);
     }
-    if (fresh.status !== "called") setCalledOpen(false);
+    if (fresh.status !== "called") {
+      setCalledOpen(false);
+      stopRinging();
+    }
 
     setPage((prev) => ({ ...prev, ticket: fresh }));
   }, []);
@@ -118,6 +127,20 @@ export default function TicketPage() {
         // keep showing the last ticket if a refresh fails
       });
   }, [entryId, showTicket]);
+
+  // Browsers only allow sound after the customer taps the page once.
+  // Also stop any ringing when they leave the page.
+  useEffect(() => {
+    const unlock = () => unlockSound();
+    window.addEventListener("pointerdown", unlock, { once: true });
+    window.addEventListener("keydown", unlock, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+      stopRinging();
+    };
+  }, []);
 
   // First load: the ticket + its queue (for the check-in time)
   useEffect(() => {
@@ -184,7 +207,10 @@ export default function TicketPage() {
   };
 
   const handleOnTheWay = () => run(() => setOnTheWay(entryId, !ticket.on_the_way));
-  const handleCheckIn = () => run(() => checkIn(entryId));
+  const handleCheckIn = () => {
+    stopRinging();
+    return run(() => checkIn(entryId));
+  };
 
   const handleTurnOnAlerts = async () => {
     await askForNotifications();
@@ -478,7 +504,10 @@ export default function TicketPage() {
           graceMinutes={graceMinutes}
           busy={busy}
           onCheckIn={handleCheckIn}
-          onClose={() => setCalledOpen(false)}
+          onClose={() => {
+            stopRinging();
+            setCalledOpen(false);
+          }}
         />
 
         {/* Leave confirm */}

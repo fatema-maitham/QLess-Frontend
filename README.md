@@ -337,7 +337,7 @@ Add the backend URLs:
 
 ```env
 VITE_API_URL=http://127.0.0.1:8000/api
-VITE_WS_URL=ws://127.0.0.1:8000/ws
+VITE_BACK_END_SERVER_URL=http://127.0.0.1:8000/api
 ```
 
 Start the development server:

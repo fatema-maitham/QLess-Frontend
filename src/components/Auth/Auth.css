@@ -291,7 +291,7 @@
 .auth-switch-top button {
   border: 0;
   background: transparent;
-  font: 600 15px 'Montserrat', sans-serif;
+  font: 600 15px var(--sans);
   padding: 10px 20px;
   border-radius: 999px;
   color: var(--muted);

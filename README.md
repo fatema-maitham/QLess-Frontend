@@ -222,6 +222,8 @@ The frontend is built with React and provides the user interface for guests, cus
 
 The application uses reusable React components, React Context for authentication state, React Router for navigation and protected routes, and service files for communication with the backend API.
 
+Business logos are uploaded directly from the browser to Cloudinary, and the image link is saved with the business.
+
 WebSockets are used to provide real-time queue updates without requiring customers to manually refresh the page.
 
 ## Authentication
@@ -333,12 +335,21 @@ Create a `.env` file in the project root:
 touch .env
 ```
 
-Add the backend URLs:
+Add the backend URLs and your Cloudinary details:
 
 ```env
 VITE_API_URL=http://127.0.0.1:8000/api
 VITE_BACK_END_SERVER_URL=http://127.0.0.1:8000/api
+VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
+VITE_CLOUDINARY_UPLOAD_PRESET=your_unsigned_upload_preset
 ```
+
+Cloudinary is used to upload business logos. To get these values:
+
+1. Create a free account at [cloudinary.com](https://cloudinary.com).
+2. Copy your **Cloud name** from the Cloudinary dashboard.
+3. Go to **Settings → Upload → Upload presets**, add a preset, and set its **Signing mode** to **Unsigned**.
+4. Use that preset's name as `VITE_CLOUDINARY_UPLOAD_PRESET`.
 
 Start the development server:
 
@@ -397,6 +408,7 @@ password123
 - Vite documentation
 - FastAPI documentation
 - Phosphor Icons
+- Cloudinary documentation
 
 ## Future Enhancements
 

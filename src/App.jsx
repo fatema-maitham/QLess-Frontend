@@ -10,10 +10,9 @@ import NotFound from "./components/NotFound/NotFound";
 
 // Auth + shared
 import NavBar from "./components/NavBar/NavBar";
-import SignUpForm from "./components/SignUpForm/SignUpForm";
-import SignInForm from "./components/SignInForm/SignInForm";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import Placeholder from "./components/Placeholder/Placeholder";
+import AuthPage from "./components/Auth/AuthPage";
 
 // Customer pages
 import JoinQueuePage from "./components/Ticket/JoinQueuePage";
@@ -94,7 +93,7 @@ export default function App() {
             user ? (
               <Navigate to={homeFor(user)} replace />
             ) : (
-              <SignUpForm />
+              <AuthPage />
             )
           }
         />
@@ -105,7 +104,7 @@ export default function App() {
             user ? (
               <Navigate to={homeFor(user)} replace />
             ) : (
-              <SignInForm />
+              <AuthPage />
             )
           }
         />

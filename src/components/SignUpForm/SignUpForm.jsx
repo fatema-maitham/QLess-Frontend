@@ -2,13 +2,12 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { signUp } from '../../services/authService';
 import { UserContext } from '../../contexts/UserContext';
-import AuthLayout from '../Auth/AuthLayout';
 import {
   UserIcon, MailIcon, PhoneIcon, LockIcon, EyeIcon, BuildingIcon, AlertIcon,
 } from '../Auth/AuthIcons';
+import { homeFor } from '../../lib/helpers/roles';
 
 const STRENGTH_COLORS = ['#E2572A', '#F26B3A', '#F7C98B', '#1E1A18'];
-const STRENGTH_LABELS = ['Weak', 'Okay', 'Good', 'Strong'];
 
 const getStrength = (p) => {
   let s = 0;
@@ -19,9 +18,8 @@ const getStrength = (p) => {
   return s;
 };
 
-const SignUpForm = () => {
+const SignUpForm = ({ onSwitch }) => {
   const navigate = useNavigate();
-
   const { setUser } = useContext(UserContext);
   const [role, setRole] = useState('customer');
   const [showPw, setShowPw] = useState(false);
@@ -57,61 +55,55 @@ const SignUpForm = () => {
     }
   };
 
-  const hint = !password
-    ? '6+ characters. A number makes it stronger.'
-    : tooShort
-      ? 'Too short. Use at least 6 characters.'
-      : `${STRENGTH_LABELS[strength - 1]} password`;
-
   return (
-    <AuthLayout mode="signup" role={role}>
-      <form className="auth-form" onSubmit={handleSubmit} noValidate>
-        <h1>Create your account</h1>
-        <p className="auth-sub">It only takes a minute. Choose how you'll use QLess.</p>
+    <form className="auth-form" onSubmit={handleSubmit} noValidate>
+      <h1>Create your account</h1>
+      <p className="auth-sub">It only takes a minute.</p>
 
-        {message && (
-          <div className="auth-alert" role="alert">
-            <AlertIcon />
-            <span>{message}</span>
-          </div>
-        )}
-
-        <div className="auth-roles" role="radiogroup" aria-label="Account type">
-          <button
-            type="button"
-            className="auth-role"
-            role="radio"
-            aria-checked={role === 'customer'}
-            onClick={() => setRole('customer')}
-          >
-            <span className="dot" aria-hidden="true" />
-            <span className="ic"><UserIcon color="#1E1A18" size={20} /></span>
-            <b>Visitor</b>
-            <span className="desc">Join queues and track your turn</span>
-          </button>
-          <button
-            type="button"
-            className="auth-role"
-            role="radio"
-            aria-checked={role === 'owner'}
-            onClick={() => setRole('owner')}
-          >
-            <span className="dot" aria-hidden="true" />
-            <span className="ic"><BuildingIcon color="#1E1A18" size={20} /></span>
-            <b>Business owner</b>
-            <span className="desc">Run queues for your branches</span>
-          </button>
+      {message && (
+        <div className="auth-alert" role="alert">
+          <AlertIcon />
+          <span>{message}</span>
         </div>
+      )}
 
-        <div className="auth-field">
-          <label htmlFor="name">Full name</label>
+      <div className="auth-roles" role="radiogroup" aria-label="Account type">
+        <button
+          type="button"
+          className="auth-role"
+          role="radio"
+          aria-checked={role === 'customer'}
+          onClick={() => setRole('customer')}
+        >
+          <span className="ic"><UserIcon color="#1E1A18" size={20} /></span>
+          <span><b>Visitor</b></span>
+        </button>
+        <button
+          type="button"
+          className="auth-role"
+          role="radio"
+          aria-checked={role === 'owner'}
+          onClick={() => setRole('owner')}
+        >
+          <span className="ic"><BuildingIcon size={20} /></span>
+          <span><b>Business owner</b></span>
+        </button>
+      </div>
+
+      <p className="auth-hint">
+                Staff? Sign up as a visitor and ask your owner to add you.
+      </p>
+
+        <div className="auth-two">
+          <div className="auth-field">
+          <label htmlFor="up-name">Full name</label>
           <div className="auth-inp">
             <UserIcon className="lead-ic" />
             <input
-              id="name"
+              id="up-name"
               name="name"
               type="text"
-              placeholder="Maram Ali"
+              placeholder="Your full name"
               autoComplete="name"
               value={name}
               onChange={handleChange}
@@ -119,50 +111,50 @@ const SignUpForm = () => {
             />
           </div>
         </div>
-
-        <div className="auth-two">
-          <div className="auth-field">
-            <label htmlFor="email">Email</label>
-            <div className="auth-inp">
-              <MailIcon className="lead-ic" />
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                value={email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-          <div className="auth-field">
-            <label htmlFor="phone">Phone <em>(optional)</em></label>
-            <div className="auth-inp">
-              <PhoneIcon className="lead-ic" />
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                placeholder="3300 0000"
-                autoComplete="tel"
-                value={phone}
-                onChange={handleChange}
-              />
-            </div>
+        <div className="auth-field">
+          <label htmlFor="up-phone">Phone <em>(optional)</em></label>
+          <div className="auth-inp">
+            <PhoneIcon className="lead-ic" />
+            <input
+              id="up-phone"
+              name="phone"
+              type="tel"
+              placeholder="3300 0000"
+              autoComplete="tel"
+              value={phone}
+              onChange={handleChange}
+            />
           </div>
         </div>
+      </div>
 
+      <div className="auth-field">
+        <label htmlFor="up-email">Email</label>
+        <div className="auth-inp">
+          <MailIcon className="lead-ic" />
+          <input
+            id="up-email"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            value={email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="auth-two auth-password-row">
         <div className="auth-field">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="up-password">Password</label>
           <div className={`auth-inp ${tooShort ? 'err' : ''}`}>
             <LockIcon className="lead-ic" />
             <input
-              id="password"
+              id="up-password"
               name="password"
               type={showPw ? 'text' : 'password'}
-              placeholder="At least 6 characters"
+              placeholder="6+ characters"
               autoComplete="new-password"
               value={password}
               onChange={handleChange}
@@ -185,15 +177,13 @@ const SignUpForm = () => {
               />
             ))}
           </div>
-          <span className={`auth-hint ${tooShort ? 'bad' : ''}`}>{hint}</span>
         </div>
-
         <div className="auth-field">
-          <label htmlFor="passwordConf">Confirm password</label>
+          <label htmlFor="up-passwordConf">Confirm password</label>
           <div className={`auth-inp ${mismatch ? 'err' : ''}`}>
             <LockIcon className="lead-ic" />
             <input
-              id="passwordConf"
+              id="up-passwordConf"
               name="passwordConf"
               type={showPw ? 'text' : 'password'}
               placeholder="Type it again"
@@ -204,19 +194,21 @@ const SignUpForm = () => {
             />
           </div>
           {mismatch && <span className="auth-hint bad">Passwords don't match</span>}
+          {tooShort && !mismatch && <span className="auth-hint bad">Use at least 6 characters</span>}
         </div>
+      </div>
 
-        <button type="submit" className="btn btn-primary" disabled={!isValid || loading}>
-          {loading
-            ? 'Creating account...'
-            : role === 'owner' ? 'Create business account' : 'Create account'}
-        </button>
+      <button type="submit" className="auth-btn" disabled={!isValid || loading}>
+        {loading
+          ? 'Creating account...'
+          : role === 'owner' ? 'Create business account' : 'Create account'}
+      </button>
 
-        <p className="auth-terms">
-          By creating an account you agree to the QLess Terms and Privacy Policy.
-        </p>
-      </form>
-    </AuthLayout>
+      <p className="auth-mobile-switch">
+        Already have an account?{' '}
+        <button type="button" onClick={onSwitch}>Sign in</button>
+      </p>
+    </form>
   );
 };
 

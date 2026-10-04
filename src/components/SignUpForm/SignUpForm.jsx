@@ -102,36 +102,18 @@ const SignUpForm = () => {
             <span className="desc">Run queues for your branches</span>
           </button>
         </div>
-
-        <div className="auth-field">
-          <label htmlFor="name">Full name</label>
-          <div className="auth-inp">
-            <UserIcon className="lead-ic" />
-            <input
-              id="name"
-              name="name"
-              type="text"
-              placeholder="Maram Ali"
-              autoComplete="name"
-              value={name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="auth-two">
+                <div className="auth-two">
           <div className="auth-field">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="name">Full name</label>
             <div className="auth-inp">
-              <MailIcon className="lead-ic" />
+              <UserIcon className="lead-ic" />
               <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                value={email}
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Maram Ali"
+                autoComplete="name"
+                value={name}
                 onChange={handleChange}
                 required
               />
@@ -151,6 +133,23 @@ const SignUpForm = () => {
                 onChange={handleChange}
               />
             </div>
+          </div>
+        </div>
+
+        <div className="auth-field">
+          <label htmlFor="email">Email</label>
+          <div className="auth-inp">
+            <MailIcon className="lead-ic" />
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              autoComplete="email"
+              value={email}
+              onChange={handleChange}
+              required
+            />
           </div>
         </div>
 

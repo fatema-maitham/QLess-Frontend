@@ -12,7 +12,7 @@ import NotFound from "./components/NotFound/NotFound";
 import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer"; // NEW
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import Placeholder from "./components/Placeholder/Placeholder";
+import NoAccess from "./components/NoAccess/NoAccess";
 import AuthPage from "./components/Auth/AuthPage";
 
 // Customer pages
@@ -346,15 +346,7 @@ export default function App() {
 
         {/* ================= NO ACCESS ================= */}
 
-        <Route
-          path="/no-access"
-          element={
-            <Placeholder
-              title="No access"
-              text="You don't have permission to open that page."
-            />
-          }
-        />
+        element={<NoAccess />}
 
         {/* ================= 404 ================= */}
 

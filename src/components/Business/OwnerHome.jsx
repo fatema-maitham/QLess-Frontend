@@ -34,7 +34,6 @@ const OwnerHome = () => {
         if (b?.approval_status === 'approved') {
           const key = `qless-approved-seen-${b.id}`;
           setFirstTime(!localStorage.getItem(key));
-          localStorage.setItem(key, 'yes');
         }
         setBusiness(b);
       })
@@ -118,7 +117,12 @@ const OwnerHome = () => {
       </p>
       <BizCard business={business} pill="Live" pillClass="ok" />
       <div className="ob-actions">
-        <Link className="ob-btn ob-btn-primary" to="/owner/dashboard">
+               <Link
+          className="ob-btn ob-btn-primary"
+          to="/owner/dashboard"
+          onClick={() => localStorage.setItem(`qless-approved-seen-${business.id}`, 'yes')}
+        >
+          
           Go to my dashboard
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
         </Link>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { UserContext } from '../../contexts/UserContext';
 import { removeToken } from '../../lib/helpers/jwt-helpers';
 import BusinessArt from './BusinessArt';
+import logo from '../../assets/qless-logo.png';
 import './Business.css';
 
 const STEPS = [

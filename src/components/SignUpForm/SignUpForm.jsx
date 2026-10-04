@@ -102,6 +102,11 @@ const SignUpForm = () => {
             <span className="desc">Run queues for your branches</span>
           </button>
         </div>
+
+
+        <p className="auth-hint">
+          Work at a business? Sign up as a visitor, then ask the owner to add you as staff.
+        </p>
                 <div className="auth-two">
           <div className="auth-field">
             <label htmlFor="name">Full name</label>

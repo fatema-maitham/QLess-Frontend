@@ -346,7 +346,11 @@ export default function App() {
 
         {/* ================= NO ACCESS ================= */}
 
-        element={<NoAccess />}
+
+        <Route
+          path="/no-access"
+          element={<NoAccess />}
+        />
 
         {/* ================= 404 ================= */}
 

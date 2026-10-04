@@ -1,87 +1,129 @@
-import { useContext } from "react";
-import { Link } from "react-router";
+import { useContext, useEffect, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router";
 import { UserContext } from "../../contexts/UserContext";
 import { removeToken } from "../../lib/helpers/jwt-helpers";
+import { homeFor } from "../../lib/helpers/roles";
 import NotificationBell from "../Notifications/NotificationBell";
+import "./NavBar.css";
+
+const linkClass = ({ isActive }) => `qnav__link ${isActive ? "is-active" : ""}`;
 
 const NavBar = () => {
   const { user, setUser } = useContext(UserContext);
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+
+  // Close the phone menu when the page changes
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
 
   const handleSignOut = () => {
     removeToken();
     setUser(null);
   };
 
+  const firstName = user?.name ? user.name.split(" ")[0] : "";
+
   return (
-    <nav>
-      <ul>
-        {user ? (
-          <>
-            <li>Hello {user.name}</li>
+    <header className="qnav">
+      <div className="qnav__inner">
+        <Link to={user ? homeFor(user) : "/"} className="qnav__logo" aria-label="QLess home">
+          <span className="qnav__logo-q">Q</span>
+          <span className="qnav__logo-text">Less</span>
+        </Link>
 
-            <li>
-              <Link to="/">Dashboard</Link>
-            </li>
+        <button
+          type="button"
+          className={`qnav__toggle ${open ? "is-open" : ""}`}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-            {user.role === "customer" && (
-              <>
+        <nav className={`qnav__menu ${open ? "is-open" : ""}`} aria-label="Main">
+          {user ? (
+            <>
+              <ul className="qnav__links">
                 <li>
-                  <Link to="/my-tickets">My Queues</Link>
+                  <NavLink to={homeFor(user)} className={linkClass}>
+                    Dashboard
+                  </NavLink>
                 </li>
 
+                {user.role === "customer" && (
+                  <>
+                    <li>
+                      <NavLink to="/my-tickets" className={linkClass}>My Queues</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/my-bookings" className={linkClass}>My Bookings</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/favorites" className={linkClass}>Favorites</NavLink>
+                    </li>
+                  </>
+                )}
+
+                {user.role === "admin" && (
+                  <>
+                    <li>
+                      <NavLink to="/admin/queues" className={linkClass}>Queues</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/admin/reviews" className={linkClass}>Reviews</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/admin/suspicious-activity" className={linkClass}>
+                        Suspicious activity
+                      </NavLink>
+                    </li>
+                  </>
+                )}
+              </ul>
+
+              <div className="qnav__actions">
+                <NotificationBell />
+
+                <span className="qnav__user">
+                  <span className="qnav__avatar" aria-hidden="true">
+                    {firstName.charAt(0).toUpperCase()}
+                  </span>
+                  Hello {firstName}
+                </span>
+
+                <Link to="/" onClick={handleSignOut} className="qnav__btn qnav__btn--ghost">
+                  Sign Out
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <ul className="qnav__links">
                 <li>
-                  <Link to="/my-bookings">My Bookings</Link>
+                  <NavLink to="/" end className={linkClass}>Home</NavLink>
                 </li>
-
                 <li>
-                  <Link to="/favorites">Favorites</Link>
+                  <NavLink to="/businesses" className={linkClass}>Businesses</NavLink>
                 </li>
-              </>
-            )}
-
-            {user.role === "admin" && (
-              <>
                 <li>
-                  <Link to="/admin/queues">Queues</Link>
+                  <a href="/#how" className="qnav__link">How it works</a>
                 </li>
+              </ul>
 
-                <li>
-                  <Link to="/admin/reviews">Reviews</Link>
-                </li>
-
-                <li>
-                  <Link to="/admin/suspicious-activity">Suspicious activity</Link>
-                </li>
-              </>
-            )}
-
-            <li>
-              <NotificationBell />
-            </li>
-
-            <li>
-              <Link to="/" onClick={handleSignOut}>
-                Sign Out
-              </Link>
-            </li>
-          </>
-        ) : (
-          <>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-
-            <li>
-              <Link to="/sign-up">Sign Up</Link>
-            </li>
-
-            <li>
-              <Link to="/sign-in">Sign In</Link>
-            </li>
-          </>
-        )}
-      </ul>
-    </nav>
+              <div className="qnav__actions">
+                <Link to="/sign-in" className="qnav__btn qnav__btn--ghost">Sign In</Link>
+                <Link to="/sign-up" className="qnav__btn qnav__btn--primary">Sign Up</Link>
+              </div>
+            </>
+          )}
+        </nav>
+      </div>
+    </header>
   );
 };
 

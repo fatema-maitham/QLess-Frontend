@@ -1,0 +1,294 @@
+/* QLess nav bar (uses tokens from src/styles/tokens.css) */
+
+.qnav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-family: var(--font-sans);
+}
+
+.qnav__inner {
+  max-width: var(--container-max);
+  height: 68px;
+  /* LandingPage.css expects 68px */
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+/* ---------- Logo ---------- */
+.qnav__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+.qnav__logo-q {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  display: grid;
+  place-items: center;
+  font-weight: var(--weight-extrabold);
+  font-size: var(--text-lg);
+}
+
+.qnav__logo-text {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* ---------- Menu ---------- */
+.qnav__menu {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.qnav__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.qnav__link {
+  position: relative;
+  padding: var(--space-2) 0;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.qnav__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.qnav__link:hover {
+  color: var(--color-text);
+}
+
+.qnav__link:hover::after,
+.qnav__link.is-active::after {
+  transform: scaleX(1);
+}
+
+.qnav__link.is-active {
+  color: var(--color-text);
+  font-weight: var(--weight-semibold);
+}
+
+/* ---------- Right side ---------- */
+.qnav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.qnav__user {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.qnav__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: var(--color-text);
+  display: grid;
+  place-items: center;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+
+.qnav__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.qnav__btn--ghost {
+  color: var(--color-text);
+  border-color: var(--color-border-subtle);
+  background: transparent;
+}
+
+.qnav__btn--ghost:hover {
+  border-color: var(--color-border);
+  background: var(--color-tint);
+}
+
+.qnav__btn--primary {
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+}
+
+.qnav__btn--primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.qnav__btn:active {
+  transform: scale(0.97);
+}
+
+.qnav__link:focus-visible,
+.qnav__btn:focus-visible,
+.qnav__logo:focus-visible,
+.qnav__toggle:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Phone menu button ---------- */
+.qnav__toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: var(--space-2);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.qnav__toggle span {
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-text);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+}
+
+.qnav__toggle.is-open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.qnav__toggle.is-open span:nth-child(2) {
+  opacity: 0;
+}
+
+.qnav__toggle.is-open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ---------- Phones and small tablets ---------- */
+@media (max-width: 900px) {
+  .qnav__inner {
+    padding: 0 var(--gutter);
+  }
+
+  .qnav__toggle {
+    display: flex;
+  }
+
+  .qnav__menu {
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-6);
+    padding: var(--space-6) var(--gutter);
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border-subtle);
+    box-shadow: var(--shadow-sm);
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    visibility: hidden;
+    transition:
+      opacity var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out),
+      visibility var(--duration-fast);
+  }
+
+  .qnav__menu.is-open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .qnav__links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin: 0;
+  }
+
+  .qnav__link {
+    display: block;
+    padding: var(--space-3) 0;
+    font-size: var(--text-base);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .qnav__link::after {
+    display: none;
+  }
+
+  .qnav__link.is-active {
+    color: var(--color-primary);
+  }
+
+  .qnav__actions {
+    flex-wrap: wrap;
+  }
+
+  .qnav__btn {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+  }
+}

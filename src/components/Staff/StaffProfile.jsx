@@ -74,6 +74,25 @@ export default function StaffProfile() {
     }
   }
 
+
+  async function handleCover(evt) {
+    const file = evt.target.files?.[0];
+    evt.target.value = '';
+    if (!file) return;
+    setUploading(true);
+    setMessage({ type: '', text: '' });
+    try {
+      const url = await uploadImage(file);
+      applyUpdate(await updateMe({ cover_image: url }));
+      setMessage({ type: 'ok', text: 'Your cover was updated.' });
+    } catch (err) {
+      setMessage({ type: 'bad', text: err.message });
+    } finally {
+      setUploading(false);
+    }
+  }
+
+
   async function saveDetails(evt) {
     evt.preventDefault();
     setBusy(true);

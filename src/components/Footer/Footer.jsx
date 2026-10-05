@@ -14,8 +14,8 @@ const FOOTER_CONTENT = {
         title: "Explore",
         links: [
           { to: "/", label: "Home" },
-          { to: "/businesses", label: "Businesses" },
-          { href: "/#how", label: "How it works" },
+          { to: "/businesses", label: "Browse" },
+          { to: "/#how", label: "How it works" },
         ],
       },
       {
@@ -34,7 +34,7 @@ const FOOTER_CONTENT = {
       {
         title: "Explore",
         links: [
-          { to: "/businesses", label: "Businesses" },
+          { to: "/businesses", label: "Browse" },
           { to: "/favorites", label: "Favorites" },
           { to: "/notifications", label: "Notifications" },
         ],
@@ -82,7 +82,7 @@ const FOOTER_CONTENT = {
       },
       {
         title: "Explore",
-        links: [{ to: "/businesses", label: "Businesses" }],
+        links: [{ to: "/businesses", label: "Browse" }],
       },
     ],
   },
@@ -142,9 +142,8 @@ const SOCIALS = [
   },
 ];
 
+// Links like "/#how" also use <Link>: ScrollToHash (in App.jsx) scrolls to the section
 function FooterLink({ link }) {
-  // "href" is for links to a part of the landing page, like /#how
-  if (link.href) return <a href={link.href}>{link.label}</a>;
   return <Link to={link.to}>{link.label}</Link>;
 }
 

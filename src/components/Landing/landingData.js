@@ -13,7 +13,7 @@ export const PARTNER_LOGOS = [
   { name: "NBB", src: "/logos/nbb.png" },
   { name: "ila", src: "/logos/ila.png" },
   { name: "alsalam", src: "/logos/alsalam.png" },
-  { name: "stc", src: "/logos/stc.webp" },
+  { name: "stc", src: "/logos/stc.svg" },
   { name: "zain", src: "/logos/zain.jpeg" },
   { name: "batelco", src: "/logos/batelco.png" },
   { name: "ewa", src: "/logos/EWA.webp" },

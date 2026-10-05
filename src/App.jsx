@@ -11,6 +11,7 @@ import NotFound from "./components/NotFound/NotFound";
 // Auth + shared
 import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer"; // NEW
+import ScrollToHash from "./components/ScrollToHash/ScrollToHash";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import NoAccess from "./components/NoAccess/NoAccess";
 import AuthPage from "./components/Auth/AuthPage";
@@ -86,6 +87,7 @@ export default function App() {
   return (
     <div className="app">
       {showNav && <NavBar />}
+      <ScrollToHash />
 
       <Routes>
         {/* ================= HOME ================= */}

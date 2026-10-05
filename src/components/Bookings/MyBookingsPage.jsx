@@ -155,7 +155,7 @@ export default function MyBookingsPage() {
   if (pageStatus === "loading") {
     return (
       <main className="bookings-page">
-        <div className="bookings-container">
+        <div className="bookings-container bookings-container--list">
           <p>Loading your bookings...</p>
         </div>
       </main>
@@ -180,8 +180,7 @@ export default function MyBookingsPage() {
       <div className="bookings-container">
         <header className="bookings-header">
           <div>
-            <p className="booking-eyebrow">Your schedule</p>
-            <h1>My Bookings</h1>
+            <h1>My bookings</h1>
             <p>
               View, reschedule, or cancel your service bookings.
             </p>

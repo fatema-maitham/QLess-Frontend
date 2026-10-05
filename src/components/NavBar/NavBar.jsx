@@ -79,6 +79,9 @@ const NavBar = () => {
                 {role === ROLES.CUSTOMER && (
                   <>
                     <li>
+                      <NavLink to="/businesses" className={linkClass}>Browse</NavLink>
+                    </li>
+                    <li>
                       <NavLink to="/my-tickets" className={linkClass}>My Queues</NavLink>
                     </li>
                     <li>

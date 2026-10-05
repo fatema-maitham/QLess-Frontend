@@ -151,8 +151,18 @@ export default function StaffProfile() {
 
       <div className="pf2">
         <div className="pf-cover">
-          {profile.cover_image && <img src={profile.cover_image} alt="" />}
-          <svg className="pf-wave" viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">
+          <div className="pf-cover-acts">
+            {profile.cover_image && (
+              <button type="button" className="pf-trash" aria-label="Remove cover" title="Remove cover"
+                disabled={uploading} onClick={() => removeImage('cover_image', 'Your cover was removed.')}>
+                <TrashIcon />
+              </button>
+            )}
+            <label className="pf-icon-btn" title="Change cover" aria-label="Change cover">
+              <Svg color="#1B191A" size={17}><rect x="3" y="5" width="18" height="14" rx="3" /><circle cx="9" cy="10" r="1.6" /><path d="M21 15l-5-5-8 8" /></Svg>
+              <input type="file" accept="image/*" hidden onChange={handleCover} disabled={uploading} />
+            </label>
+          </div>          <svg className="pf-wave" viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">
             <rect width="1000" height="200" fill="#FCEBD3" />
             <path d="M0 140 C180 60 320 200 520 120 S860 40 1000 110 V200 H0Z" fill="#F9CA87" opacity=".45" />
             <path d="M0 170 C220 110 380 210 600 160 S880 120 1000 150 V200 H0Z" fill="#F8713A" opacity=".22" />

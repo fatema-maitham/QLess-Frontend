@@ -1,269 +1,201 @@
-import { useEffect, useState } from "react";
-import { PencilSimple, Plus, Tag, Trash } from "@phosphor-icons/react";
-import AdminTabs from "./AdminTabs";
-import {
-  createCategory,
-  deleteCategory,
-  getCategories,
-  updateCategory,
-} from "../../services/categoryService";
+import { useEffect, useRef, useState } from "react";
+import { useOutletContext } from "react-router";
+import { createCategory, deleteCategory, getCategories, updateCategory } from "../../services/categoryService";
+import { getAdminBusinesses } from "../../services/adminManageService";
+import { initial } from "../Owner/ownerSetup";
+import { SearchBox, matches } from "../AdminPanel/AdminParts";
+import { plural } from "./adminHelpers";
 import "./Admin.css";
 
 const EMPTY_FORM = { name: "", description: "" };
-
 const byName = (a, b) => a.name.localeCompare(b.name);
 
-// One category row: view, edit or delete (delete asks first)
-function CategoryCard({ category, busy, onSave, onRemove }) {
-  const [editing, setEditing] = useState(false);
-  const [confirming, setConfirming] = useState(false);
-  const [form, setForm] = useState({
-    name: category.name,
-    description: category.description || "",
-  });
-
-  function handleChange(event) {
-    setForm({ ...form, [event.target.name]: event.target.value });
-  }
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const saved = await onSave(category, form);
-    if (saved) setEditing(false);
-  }
-
-  if (editing) {
-    return (
-      <li className="ad-card">
-        <form className="ad-actions" onSubmit={handleSubmit}>
-          <label className="ad-field">
-            <span>Name</span>
-            <input
-              className="ad-input"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label className="ad-field">
-            <span>Description</span>
-            <input
-              className="ad-input"
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-            />
-          </label>
-          <div className="ad-actions__buttons">
-            <button type="submit" className="ad-btn ad-btn--primary" disabled={busy}>
-              Save
-            </button>
-            <button type="button" className="ad-btn" disabled={busy} onClick={() => setEditing(false)}>
-              Cancel
-            </button>
-          </div>
-        </form>
-      </li>
-    );
-  }
-
-  return (
-    <li className="ad-card">
-      <div className="ad-card__top">
-        <div>
-          <h2 className="ad-card__title">{category.name}</h2>
-          <p className="ad-card__sub">{category.description || "No description"}</p>
-        </div>
-      </div>
-
-      <div className="ad-actions__buttons">
-        {confirming ? (
-          <>
-            <span className="ad-confirm">
-              Delete this category? Its businesses stay, but lose their category.
-            </span>
-            <button
-              type="button"
-              className="ad-btn ad-btn--primary"
-              disabled={busy}
-              onClick={() => onRemove(category)}
-            >
-              Yes, delete
-            </button>
-            <button type="button" className="ad-btn" disabled={busy} onClick={() => setConfirming(false)}>
-              Cancel
-            </button>
-          </>
-        ) : (
-          <>
-            <button type="button" className="ad-btn" onClick={() => setEditing(true)}>
-              <PencilSimple size={16} /> Edit
-            </button>
-            <button type="button" className="ad-btn" onClick={() => setConfirming(true)}>
-              <Trash size={16} /> Delete
-            </button>
-          </>
-        )}
-      </div>
-    </li>
-  );
-}
-
 export default function AdminCategoriesPage() {
-  const [page, setPage] = useState({ status: "loading", list: [], error: "" });
+  const { toast } = useOutletContext();
+  const [list, setList] = useState(null);
+  const [businesses, setBusinesses] = useState([]);
+  const [error, setError] = useState("");
+  const [q, setQ] = useState("");
+  const [editing, setEditing] = useState(null); // null = closed, {} = new, category = edit
   const [form, setForm] = useState(EMPTY_FORM);
-  const [busyId, setBusyId] = useState(null);
-  const [actionError, setActionError] = useState("");
+  const [formError, setFormError] = useState("");
+  const [deleting, setDeleting] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const formDialog = useRef(null);
+  const deleteDialog = useRef(null);
 
   useEffect(() => {
     const controller = new AbortController();
-
     getCategories({ signal: controller.signal })
-      .then((list) => setPage({ status: "ready", list: [...list].sort(byName), error: "" }))
-      .catch((err) => {
-        if (err.name === "AbortError") return;
-        setPage({ status: "error", list: [], error: err.message });
-      });
+      .then((data) => { setList([...data].sort(byName)); setError(""); })
+      .catch((err) => { if (err.name !== "AbortError") setError(err.message); });
+
+    // Only used to count businesses per category, so a failure here is fine
+    getAdminBusinesses({ signal: controller.signal })
+      .then(setBusinesses)
+      .catch(() => { });
 
     return () => controller.abort();
   }, []);
 
-  function handleChange(event) {
-    setForm({ ...form, [event.target.name]: event.target.value });
+  // ---------- add / edit ----------
+  function openForm(category) {
+    setEditing(category || {});
+    setForm(category ? { name: category.name, description: category.description || "" } : EMPTY_FORM);
+    setFormError("");
+    formDialog.current?.showModal();
   }
 
-  async function handleCreate(event) {
+  function closeForm() {
+    formDialog.current?.close();
+    setEditing(null);
+  }
+
+  async function saveForm(event) {
     event.preventDefault();
-    setBusyId("new");
-    setActionError("");
-
+    const values = { name: form.name.trim(), description: form.description.trim() || null };
+    setBusy(true);
+    setFormError("");
     try {
-      const created = await createCategory({
-        name: form.name.trim(),
-        description: form.description.trim() || null,
-      });
-      setPage((prev) => ({ ...prev, list: [...prev.list, created].sort(byName) }));
-      setForm(EMPTY_FORM);
+      if (editing.id) {
+        const saved = await updateCategory(editing.id, values);
+        setList((prev) => prev.map((row) => (row.id === saved.id ? saved : row)).sort(byName));
+        toast(`${saved.name} was updated`);
+      } else {
+        const created = await createCategory(values);
+        setList((prev) => [...prev, created].sort(byName));
+        toast(`${created.name} was added`);
+      }
+      closeForm();
     } catch (err) {
-      setActionError(err.message);
+      setFormError(err.message);
     } finally {
-      setBusyId(null);
+      setBusy(false);
     }
   }
 
-  // Returns true when saved, so the card can close its form
-  async function save(category, values) {
-    setBusyId(category.id);
-    setActionError("");
-
-    try {
-      const saved = await updateCategory(category.id, {
-        name: values.name.trim(),
-        description: values.description.trim() || null,
-      });
-      setPage((prev) => ({
-        ...prev,
-        list: prev.list.map((row) => (row.id === saved.id ? saved : row)).sort(byName),
-      }));
-      return true;
-    } catch (err) {
-      setActionError(err.message);
-      return false;
-    } finally {
-      setBusyId(null);
-    }
+  // ---------- delete ----------
+  function askDelete(category) {
+    setDeleting(category);
+    deleteDialog.current?.showModal();
   }
 
-  async function remove(category) {
-    setBusyId(category.id);
-    setActionError("");
+  function closeDelete() {
+    deleteDialog.current?.close();
+    setDeleting(null);
+  }
 
+  async function confirmDelete(event) {
+    event.preventDefault();
+    const category = deleting;
+    setBusy(true);
     try {
       await deleteCategory(category.id);
-      setPage((prev) => ({ ...prev, list: prev.list.filter((row) => row.id !== category.id) }));
+      setList((prev) => prev.filter((row) => row.id !== category.id));
+      toast(`${category.name} was deleted`);
+      closeDelete();
     } catch (err) {
-      setActionError(err.message);
+      toast(err.message);
     } finally {
-      setBusyId(null);
+      setBusy(false);
     }
   }
 
-  const count = page.list.length;
+  if (error) return <div className="empty"><b>Couldn't load categories</b><p>{error}</p></div>;
+  if (!list) return null;
+
+  const countFor = (category) => businesses.filter((business) => business.category_id === category.id).length;
+  const shown = list.filter((category) => matches(`${category.name} ${category.description}`, q));
 
   return (
-    <main className="ad-page">
-      <header className="ad-head">
-        <p className="ad-eyebrow">Admin</p>
-        <h1 className="ad-title">Categories</h1>
-        <p className="ad-sub">The categories visitors use to filter businesses on the Browse page.</p>
-      </header>
-
-      <AdminTabs />
-
-      <form className="ad-filters" onSubmit={handleCreate}>
-        <label className="ad-field ad-field--inline">
-          <span>Name</span>
-          <input
-            className="ad-input"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="e.g. Banking"
-            required
-          />
-        </label>
-        <label className="ad-field ad-field--inline">
-          <span>Description</span>
-          <input
-            className="ad-input"
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            placeholder="Optional"
-          />
-        </label>
-        <button type="submit" className="ad-btn ad-btn--primary" disabled={busyId === "new"}>
-          <Plus size={16} /> Add category
+    <section className="am-page">
+      <div className="page-h">
+        <h1>Categories</h1>
+        <span className="sp" />
+        <SearchBox value={q} onChange={setQ} placeholder="Search categories" />
+        <button className="btn btn-primary btn-sm" type="button" onClick={() => openForm(null)}>
+          + Add category
         </button>
-      </form>
+      </div>
 
-      {actionError && (
-        <p className="ad-error" role="alert">
-          {actionError}
-        </p>
-      )}
-
-      {page.status === "loading" && <p className="ad-empty">Loading categories…</p>}
-
-      {page.status === "error" && (
-        <div className="ad-empty" role="alert">
-          <b>Could not load categories</b>
-          <p>{page.error}</p>
+      {shown.length ? (
+        <div className="list">
+          {shown.map((category) => {
+            const n = countFor(category);
+            return (
+              <div className="li am-li" key={category.id}>
+                <span className="ic">{initial(category.name)}</span>
+                <div>
+                  <b>{category.name}</b>
+                  <small>{category.description || "No description"}</small>
+                </div>
+                <span className={`st ${n ? "open" : "off"}`}>{plural(n, "business", "businesses")}</span>
+                <span className="am-acts">
+                  <button className="edit" type="button" onClick={() => openForm(category)}>Edit</button>
+                  <button className="no" type="button" onClick={() => askDelete(category)}>Delete</button>
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="empty">
+          <b>{q ? "Nothing matches your search" : "No categories yet"}</b>
+          <p>{q ? "Try another name." : "Add the first one so owners can pick it for their business."}</p>
         </div>
       )}
 
-      {page.status === "ready" && count === 0 && (
-        <div className="ad-empty">
-          <Tag size={32} weight="duotone" />
-          <b>No categories yet</b>
-          <p>Add the first one above.</p>
-        </div>
-      )}
+      {/* Add or edit */}
+      <dialog className="am-dlg" ref={formDialog} onClose={() => setEditing(null)}>
+        <form onSubmit={saveForm}>
+          <h2>{editing?.id ? `Edit ${editing.name}` : "Add a category"}</h2>
+          <p>Owners pick a category for their business, and visitors filter by it on Browse.</p>
+          {formError && <p className="form-error" role="alert">{formError}</p>}
+          <div className="am-fields">
+            <div className="f">
+              <label htmlFor="am-cat-name">Name</label>
+              <input
+                id="am-cat-name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="e.g. Banking"
+                required
+              />
+            </div>
+            <div className="f">
+              <label htmlFor="am-cat-desc">Description (optional)</label>
+              <input
+                id="am-cat-desc"
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                placeholder="e.g. Banks and money services"
+              />
+            </div>
+          </div>
+          <div className="fa">
+            <button className="btn btn-ghost" type="button" onClick={closeForm}>Cancel</button>
+            <button className="btn btn-primary" type="submit" disabled={busy || !form.name.trim()}>
+              {editing?.id ? "Save changes" : "Add category"}
+            </button>
+          </div>
+        </form>
+      </dialog>
 
-      {page.status === "ready" && count > 0 && (
-        <ul className="ad-list">
-          {page.list.map((category) => (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              busy={busyId === category.id}
-              onSave={save}
-              onRemove={remove}
-            />
-          ))}
-        </ul>
-      )}
-    </main>
+      {/* Delete */}
+      <dialog className="am-dlg" ref={deleteDialog} onClose={() => setDeleting(null)}>
+        <form onSubmit={confirmDelete}>
+          <h2>Delete {deleting?.name}?</h2>
+          <p>
+            {deleting && countFor(deleting)
+              ? `${plural(countFor(deleting), "business", "businesses")} will stay, but without a category until the owner picks a new one.`
+              : "No businesses use this category."}
+          </p>
+          <div className="fa">
+            <button className="btn btn-ghost" type="button" onClick={closeDelete}>Cancel</button>
+            <button className="btn btn-primary" type="submit" disabled={busy}>Delete category</button>
+          </div>
+        </form>
+      </dialog>
+    </section>
   );
 }

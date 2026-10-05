@@ -1,231 +1,183 @@
-import { useEffect, useState } from "react";
-import { ShieldCheck } from "@phosphor-icons/react";
-import AdminTabs from "./AdminTabs";
-import {
-  getSuspiciousActivity,
-  updateSuspiciousActivity,
-} from "../../services/adminService";
-import { formatDate, label } from "./adminHelpers";
+import { useEffect, useRef, useState } from "react";
+import { useOutletContext } from "react-router";
+import { getSuspiciousActivity, updateSuspiciousActivity } from "../../services/adminService";
+import { initial } from "../Owner/ownerSetup";
+import { SearchBox, Tabs, ago, matches, shortDate } from "../AdminPanel/AdminParts";
+import { label, plural } from "./adminHelpers";
 import "./Admin.css";
 
-const STATUS_TABS = [
-  { key: "open", label: "Open" },
-  { key: "reviewed", label: "Reviewed" },
-  { key: "dismissed", label: "Dismissed" },
-  { key: "", label: "All" },
-];
+const SEVERITY = {
+  high: { text: "High", cls: "bad" },
+  medium: { text: "Medium", cls: "warn" },
+  low: { text: "Low", cls: "off" },
+};
 
-const SEVERITIES = ["", "high", "medium", "low"];
+const DECISION = {
+  reviewed: { title: "Mark as reviewed", button: "Mark reviewed", done: "marked as reviewed" },
+  dismissed: { title: "Dismiss this flag", button: "Dismiss flag", done: "dismissed" },
+};
 
-// One flagged record, with buttons to review or dismiss it
-function ActivityCard({ item, busy, onDecide }) {
-  const [note, setNote] = useState("");
-  const isOpen = item.status === "open";
-
-  return (
-    <li className="ad-card">
-      <div className="ad-card__top">
-        <div>
-          <h2 className="ad-card__title">{label(item.activity_type)}</h2>
-          <p className="ad-card__sub">
-            {item.user_name} · {item.user_email}
-          </p>
-        </div>
-        <div className="ad-badges">
-          <span className={`ad-badge ad-badge--${item.severity}`}>{item.severity}</span>
-          <span className={`ad-badge ad-badge--${item.status}`}>{item.status}</span>
-        </div>
-      </div>
-
-      {item.description && <p>{item.description}</p>}
-
-      <dl className="ad-meta">
-        <div>
-          <dt>Flagged</dt>
-          <dd>{formatDate(item.created_at)}</dd>
-        </div>
-        <div>
-          <dt>Queue</dt>
-          <dd>{item.queue_name || "—"}</dd>
-        </div>
-        <div>
-          <dt>No-shows</dt>
-          <dd>{item.user_no_show_count ?? 0}</dd>
-        </div>
-        <div>
-          <dt>Restricted until</dt>
-          <dd>{formatDate(item.user_restricted_until)}</dd>
-        </div>
-        {!isOpen && (
-          <div>
-            <dt>Handled by</dt>
-            <dd>
-              {item.reviewer_name || "—"} · {formatDate(item.reviewed_at)}
-            </dd>
-          </div>
-        )}
-      </dl>
-
-      {isOpen && (
-        <div className="ad-actions">
-          <label className="ad-field">
-            <span>Note (optional)</span>
-            <input
-              className="ad-input"
-              value={note}
-              onChange={(event) => setNote(event.target.value)}
-              placeholder="Why you made this decision"
-              maxLength={300}
-            />
-          </label>
-          <div className="ad-actions__buttons">
-            <button
-              type="button"
-              className="ad-btn ad-btn--primary"
-              disabled={busy}
-              onClick={() => onDecide(item, "reviewed", note)}
-            >
-              Mark reviewed
-            </button>
-            <button
-              type="button"
-              className="ad-btn"
-              disabled={busy}
-              onClick={() => onDecide(item, "dismissed", note)}
-            >
-              Dismiss
-            </button>
-          </div>
-        </div>
-      )}
-    </li>
-  );
-}
+const stillRestricted = (item) =>
+  !!item.user_restricted_until && new Date(item.user_restricted_until) > new Date();
 
 export default function AdminSuspiciousPage() {
-  const [status, setStatus] = useState("open");
+  const { toast } = useOutletContext();
+  const [list, setList] = useState(null);
+  const [error, setError] = useState("");
+  const [tab, setTab] = useState("open");
   const [severity, setSeverity] = useState("");
-  const [page, setPage] = useState({ status: "loading", list: [], error: "" });
-  const [busyId, setBusyId] = useState(null);
-  const [actionError, setActionError] = useState("");
+  const [q, setQ] = useState("");
+  const [deciding, setDeciding] = useState(null); // { item, status }
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const dialog = useRef(null);
 
-  // Load again whenever a filter changes
   useEffect(() => {
     const controller = new AbortController();
-
-    getSuspiciousActivity({ status, severity, signal: controller.signal })
-      .then((list) => setPage({ status: "ready", list, error: "" }))
-      .catch((err) => {
-        if (err.name === "AbortError") return;
-        setPage({ status: "error", list: [], error: err.message });
-      });
-
+    getSuspiciousActivity({ signal: controller.signal })
+      .then((data) => { setList(data); setError(""); })
+      .catch((err) => { if (err.name !== "AbortError") setError(err.message); });
     return () => controller.abort();
-  }, [status, severity]);
+  }, []);
 
-  async function decide(item, newStatus, note) {
-    setBusyId(item.id);
-    setActionError("");
+  function openDecision(item, status) {
+    setDeciding({ item, status });
+    setNote("");
+    dialog.current?.showModal();
+  }
 
+  function closeDialog() {
+    dialog.current?.close();
+    setDeciding(null);
+  }
+
+  async function confirmDecision(event) {
+    event.preventDefault();
+    const { item, status } = deciding;
+    setBusy(true);
     try {
-      const saved = await updateSuspiciousActivity(item.id, {
-        status: newStatus,
-        note: note.trim(),
-      });
-
-      // Drop it from the list if it no longer matches the status tab
-      setPage((prev) => ({
-        ...prev,
-        list:
-          status && saved.status !== status
-            ? prev.list.filter((row) => row.id !== saved.id)
-            : prev.list.map((row) => (row.id === saved.id ? saved : row)),
-      }));
+      const saved = await updateSuspiciousActivity(item.id, { status, note: note.trim() });
+      setList((prev) => prev.map((row) => (row.id === saved.id ? { ...row, ...saved } : row)));
+      toast(`Flag for ${item.user_name} was ${DECISION[status].done}`);
+      closeDialog();
     } catch (err) {
-      setActionError(err.message);
+      toast(err.message);
     } finally {
-      setBusyId(null);
+      setBusy(false);
     }
   }
 
+  if (error) return <div className="empty"><b>Couldn't load flagged activity</b><p>{error}</p></div>;
+  if (!list) return null;
+
+  const bySeverity = list.filter((item) => !severity || item.severity === severity);
+  const count = (status) => bySeverity.filter((item) => item.status === status).length;
+  const tabs = [
+    { key: "open", label: "Open", count: count("open") },
+    { key: "reviewed", label: "Reviewed", count: count("reviewed") },
+    { key: "dismissed", label: "Dismissed", count: count("dismissed") },
+    { key: "all", label: "All", count: bySeverity.length },
+  ];
+
+  const shown = bySeverity
+    .filter((item) => tab === "all" || item.status === tab)
+    .filter((item) => matches(`${item.user_name} ${item.user_email} ${item.activity_type} ${item.queue_name}`, q));
+
+  function details(item) {
+    const parts = [item.user_email];
+    if (item.queue_name) parts.push(item.queue_name);
+    parts.push(plural(item.user_no_show_count ?? 0, "no-show"));
+    parts.push(`flagged ${ago(item.created_at)}`);
+    return parts.join(" · ");
+  }
+
   return (
-    <main className="ad-page">
-      <header className="ad-head">
-        <p className="ad-eyebrow">Admin</p>
-        <h1 className="ad-title">Suspicious activity</h1>
-        <p className="ad-sub">
-          Accounts flagged automatically for repeated no-shows or for leaving many queues in a short time.
-        </p>
-      </header>
-
-      <AdminTabs />
-
-      <div className="ad-filters">
-        <div className="ad-chips" role="group" aria-label="Filter by status">
-          {STATUS_TABS.map((tab) => (
-            <button
-              key={tab.key || "all"}
-              type="button"
-              className={`ad-chip ${status === tab.key ? "is-active" : ""}`}
-              aria-pressed={status === tab.key}
-              onClick={() => setStatus(tab.key)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <label className="ad-field ad-field--inline">
-          <span>Severity</span>
-          <select
-            className="ad-select"
-            value={severity}
-            onChange={(event) => setSeverity(event.target.value)}
-          >
-            {SEVERITIES.map((value) => (
-              <option key={value || "any"} value={value}>
-                {value ? label(value) : "Any"}
-              </option>
-            ))}
-          </select>
-        </label>
+    <section className="am-page">
+      <div className="page-h">
+        <h1>Suspicious activity</h1>
+        <span className="sp" />
+        <SearchBox value={q} onChange={setQ} placeholder="Search name or email" />
+        <select className="sel" aria-label="Filter by severity" value={severity} onChange={(e) => setSeverity(e.target.value)}>
+          <option value="">All severities</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
       </div>
 
-      {actionError && (
-        <p className="ad-error" role="alert">
-          {actionError}
-        </p>
-      )}
+      <Tabs tabs={tabs} active={tab} onChange={setTab} />
 
-      {page.status === "loading" && <p className="ad-empty">Loading flagged activity…</p>}
-
-      {page.status === "error" && (
-        <div className="ad-empty" role="alert">
-          <b>Could not load flagged activity</b>
-          <p>{page.error}</p>
+      {shown.length ? (
+        <div className="list">
+          {shown.map((item) => {
+            const sev = SEVERITY[item.severity] || SEVERITY.low;
+            const isOpen = item.status === "open";
+            return (
+              <div className={`li am-li am-li--top${isOpen ? "" : " off"}`} key={item.id}>
+                <span className="ic">{initial(item.user_name)}</span>
+                <div>
+                  <b>{item.user_name} <span className="am-reason">· {label(item.activity_type)}</span></b>
+                  <small>{details(item)}</small>
+                  {item.description && <p className="am-quote">{item.description}</p>}
+                  {stillRestricted(item) && (
+                    <p className="am-flag">Can't join queues until {shortDate(item.user_restricted_until)}</p>
+                  )}
+                  {!isOpen && (
+                    <small className="am-handled">
+                      {label(item.status)} by {item.reviewer_name || "an admin"} · {ago(item.reviewed_at)}
+                    </small>
+                  )}
+                </div>
+                <span className={`st ${sev.cls}`}>{sev.text}</span>
+                <span className="am-acts">
+                  {isOpen ? (
+                    <>
+                      <button className="ok" type="button" onClick={() => openDecision(item, "reviewed")}>Reviewed</button>
+                      <button className="mute" type="button" onClick={() => openDecision(item, "dismissed")}>Dismiss</button>
+                    </>
+                  ) : (
+                    <span className={`st ${item.status === "reviewed" ? "open" : "off"}`}>{label(item.status)}</span>
+                  )}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="empty">
+          <b>{q ? "Nothing matches your search" : tab === "open" ? "No open flags" : "Nothing here"}</b>
+          <p>
+            {q
+              ? "Try another name or email."
+              : "Accounts are flagged automatically for repeated no-shows or for leaving many queues quickly."}
+          </p>
         </div>
       )}
 
-      {page.status === "ready" && page.list.length === 0 && (
-        <div className="ad-empty">
-          <ShieldCheck size={32} weight="duotone" />
-          <b>Nothing here</b>
-          <p>No flagged activity matches these filters.</p>
-        </div>
-      )}
-
-      {page.status === "ready" && page.list.length > 0 && (
-        <ul className="ad-list">
-          {page.list.map((item) => (
-            <ActivityCard
-              key={item.id}
-              item={item}
-              busy={busyId === item.id}
-              onDecide={decide}
+      <dialog className="am-dlg" ref={dialog} onClose={() => setDeciding(null)}>
+        <form onSubmit={confirmDecision}>
+          <h2>{deciding && DECISION[deciding.status].title}</h2>
+          <p>
+            {deciding?.item.user_name} · {label(deciding?.item.activity_type)}. Your note is saved in the audit log.
+          </p>
+          <div className="f">
+            <label htmlFor="am-note">Note (optional)</label>
+            <textarea
+              id="am-note"
+              value={note}
+              maxLength={300}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Why you made this decision"
             />
-          ))}
-        </ul>
-      )}
-    </main>
+          </div>
+          <div className="fa">
+            <button className="btn btn-ghost" type="button" onClick={closeDialog}>Cancel</button>
+            <button className="btn btn-primary" type="submit" disabled={busy}>
+              {deciding && DECISION[deciding.status].button}
+            </button>
+          </div>
+        </form>
+      </dialog>
+    </section>
   );
 }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import {
-  ArrowLeft,
   ArrowRight,
   EnvelopeSimple,
   MapPin,
@@ -108,10 +107,17 @@ export default function BusinessDetailsPage() {
   return (
     <main className="dt">
       <div className="dt__container">
-        <Link className="dt__back" to="/businesses">
-          <ArrowLeft size={16} weight="bold" />
-          All places
-        </Link>
+        {/* Breadcrumbs (same as the branch page) */}
+        <nav aria-label="Breadcrumb">
+          <ol className="dt__crumbs">
+            <li>
+              <Link to="/businesses">All places</Link>
+            </li>
+            <li>
+              <span aria-current="page">{business.name}</span>
+            </li>
+          </ol>
+        </nav>
 
         {/* Header */}
         <header className="dt__header">

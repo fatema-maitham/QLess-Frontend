@@ -48,7 +48,7 @@
 /* overview: bars */
 .owner .am-split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .owner .am-card{background:var(--surface);border:1.5px solid var(--line);border-radius:24px;padding:22px 24px}
-.owner .am-card h3{margin:0 0 16px;font-size:16px;font-weight:800}
+.owner .am-card h3{margin:0 0 30px;font-size:16px;font-weight:800}
 .owner .am-meter{display:flex;flex-direction:column;gap:12px}
 .owner .am-meter div{display:grid;grid-template-columns:110px 1fr 40px;gap:12px;align-items:center;font-size:14px;font-weight:600}
 .owner .am-meter i{height:10px;border-radius:999px;background:var(--soft);position:relative;overflow:hidden}

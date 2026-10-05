@@ -40,6 +40,11 @@ import QueueSettingsPage from "./components/QueueSettings/QueueSettingsPage";
 
 // Staff
 import StaffQueues from "./components/Control/StaffQueues";
+import StaffLayout from "./components/Staff/StaffLayout";
+import StaffOverview from "./components/Staff/StaffOverview";
+import StaffBranch from "./components/Staff/StaffBranch";
+import StaffProfile from "./components/Staff/StaffProfile";
+import StaffHistory from "./components/Staff/StaffHistory";
 
 // Bookings
 import BranchBookingsPage from "./components/Bookings/BranchBookingsPage";
@@ -68,7 +73,8 @@ export default function App() {
 
   const showNav =
     !NO_NAV.includes(location.pathname) &&
-    !location.pathname.startsWith("/owner");
+    !location.pathname.startsWith("/owner") &&
+    !location.pathname.startsWith("/staff");
 
   // NEW: the landing page ("/") already has its own footer
   const showFooter = showNav;
@@ -265,14 +271,20 @@ export default function App() {
 
         {/* ================= STAFF ================= */}
 
-        <Route
+                <Route
           path="/staff"
           element={
             <ProtectedRoute roles={[ROLES.STAFF]}>
-              <StaffQueues />
+              <StaffLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<StaffOverview />} />
+          <Route path="queues" element={<StaffQueues />} />
+          <Route path="history" element={<StaffHistory />} />
+          <Route path="branch" element={<StaffBranch />} />
+          <Route path="profile" element={<StaffProfile />} />
+        </Route>
 
         {/* ================= BRANCH BOOKINGS ================= */}
 

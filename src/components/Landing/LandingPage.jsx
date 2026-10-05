@@ -35,11 +35,11 @@ import "./LandingPage.css";
 const INDUSTRIES = [
   { name: "Healthcare", icon: "healthcare" },
   { name: "Government", icon: "government" },
-  { name: "Banks", icon: "banks" },
+  { name: "Banking", icon: "banks" },
   { name: "Restaurants", icon: "restaurants" },
   { name: "Veterinary", icon: "veterinary" },
   { name: "Pharmacies", icon: "pharmacies" },
-  { name: "Salons and beauty", icon: "salons" },
+  { name: "Salons", icon: "salons" },
   { name: "Universities", icon: "universities" },
 ];
 
@@ -1274,7 +1274,7 @@ function Places({ reduced }) {
                     </span>
                   </div>
                   <p>{place.description}</p>
-                  <Link className="lp-card__link" to={`/businesses/${place.id}`}>
+                  <Link className="lp-card__link" to="/businesses">
                     Join queue <ArrowRight size={18} weight="bold" />
                   </Link>
                 </article>

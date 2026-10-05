@@ -1,11 +1,16 @@
 .bookings-page {
   min-height: 100vh;
-  padding: var(--space-12) var(--space-6);
 }
 
 .bookings-container {
-  width: min(1000px, 100%);
-  margin: 0 auto;
+  width: min(1000px, 100% - var(--gutter) * 2);
+  margin-inline: auto;
+  padding: var(--space-8) 0 var(--space-24);
+}
+
+/* My bookings: same width as the other customer list pages */
+.bookings-container--list {
+  width: min(760px, 100% - var(--gutter) * 2);
 }
 
 .booking-eyebrow {
@@ -27,8 +32,10 @@
 
 .bookings-header h1 {
   margin-bottom: var(--space-2);
-  font-size: var(--text-3xl);
+  font-size: var(--text-h2);
   font-weight: var(--weight-extrabold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
 }
 
 .bookings-header p {
@@ -200,24 +207,25 @@
   text-transform: capitalize;
 }
 
+/* Same colours as the ticket chips */
 .booking-status--pending {
-  background: rgba(181, 113, 0, 0.1);
-  color: #8a5700;
+  background: var(--color-tint);
+  color: var(--color-text);
 }
 
 .booking-status--confirmed {
-  background: rgba(0, 102, 204, 0.09);
-  color: #075985;
+  background: var(--color-accent);
+  color: var(--color-text);
 }
 
 .booking-status--completed {
-  background: rgba(6, 118, 71, 0.09);
-  color: #067647;
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 .booking-status--cancelled {
-  background: rgba(180, 35, 24, 0.08);
-  color: #b42318;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
 }
 
 .booking-card__details {
@@ -316,9 +324,6 @@
 }
 
 @media (max-width: 700px) {
-  .bookings-page {
-    padding: var(--space-8) var(--space-4);
-  }
 
   .bookings-header,
   .booking-form__footer {

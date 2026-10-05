@@ -1,4 +1,5 @@
 @import "./styles/tokens.css";
+@import "./styles/pages.css";
 
 /* ---------- Auth pages tokens (Maram) ---------- */
 :root {
@@ -130,6 +131,16 @@ textarea {
 .btn--outline {
   border-color: var(--color-text);
   color: var(--color-text);
+}
+
+.btn--secondary {
+  border-color: var(--color-border);
+  background: transparent;
+  color: var(--color-text);
+}
+
+.btn--secondary:hover {
+  border-color: var(--color-text);
 }
 
 .btn--outline:hover {

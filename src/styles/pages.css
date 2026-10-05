@@ -1,0 +1,137 @@
+/* =========================================================
+   Shared layout for every customer page
+   (Dashboard, Browse, My queues, My bookings, Favorites, Notifications)
+
+   <main className="page ...">
+     <div className="page__container">
+       <div className="page__narrow">        (list pages only)
+         <header className="page-head">
+           <div><h1>Title</h1><p>One line about the page</p></div>
+           (optional button on the right)
+         </header>
+         ...
+   ========================================================= */
+
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+/* Same width and same left edge on every page */
+.page .page__container {
+  width: min(var(--container-max), 100% - var(--gutter) * 2);
+  margin-inline: auto;
+  padding: var(--space-8) 0 var(--space-24);
+}
+
+/* Lists (queues, bookings, notifications) stay readable, but start
+   at the same left edge as everything else */
+.page .page__narrow {
+  max-width: 760px;
+}
+
+/* ---------- Title row ---------- */
+.page .page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  margin: 0 0 var(--space-8);
+  text-align: left;
+}
+
+.page .page-head h1 {
+  margin: 0;
+  font-size: var(--text-h2);
+  font-weight: var(--weight-extrabold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+.page .page-head p {
+  max-width: 60ch;
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-muted);
+}
+
+/* The first thing under the title never adds extra space */
+.page .page-head+* {
+  margin-top: 0;
+}
+
+/* Space under the tab buttons (My queues, Notifications) */
+.page [role="tablist"]~* {
+  margin-top: var(--space-6);
+}
+
+.page [role="tabpanel"]>* {
+  margin-top: 0;
+}
+
+/* ---------- Empty and error boxes (same everywhere) ---------- */
+.page .page-empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-12) var(--space-6);
+  border: 2px dashed var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  text-align: center;
+}
+
+.page .page-empty--small {
+  padding: var(--space-8) var(--space-6);
+}
+
+.page .page-empty h2,
+.page .page-empty h3 {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+}
+
+.page .page-empty p {
+  max-width: 44ch;
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.page .page-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+/* ---------- Loading rows (same everywhere) ---------- */
+.page .page-skeleton {
+  height: 96px;
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-bg) 50%, var(--color-surface) 75%);
+  background-size: 200% 100%;
+  animation: page-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes page-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page .page-skeleton {
+    animation: none;
+  }
+}

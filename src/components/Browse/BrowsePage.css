@@ -156,7 +156,7 @@
 
 /* ---------- Results ---------- */
 .browse__results {
-  padding: var(--space-10) 0 var(--space-24);
+  padding-top: var(--space-8);
 }
 
 .browse__count {
@@ -322,10 +322,6 @@
 
 /* ---------- Phone ---------- */
 @media (max-width: 600px) {
-  .browse__head {
-    padding-top: var(--space-10);
-  }
-
   .browse__search {
     padding-left: var(--space-4);
   }
@@ -334,9 +330,6 @@
     font-size: var(--text-base);
   }
 
-  .browse__results {
-    padding-bottom: var(--space-16);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

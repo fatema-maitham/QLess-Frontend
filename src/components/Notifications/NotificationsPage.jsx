@@ -79,7 +79,11 @@ export default function NotificationsPage() {
       .then((data) => setPage({ status: "ready", error: "", ...data }))
       .catch((err) => {
         if (err.name === "AbortError") return;
-        setPage((prev) => ({ ...prev, status: prev.status === "ready" ? "ready" : "error", error: err.message }));
+        setPage((prev) => ({
+          ...prev,
+          status: prev.status === "ready" ? "ready" : "error",
+          error: err.message,
+        }));
       });
   }, []);
 
@@ -123,90 +127,97 @@ export default function NotificationsPage() {
   ].filter((g) => g.items.length > 0);
 
   return (
-    <main className="nt">
-      <div className="nt__container">
-        <header className="nt-head">
-          <div>
-            <h1>Notifications</h1>
-            <p>{unreadCount ? `${unreadCount} unread` : "You're all caught up."}</p>
+    <main className="page nt">
+      <div className="page__container">
+        <div className="page__narrow">
+          <header className="page-head">
+            <div>
+              <h1>Notifications</h1>
+              <p>{unreadCount ? `${unreadCount} unread` : "You're all caught up."}</p>
+            </div>
+            {unreadCount > 0 && (
+              <button
+                type="button"
+                className="btn btn--outline nt-head__btn"
+                onClick={handleMarkAll}
+                disabled={busyId === "all"}
+              >
+                <Checks size={18} weight="bold" />
+                Mark all as read
+              </button>
+            )}
+          </header>
+
+          <div className="nt-tabs" role="tablist" aria-label="Filter notifications">
+            {TABS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={tab === key}
+                className="nt-tabs__tab"
+                onClick={() => setTab(key)}
+              >
+                {label}
+                {key === "unread" && unreadCount > 0 && <span className="nt-tabs__count">{unreadCount}</span>}
+              </button>
+            ))}
           </div>
-          {unreadCount > 0 && (
-            <button type="button" className="btn btn--outline nt-head__btn" onClick={handleMarkAll} disabled={busyId === "all"}>
-              <Checks size={18} weight="bold" />
-              Mark all as read
-            </button>
+
+          {actionError && (
+            <p className="nt-alert" role="alert">
+              {actionError}
+            </p>
           )}
-        </header>
 
-        <div className="nt-tabs" role="tablist" aria-label="Filter notifications">
-          {TABS.map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              role="tab"
-              aria-selected={tab === key}
-              className="nt-tabs__tab"
-              onClick={() => setTab(key)}
-            >
-              {label}
-              {key === "unread" && unreadCount > 0 && <span className="nt-tabs__count">{unreadCount}</span>}
-            </button>
-          ))}
+          {page.status === "loading" && (
+            <div aria-busy="true">
+              <div className="page-skeleton" />
+              <div className="page-skeleton" />
+              <div className="page-skeleton" />
+            </div>
+          )}
+
+          {page.status === "error" && (
+            <div className="page-empty" role="alert">
+              <h2>We couldn't load your notifications</h2>
+              <p>{page.error}. Please try again.</p>
+              <button type="button" className="btn btn--primary" onClick={() => load()}>
+                Try again
+              </button>
+            </div>
+          )}
+
+          {page.status === "ready" && list.length === 0 && (
+            <div className="page-empty">
+              <span className="page-empty__icon">
+                <BellSlash size={28} weight="duotone" />
+              </span>
+              <h2>{tab === "unread" ? "No unread notifications" : "No notifications yet"}</h2>
+              <p>We'll let you know when your turn is close, when you're called, and more.</p>
+            </div>
+          )}
+
+          {page.status === "ready" &&
+            groups.map((group) => (
+              <section key={group.key} className="nt-group" aria-labelledby={`nt-${group.key}`}>
+                <h2 id={`nt-${group.key}`} className="nt-group__title">
+                  {group.title}
+                </h2>
+                <ul className="nt-list">
+                  {group.items.map((item) => (
+                    <NotificationRow
+                      key={item.id}
+                      item={item}
+                      busy={busyId === item.id}
+                      onToggleRead={handleToggleRead}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </ul>
+              </section>
+            ))}
         </div>
-
-        {actionError && (
-          <p className="nt-alert" role="alert">
-            {actionError}
-          </p>
-        )}
-
-        {page.status === "loading" && (
-          <div aria-busy="true">
-            <div className="nt-skeleton" />
-            <div className="nt-skeleton" />
-            <div className="nt-skeleton" />
-          </div>
-        )}
-
-        {page.status === "error" && (
-          <div className="nt-empty" role="alert">
-            <h2>We couldn't load your notifications</h2>
-            <p>{page.error}. Please try again.</p>
-            <button type="button" className="btn btn--primary" onClick={() => load()}>
-              Try again
-            </button>
-          </div>
-        )}
-
-        {page.status === "ready" && list.length === 0 && (
-          <div className="nt-empty">
-            <span className="nt-empty__icon">
-              <BellSlash size={28} weight="duotone" />
-            </span>
-            <h2>{tab === "unread" ? "No unread notifications" : "No notifications yet"}</h2>
-            <p>We'll let you know when your turn is close, when you're called, and more.</p>
-          </div>
-        )}
-
-        {page.status === "ready" &&
-          groups.map((group) => (
-            <section key={group.key} className="nt-group" aria-labelledby={`nt-${group.key}`}>
-              <h2 id={`nt-${group.key}`} className="nt-group__title">
-                {group.title}
-              </h2>
-              <ul className="nt-list">
-                {group.items.map((item) => (
-                  <NotificationRow
-                    key={item.id}
-                    item={item}
-                    busy={busyId === item.id}
-                    onToggleRead={handleToggleRead}
-                    onDelete={handleDelete}
-                  />
-                ))}
-              </ul>
-            </section>
-          ))}
       </div>
     </main>
   );

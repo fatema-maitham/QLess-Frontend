@@ -16,7 +16,7 @@ const getScrollTop = () =>
     window.scrollY,
     document.documentElement.scrollTop,
     document.body.scrollTop,
-    document.getElementById("root")?.scrollTop || 0
+    document.getElementById("root")?.scrollTop || 0,
   );
 
 const NavBar = () => {
@@ -70,22 +70,36 @@ const NavBar = () => {
           {user ? (
             <>
               <ul className="qnav__links">
-                <li>
-                  <NavLink to={homeFor(user)} end className={linkClass}>
-                    Dashboard
-                  </NavLink>
-                </li>
+                {/* Customers reach their dashboard from the logo */}
+                {role !== ROLES.CUSTOMER && (
+                  <li>
+                    <NavLink to={homeFor(user)} end className={linkClass}>
+                      Dashboard
+                    </NavLink>
+                  </li>
+                )}
 
                 {role === ROLES.CUSTOMER && (
                   <>
                     <li>
-                      <NavLink to="/my-tickets" className={linkClass}>My Queues</NavLink>
+                      <NavLink to="/businesses" className={linkClass}>
+                        Browse
+                      </NavLink>
                     </li>
                     <li>
-                      <NavLink to="/my-bookings" className={linkClass}>My Bookings</NavLink>
+                      <NavLink to="/my-tickets" className={linkClass}>
+                        My Queues
+                      </NavLink>
                     </li>
                     <li>
-                      <NavLink to="/favorites" className={linkClass}>Favorites</NavLink>
+                      <NavLink to="/my-bookings" className={linkClass}>
+                        My Bookings
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/favorites" className={linkClass}>
+                        Favorites
+                      </NavLink>
                     </li>
                   </>
                 )}
@@ -93,10 +107,14 @@ const NavBar = () => {
                 {role === ROLES.ADMIN && (
                   <>
                     <li>
-                      <NavLink to="/admin/queues" className={linkClass}>Queues</NavLink>
+                      <NavLink to="/admin/queues" className={linkClass}>
+                        Queues
+                      </NavLink>
                     </li>
                     <li>
-                      <NavLink to="/admin/reviews" className={linkClass}>Reviews</NavLink>
+                      <NavLink to="/admin/reviews" className={linkClass}>
+                        Reviews
+                      </NavLink>
                     </li>
                     <li>
                       <NavLink to="/admin/suspicious-activity" className={linkClass}>
@@ -104,7 +122,9 @@ const NavBar = () => {
                       </NavLink>
                     </li>
                     <li>
-                      <NavLink to="/admin/categories" className={linkClass}>Categories</NavLink>
+                      <NavLink to="/admin/categories" className={linkClass}>
+                        Categories
+                      </NavLink>
                     </li>
                   </>
                 )}
@@ -129,19 +149,29 @@ const NavBar = () => {
             <>
               <ul className="qnav__links">
                 <li>
-                  <NavLink to="/" end className={linkClass}>Home</NavLink>
+                  <NavLink to="/" end className={linkClass}>
+                    Home
+                  </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/businesses" className={linkClass}>Businesses</NavLink>
+                  <NavLink to="/businesses" className={linkClass}>
+                    Businesses
+                  </NavLink>
                 </li>
                 <li>
-                  <a href="/#how" className="qnav__link">How it works</a>
+                  <a href="/#how" className="qnav__link">
+                    How it works
+                  </a>
                 </li>
               </ul>
 
               <div className="qnav__actions">
-                <Link to="/sign-in" className="qnav__btn qnav__btn--ghost">Sign In</Link>
-                <Link to="/sign-up" className="qnav__btn qnav__btn--primary">Sign Up</Link>
+                <Link to="/sign-in" className="qnav__btn qnav__btn--ghost">
+                  Sign In
+                </Link>
+                <Link to="/sign-up" className="qnav__btn qnav__btn--primary">
+                  Sign Up
+                </Link>
               </div>
             </>
           )}

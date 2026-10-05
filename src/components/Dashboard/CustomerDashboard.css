@@ -1,0 +1,307 @@
+/* =========================================================
+   Customer dashboard
+   Page layout comes from src/styles/pages.css,
+   the ticket, track and chips come from Ticket/Ticket.css
+   ========================================================= */
+
+.cd a {
+  text-decoration: none;
+}
+
+.cd h2,
+.cd h3,
+.cd p {
+  margin: 0;
+}
+
+.cd .cd-cta {
+  gap: var(--space-2);
+}
+
+.cd-banner {
+  margin-bottom: var(--space-6);
+}
+
+.cd-error {
+  margin-bottom: var(--space-6) !important;
+  padding: var(--space-3) var(--space-4);
+  border-left: 4px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+/* ---------- Numbers (look like the boxes on the ticket page) ---------- */
+.cd-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+
+.cd-stat {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition:
+    border-color var(--duration-fast),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.cd-stat:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.cd-stat__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.cd-stat__label svg {
+  color: var(--color-primary);
+}
+
+.cd-stat strong {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-extrabold);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Sections ---------- */
+.cd-section {
+  margin-top: var(--space-10);
+}
+
+.cd-section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.cd-section__head h2 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+}
+
+.cd .cd-section__head a {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+}
+
+.cd .cd-section__head a:hover {
+  text-decoration: underline;
+}
+
+.cd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--space-6);
+}
+
+/* ---------- Right now: ticket + place in line ---------- */
+.cd-now {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--space-6);
+}
+
+.cd .cd-now__ticket {
+  margin-top: 0;
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.cd .cd-now__ticket:hover {
+  transform: translateY(-2px);
+}
+
+.cd-now__ticket .tk-card__number {
+  font-size: clamp(4.5rem, 10vw, 6.5rem);
+}
+
+.cd .cd-now__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 0;
+}
+
+.cd-now__panel .tk-stats {
+  width: 100%;
+}
+
+.cd-now__panel>p {
+  margin-top: var(--space-2);
+}
+
+.cd .cd-now__btn {
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+/* space above the button when the panel is short */
+.cd-now__panel .tk-stats+.cd-now__btn,
+.cd-now__panel>p+.cd-now__btn {
+  margin-top: var(--space-6);
+}
+
+.cd-now+.tk-list {
+  max-width: 760px;
+}
+
+/* ---------- Rows (bookings, updates, favorites) ---------- */
+.cd-list,
+.cd-favs {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cd-favs {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.cd-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  height: 100%;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  transition: border-color var(--duration-fast);
+}
+
+.cd-item:hover {
+  border-color: var(--color-text);
+}
+
+.cd-item--fav {
+  align-items: center;
+}
+
+.cd-item__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.cd-item.is-unread .cd-item__icon {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.cd-item__text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 2px;
+  font-size: var(--text-sm);
+}
+
+.cd-item__text strong {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cd-item__text>span {
+  color: var(--color-text-muted);
+}
+
+.cd-item__text .cd-item__meta {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.cd-item__arrow {
+  flex: none;
+  color: var(--color-primary);
+}
+
+.cd-fav__logo {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  font-weight: var(--weight-extrabold);
+}
+
+.cd-fav__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* loading */
+.cd .cd-skeleton-big {
+  height: 320px;
+}
+
+/* ---------- Smaller screens ---------- */
+@media (max-width: 960px) {
+
+  .cd-stats,
+  .cd-favs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cd-now,
+  .cd-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cd-now__ticket {
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 560px) {
+  .cd .cd-cta {
+    width: 100%;
+  }
+
+  .cd-favs {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .cd-stat,
+  .cd .cd-now__ticket {
+    transition: none;
+  }
+
+  .cd-stat:hover,
+  .cd .cd-now__ticket:hover {
+    transform: none;
+  }
+}

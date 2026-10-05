@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { signIn } from '../../services/authService';
 import { UserContext } from '../../contexts/UserContext';
 import { MailIcon, LockIcon, EyeIcon, AlertIcon } from '../Auth/AuthIcons';
@@ -25,6 +25,7 @@ const SignInForm = ({ onSwitch }) => {
   const handleSubmit = async (evt) => {
     evt.preventDefault();
     if (!isValid) return;
+
     setLoading(true);
     try {
       const user = await signIn({ email, password });
@@ -95,6 +96,9 @@ const SignInForm = ({ onSwitch }) => {
         <label className="auth-check">
           <input type="checkbox" defaultChecked /> Keep me signed in
         </label>
+        <Link to="/forgot-password" className="auth-forgot">
+          Forgot password?
+        </Link>
       </div>
 
       <button type="submit" className="auth-btn" disabled={!isValid || loading}>
@@ -103,7 +107,9 @@ const SignInForm = ({ onSwitch }) => {
 
       <p className="auth-mobile-switch">
         New to QLess?{' '}
-        <button type="button" onClick={onSwitch}>Create an account</button>
+        <button type="button" onClick={onSwitch}>
+          Create an account
+        </button>
       </p>
     </form>
   );

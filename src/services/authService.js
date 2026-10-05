@@ -43,7 +43,31 @@ const signUp = (formData) => handleAuth(`${BASE_URL}/sign-up`, formData);
 // { email, password }
 const signIn = (formData) => handleAuth(`${BASE_URL}/sign-in`, formData);
 
+// Forgot / reset password: these don't sign you in, they just return a message
+const postJson = async (url, body) => {
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new Error('Cannot reach the server. Is the backend running?');
+  }
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(readError(data));
+  return data;
+};
+
+const forgotPassword = (email) => postJson(`${BASE_URL}/forgot-password`, { email });
+
+const resetPassword = (token, newPassword) =>
+  postJson(`${BASE_URL}/reset-password`, { token, new_password: newPassword });
+
 export {
   signUp,
   signIn,
+  forgotPassword,
+  resetPassword,
 };

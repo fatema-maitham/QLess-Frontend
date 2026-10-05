@@ -62,7 +62,7 @@ export default function AdminOverview() {
   const first = (user?.name || 'Admin').split(' ')[0];
 
   return (
-    <section className="am-page">
+    <section className="am-page am-overview">
       <div className="am-hero">
         <div>
           <p className="am-eyebrow">ADMIN</p>

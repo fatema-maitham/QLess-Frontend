@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { signIn } from '../../services/authService';
 import { UserContext } from '../../contexts/UserContext';
 import { MailIcon, LockIcon, EyeIcon, AlertIcon } from '../Auth/AuthIcons';
@@ -7,6 +7,7 @@ import { homeFor } from '../../lib/helpers/roles';
 
 const SignInForm = ({ onSwitch }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setUser } = useContext(UserContext);
   const [showPw, setShowPw] = useState(false);
   const [message, setMessage] = useState('');
@@ -28,7 +29,7 @@ const SignInForm = ({ onSwitch }) => {
     try {
       const user = await signIn({ email, password });
       setUser(user);
-      navigate(homeFor(user));
+      navigate(location.state?.from || homeFor(user), { replace: true });
     } catch (err) {
       setMessage(err.message);
     } finally {

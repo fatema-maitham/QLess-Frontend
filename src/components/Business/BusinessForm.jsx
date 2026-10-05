@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import BusinessLayout from './BusinessLayout';
-import {getMyBusiness, createAndSubmit, updateBusiness, getCategories,} from '../../services/ownerBusinessService';
+import { getMyBusiness, createAndSubmit, updateBusiness, getCategories, } from '../../services/ownerBusinessService';
 import { uploadImage } from '../../services/cloudinaryService';
 
 const EMPTY = { name: '', category_id: '', description: '', phone: '', email: '', image: '' };
@@ -44,7 +44,7 @@ const BusinessForm = () => {
     load();
   }, []);
 
-    const handleChange = (evt) => {
+  const handleChange = (evt) => {
     setMessage('');
     const { name, value } = evt.target;
     if (name === 'image') setLogoOk(false);
@@ -123,7 +123,7 @@ const BusinessForm = () => {
       <form className="ob-form" onSubmit={handleSubmit} noValidate>
         {message && <div className="ob-alert" role="alert">{message}</div>}
 
-                <div className="ob-field">
+        <div className="ob-field">
           <span className="ob-label">Business logo <em>(optional)</em></span>
 
           <label
@@ -181,7 +181,7 @@ const BusinessForm = () => {
             />
           </label>
 
-          
+
         </div>
 
         <div className="ob-two">
@@ -196,7 +196,7 @@ const BusinessForm = () => {
             <label htmlFor="category_id">Category</label>
             <div className="ob-inp">
               <svg className="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A827B" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
-              <select id="category_id" name="category_id" value={formData.category_id} onChange={handleChange}>
+              <select id="category_id" name="category_id" value={formData.category_id} onChange={handleChange} required>
                 <option value="">Choose a category</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
@@ -239,13 +239,13 @@ const BusinessForm = () => {
 
         <div className="ob-submit">
           <button className="ob-btn ob-btn-primary" type="submit" disabled={saving || uploading}>            {saving
-              ? 'Sending…'
-              : !isEdit ? 'Send for approval' : canResubmit ? 'Send again for approval' : 'Save changes'}
+            ? 'Sending…'
+            : !isEdit ? 'Send for approval' : canResubmit ? 'Send again for approval' : 'Save changes'}
             {!saving && (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
             )}
           </button>
-          
+
         </div>
       </form>
     </BusinessLayout>

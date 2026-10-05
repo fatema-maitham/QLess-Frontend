@@ -67,9 +67,9 @@ export default function MyTicketsPage() {
 
   return (
     <main className="tk">
-      <div className="tk__container tk__container--narrow">
+      <div className="tk__container tk__container--list">
         <header className="tk-head">
-          <h1>My tickets</h1>
+          <h1>My queues</h1>
           <p>Your places in line, and the queues you joined before.</p>
 
           {noShow && noShow.state !== "ok" && (

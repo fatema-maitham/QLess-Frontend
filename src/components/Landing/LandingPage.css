@@ -220,8 +220,8 @@
 }
 
 .lp-hero__title {
-  max-width: 15ch;
-  font-size: clamp(3rem, 7.2vw, 6rem);
+  max-width: 14ch;
+  font-size: clamp(3.75rem, 9.5vw, 8.5rem);
   font-weight: var(--weight-extrabold);
   line-height: 1.02;
   letter-spacing: -0.045em;
@@ -235,7 +235,7 @@
 
 .lp-hero__text {
   max-width: 52ch;
-  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  font-size: clamp(1.125rem, 1.8vw, 1.5rem);
   line-height: 1.65;
   color: var(--color-text-muted);
 }
@@ -1326,6 +1326,31 @@
   font-weight: var(--weight-extrabold);
 }
 
+/* real QLess "Q" icon inside the phone tiles */
+.lp-ph__head i,
+.lp-ph__ntf i {
+  background: var(--color-bg);
+}
+
+.lp-ph__head i img,
+.lp-ph__ntf i img {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+}
+
+/* QLess logo in the phone status bar */
+.lp-ph__logo {
+  display: block;
+  width: auto;
+  height: 14px;
+}
+
+/* lock screen is dark: show the logo in white */
+.lp-ph.is-dark .lp-ph__logo {
+  filter: brightness(0) invert(1);
+}
+
 .lp-ph__head b {
   display: block;
   font-size: var(--text-sm);
@@ -1803,24 +1828,57 @@ button.lp-ph__btn:active {
   margin-top: var(--space-24);
 }
 
+/* reviews move in one line (like the logo strip) */
 .lp-reviews {
-  columns: 3 300px;
-  column-gap: var(--space-6);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 
-.lp-review-wrap {
-  margin-bottom: var(--space-6);
-  break-inside: avoid;
+.lp-reviews__track {
+  display: flex;
+  align-items: stretch;
+  width: max-content;
+  margin: 0;
+  padding: var(--space-2) 0;
+  list-style: none;
+  animation: lp-marquee-left 60s linear infinite;
+}
+
+.lp-reviews:hover .lp-reviews__track {
+  animation-play-state: paused;
+}
+
+.lp-review-item {
+  display: flex;
+  flex: none;
+  width: 380px;
+  margin-right: var(--space-6);
 }
 
 .lp-review {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: var(--space-4);
   margin: 0;
   padding: var(--space-8);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
+}
+
+/* quote mark on the left, stars on the right */
+.lp-review__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.lp-review__stars {
+  font-size: var(--text-lg);
+  letter-spacing: 2px;
+  line-height: 1;
+  color: var(--color-primary);
 }
 
 .lp-review__mark {
@@ -1837,15 +1895,9 @@ button.lp-ph__btn:active {
   line-height: 1.7;
 }
 
-.lp-review mark {
-  padding-inline: 2px;
-  background: linear-gradient(transparent 55%, var(--color-accent) 55%);
-  font-weight: var(--weight-bold);
-  color: inherit;
-}
-
 .lp-review figcaption {
   display: flex;
+  margin-top: auto;
   flex-direction: column;
   font-size: var(--text-sm);
 }
@@ -2535,7 +2587,7 @@ button.lp-ph__btn:active {
   }
 
   .lp-hero__title {
-    font-size: clamp(2.5rem, 12vw, 3.25rem);
+    font-size: clamp(3rem, 14vw, 4.25rem);
   }
 
   .lp-hero__text {
@@ -2579,6 +2631,10 @@ button.lp-ph__btn:active {
 
   .lp-review {
     padding: var(--space-6);
+  }
+
+  .lp-review-item {
+    width: 290px;
   }
 
   .lp-values {
@@ -2673,5 +2729,493 @@ button.lp-ph__btn:active {
 
   .lp-logo[aria-hidden="true"] {
     display: none;
+  }
+
+  .lp-reviews {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .lp-review-item[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+/* =========================================================
+   Take a ticket · A day without a waiting room · Wait less
+   ========================================================= */
+
+.qm-wrap {
+  width: min(var(--container-max), calc(100% - var(--gutter) * 2));
+  margin-inline: auto;
+}
+
+.qm-eyebrow {
+  margin: 0 0 16px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.qm-h2 {
+  margin: 0;
+  font-size: clamp(2.6rem, 5.5vw, 5.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+.qm-h2 span {
+  color: var(--color-primary);
+}
+
+.qm-text {
+  max-width: 40ch;
+  margin-top: 22px;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.qm-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   Take a ticket (magnetic button + printer)
+   ========================================================= */
+.qm-printer {
+  padding-block: clamp(6rem, 12vw, 10rem);
+  background: var(--color-bg);
+}
+
+.qm-printer__layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(3rem, 8vw, 7rem);
+  align-items: center;
+}
+
+/* magnetic button: follows the mouse a little */
+.qm-magnet {
+  --mx: 0px;
+  --my: 0px;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 36px;
+  padding: 18px 32px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transform: translate(var(--mx), var(--my));
+  transition: transform 250ms var(--ease-out), box-shadow 250ms;
+}
+
+.qm-magnet:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.qm-magnet:active {
+  transform: translate(var(--mx), var(--my)) scale(0.96);
+}
+
+.qm-magnet:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.qm-magnet svg,
+.qm-magnet__label {
+  position: relative;
+}
+
+.qm-magnet__ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 45%);
+  pointer-events: none;
+  animation: qm-ripple 700ms var(--ease-out) forwards;
+}
+
+.qm-machine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qm-machine__body {
+  position: relative;
+  z-index: 2;
+  width: min(340px, 100%);
+  padding: 28px 28px 22px;
+  border-radius: 32px 32px 18px 18px;
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-lg);
+}
+
+.qm-machine__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-weight: 800;
+}
+
+.qm-machine__screen {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--color-inverse-tint);
+  font-size: 0.8rem;
+  color: var(--color-text-inverse-muted);
+}
+
+.qm-machine__screen b {
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+}
+
+.qm-machine__slot {
+  height: 10px;
+  margin-top: 22px;
+  border-radius: var(--radius-full);
+  background: #000;
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 60%);
+}
+
+.qm-machine__out {
+  position: relative;
+  z-index: 1;
+  width: min(280px, 86%);
+  min-height: 280px;
+  margin-top: -6px;
+  filter: drop-shadow(0 18px 30px rgb(0 0 0 / 14%));
+}
+
+/* paper ticket with a wavy torn bottom edge */
+.qm-ticket {
+  padding: 30px 22px 34px;
+  background: var(--color-bg);
+  -webkit-mask: radial-gradient(circle 7px at 50% 100%, #0000 98%, #000) 50% 0 / 20px 100% repeat-x;
+  mask: radial-gradient(circle 7px at 50% 100%, #0000 98%, #000) 50% 0 / 20px 100% repeat-x;
+  animation: qm-print 1100ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.qm-ticket small {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.qm-ticket strong {
+  display: block;
+  margin: 8px 0 18px;
+  font-size: 4.5rem;
+  line-height: 1;
+  letter-spacing: -0.07em;
+  color: var(--color-primary);
+}
+
+.qm-ticket__line {
+  margin-bottom: 16px;
+  border-top: 2px dashed var(--color-border);
+}
+
+.qm-ticket__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.qm-ticket__stats b {
+  display: block;
+  font-size: 1.15rem;
+}
+
+/* =========================================================
+   A whole day without a waiting room (horizontal scroll)
+   ========================================================= */
+.qm-h {
+  --h-shift: 0px;
+  position: relative;
+  height: 400vh;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.qm-h__sticky {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 48px;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.qm-h__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+}
+
+.qm-h__total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: clamp(3rem, 6vw, 5rem);
+  color: var(--color-primary);
+}
+
+.qm-h__total small {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.qm-h__track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  padding-inline: max(var(--gutter), calc((100vw - var(--container-max)) / 2));
+  transform: translateX(var(--h-shift));
+  will-change: transform;
+}
+
+.qm-h__card {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: clamp(260px, 30vw, 380px);
+  min-height: 300px;
+  padding: 30px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 28px;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-sm);
+  opacity: 0.6;
+  transform: rotate(var(--tilt)) scale(0.94);
+  transition:
+    transform 600ms var(--ease-out),
+    opacity 600ms,
+    background-color 600ms;
+}
+
+.qm-h__card.is-on {
+  border-color: transparent;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  opacity: 1;
+  transform: none;
+}
+
+.qm-h__time {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.qm-h__card h3 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.qm-h__card p {
+  margin: 0;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.qm-h__saved {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-tint);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.qm-h__bar {
+  display: block;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--color-border-subtle);
+}
+
+.qm-h__bar i {
+  display: block;
+  height: 100%;
+  background: var(--color-primary);
+  transform: scaleX(var(--h-progress, 1));
+  transform-origin: left center;
+}
+
+/* rolling numbers used by the day section */
+.qm-odo {
+  display: inline-flex;
+  height: 1em;
+  overflow: hidden;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+.qm-odo__col {
+  display: block;
+  height: 1em;
+  overflow: hidden;
+}
+
+.qm-odo__strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--n) * -10%));
+  transition: transform 650ms cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+
+.qm-odo__strip span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+/* ---------- animations for these sections ---------- */
+@keyframes qm-ripple {
+  to {
+    opacity: 0;
+    transform: scale(18);
+  }
+}
+
+@keyframes qm-print {
+  0% {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-30px);
+  }
+
+  70% {
+    clip-path: inset(0 0 0 0);
+    transform: translateY(6px);
+  }
+
+  100% {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+  }
+}
+
+/* ---------- tablet ---------- */
+@media (max-width: 900px) {
+  .qm-printer__layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* horizontal day becomes a normal swipe row */
+  .qm-h {
+    height: auto;
+  }
+
+  .qm-h__sticky {
+    position: relative;
+    min-height: auto;
+    padding-block: 90px;
+  }
+
+  .qm-h__total {
+    align-items: flex-start;
+  }
+
+  .qm-h__track {
+    width: auto;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    scroll-snap-type: x mandatory;
+    transform: none;
+  }
+
+  .qm-h__card {
+    scroll-snap-align: center;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- phone ---------- */
+@media (max-width: 600px) {
+  .qm-ticket strong {
+    font-size: 3.5rem;
+  }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .qm-h {
+    height: auto;
+  }
+
+  .qm-h__sticky {
+    position: relative;
+    min-height: auto;
+    padding-block: 90px;
+  }
+
+  .qm-h__track {
+    width: auto;
+    overflow-x: auto;
+    transform: none;
+  }
+
+  .qm-h__card,
+  .qm-magnet {
+    opacity: 1;
+    transform: none;
+  }
+
+  .qm-ticket,
+  .qm-magnet__ripple {
+    animation: none;
+  }
+
+  .qm-odo__strip {
+    transition: none;
   }
 }

@@ -91,6 +91,20 @@ export default function StaffProfile() {
       setUploading(false);
     }
   }
+
+
+    async function removeImage(field, text) {
+    setUploading(true);
+    setMessage({ type: '', text: '' });
+    try {
+      applyUpdate(await updateMe({ [field]: null }));
+      setMessage({ type: 'ok', text });
+    } catch (err) {
+      setMessage({ type: 'bad', text: err.message });
+    } finally {
+      setUploading(false);
+    }
+  }
   
 
   async function saveDetails(evt) {

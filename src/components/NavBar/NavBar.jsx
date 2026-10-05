@@ -155,13 +155,13 @@ const NavBar = () => {
                 </li>
                 <li>
                   <NavLink to="/businesses" className={linkClass}>
-                    Businesses
+                    Browse
                   </NavLink>
                 </li>
                 <li>
-                  <a href="/#how" className="qnav__link">
+                  <Link to="/#how" className="qnav__link">
                     How it works
-                  </a>
+                  </Link>
                 </li>
               </ul>
 

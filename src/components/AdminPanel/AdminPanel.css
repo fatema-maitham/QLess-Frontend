@@ -178,7 +178,7 @@
   .owner .main > .content:has(.am-overview) {
     height: 100% !important;
     box-sizing: border-box;
-    padding-bottom: 28px !important;
+    padding-bottom: 50px !important;
   }
 
   .owner .am-overview {

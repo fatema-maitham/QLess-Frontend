@@ -1,173 +1,162 @@
-import { useEffect, useState } from "react";
-import { ChatCircleText, Star, Trash } from "@phosphor-icons/react";
-import AdminTabs from "./AdminTabs";
+import { useEffect, useRef, useState } from "react";
+import { useOutletContext } from "react-router";
 import { getAdminReviews } from "../../services/adminService";
 import { deleteReview } from "../../services/reviewService";
-import { formatDate } from "./adminHelpers";
+import { initial } from "../Owner/ownerSetup";
+import { SearchBox, Tabs, ago, matches } from "../AdminPanel/AdminParts";
+import { Kpi, MeterCard, Stars } from "./AdminBits";
 import "./Admin.css";
 
-const RATINGS = ["", "5", "4", "3", "2", "1"];
+// Which tab a rating belongs to
+const GROUPS = {
+  positive: (rating) => rating >= 4,
+  mixed: (rating) => rating === 3,
+  negative: (rating) => rating <= 2,
+};
 
-function Stars({ rating }) {
-  return (
-    <span className="ad-stars" role="img" aria-label={`${rating} out of 5 stars`}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <Star key={n} size={16} weight={n <= rating ? "fill" : "regular"} aria-hidden="true" />
-      ))}
-    </span>
-  );
-}
-
-// One review, with a two-step remove button
-function ReviewCard({ review, busy, onRemove }) {
-  const [confirming, setConfirming] = useState(false);
-
-  return (
-    <li className="ad-card">
-      <div className="ad-card__top">
-        <div>
-          <h2 className="ad-card__title">{review.business_name}</h2>
-          <p className="ad-card__sub">
-            by {review.author_name} · {formatDate(review.created_at)}
-          </p>
-        </div>
-        <Stars rating={review.rating} />
-      </div>
-
-      <p>{review.comment || <em>No comment, rating only.</em>}</p>
-
-      <div className="ad-actions__buttons">
-        {confirming ? (
-          <>
-            <span className="ad-confirm">Remove this review for everyone?</span>
-            <button
-              type="button"
-              className="ad-btn ad-btn--primary"
-              disabled={busy}
-              onClick={() => onRemove(review)}
-            >
-              Yes, remove
-            </button>
-            <button
-              type="button"
-              className="ad-btn"
-              disabled={busy}
-              onClick={() => setConfirming(false)}
-            >
-              Cancel
-            </button>
-          </>
-        ) : (
-          <button type="button" className="ad-btn" onClick={() => setConfirming(true)}>
-            <Trash size={16} /> Remove
-          </button>
-        )}
-      </div>
-    </li>
-  );
-}
+const average = (reviews) =>
+  reviews.length ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length : 0;
 
 export default function AdminReviewsPage() {
-  const [rating, setRating] = useState("");
-  const [page, setPage] = useState({ status: "loading", list: [], error: "" });
-  const [busyId, setBusyId] = useState(null);
-  const [actionError, setActionError] = useState("");
+  const { toast } = useOutletContext();
+  const [list, setList] = useState(null);
+  const [error, setError] = useState("");
+  const [tab, setTab] = useState("all");
+  const [q, setQ] = useState("");
+  const [removing, setRemoving] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const dialog = useRef(null);
 
   useEffect(() => {
     const controller = new AbortController();
-
-    getAdminReviews({ rating, signal: controller.signal })
-      .then((list) => setPage({ status: "ready", list, error: "" }))
-      .catch((err) => {
-        if (err.name === "AbortError") return;
-        setPage({ status: "error", list: [], error: err.message });
-      });
-
+    getAdminReviews({ signal: controller.signal })
+      .then((data) => { setList(data); setError(""); })
+      .catch((err) => { if (err.name !== "AbortError") setError(err.message); });
     return () => controller.abort();
-  }, [rating]);
+  }, []);
 
-  async function remove(review) {
-    setBusyId(review.id);
-    setActionError("");
+  function askRemove(review) {
+    setRemoving(review);
+    dialog.current?.showModal();
+  }
 
+  function closeDialog() {
+    dialog.current?.close();
+    setRemoving(null);
+  }
+
+  async function confirmRemove(event) {
+    event.preventDefault();
+    const review = removing;
+    setBusy(true);
     try {
       await deleteReview(review.id);
-      setPage((prev) => ({ ...prev, list: prev.list.filter((row) => row.id !== review.id) }));
+      setList((prev) => prev.filter((row) => row.id !== review.id));
+      toast(`Review by ${review.author_name} was removed`);
+      closeDialog();
     } catch (err) {
-      setActionError(err.message);
+      toast(err.message);
     } finally {
-      setBusyId(null);
+      setBusy(false);
     }
   }
 
-  const count = page.list.length;
+  if (error) return <div className="empty"><b>Couldn't load reviews</b><p>{error}</p></div>;
+  if (!list) return null;
+
+  const count = (group) => list.filter((review) => GROUPS[group](review.rating)).length;
+  const tabs = [
+    { key: "all", label: "All", count: list.length },
+    { key: "positive", label: "4–5 stars", count: count("positive") },
+    { key: "mixed", label: "3 stars", count: count("mixed") },
+    { key: "negative", label: "1–2 stars", count: count("negative") },
+  ];
+
+  const shown = list
+    .filter((review) => tab === "all" || GROUPS[tab](review.rating))
+    .filter((review) => matches(`${review.business_name} ${review.author_name} ${review.comment}`, q));
+
+  // Businesses with the lowest average (at least one review), worst first
+  const byBusiness = {};
+  list.forEach((review) => {
+    (byBusiness[review.business_name] ||= []).push(review);
+  });
+  const lowest = Object.entries(byBusiness)
+    .map(([name, reviews]) => ({ name, avg: average(reviews), n: reviews.length }))
+    .sort((a, b) => a.avg - b.avg || b.n - a.n)
+    .slice(0, 5)
+    .map((row) => ({
+      label: row.name,
+      value: row.avg,
+      shown: `${row.avg.toFixed(1)} ★`,
+      color: row.avg >= 4 ? "#2F6B37" : row.avg >= 3 ? "#F7C98B" : undefined,
+    }));
+
+  const avg = average(list);
+  const positive = list.length ? Math.round((count("positive") / list.length) * 100) : 0;
 
   return (
-    <main className="ad-page">
-      <header className="ad-head">
-        <p className="ad-eyebrow">Admin</p>
-        <h1 className="ad-title">Reviews</h1>
-        <p className="ad-sub">All customer reviews, newest first. Remove any that are inappropriate.</p>
-      </header>
-
-      <AdminTabs />
-
-      <div className="ad-filters">
-        <span className="ad-updated">
-          {page.status === "ready" && `${count} ${count === 1 ? "review" : "reviews"}`}
-        </span>
-
-        <label className="ad-field ad-field--inline">
-          <span>Rating</span>
-          <select
-            className="ad-select"
-            value={rating}
-            onChange={(event) => setRating(event.target.value)}
-          >
-            {RATINGS.map((value) => (
-              <option key={value || "any"} value={value}>
-                {value ? `${value} stars` : "Any"}
-              </option>
-            ))}
-          </select>
-        </label>
+    <section className="am-page">
+      <div className="page-h">
+        <h1>Reviews</h1>
+        <span className="sp" />
+        <SearchBox value={q} onChange={setQ} placeholder="Search reviews" />
       </div>
 
-      {actionError && (
-        <p className="ad-error" role="alert">
-          {actionError}
-        </p>
-      )}
+      <div className="am-kpis">
+        <Kpi icon="reviews" value={list.length ? `${avg.toFixed(1)} ★` : "—"} label="Average rating" note="out of 5" />
+        <Kpi icon="overview" value={list.length} label="Reviews" note="newest first below" />
+        <Kpi icon="users" value={`${positive}%`} label="Happy visitors" note="gave 4 or 5 stars" />
+        <Kpi icon="suspicious" value={count("negative")} label="Low ratings" note={count("negative") ? "worth a look" : "nothing to check"} />
+      </div>
 
-      {page.status === "loading" && <p className="ad-empty">Loading reviews…</p>}
+      <div className="am-gap">
+        <MeterCard title="Average rating by business (lowest first)" rows={lowest} total={5} empty="No reviews yet." />
+      </div>
 
-      {page.status === "error" && (
-        <div className="ad-empty" role="alert">
-          <b>Could not load reviews</b>
-          <p>{page.error}</p>
-        </div>
-      )}
+      <Tabs tabs={tabs} active={tab} onChange={setTab} />
 
-      {page.status === "ready" && count === 0 && (
-        <div className="ad-empty">
-          <ChatCircleText size={32} weight="duotone" />
-          <b>No reviews</b>
-          <p>No reviews match this filter.</p>
-        </div>
-      )}
-
-      {page.status === "ready" && count > 0 && (
-        <ul className="ad-list">
-          {page.list.map((review) => (
-            <ReviewCard
-              key={review.id}
-              review={review}
-              busy={busyId === review.id}
-              onRemove={remove}
-            />
+      {shown.length ? (
+        <div className="list">
+          {shown.map((review) => (
+            <div className="li am-li am-li--top" key={review.id}>
+              <span className="ic">{initial(review.author_name)}</span>
+              <div>
+                <b>{review.business_name}</b>
+                <small>by {review.author_name} · {ago(review.created_at)}</small>
+                <p className={`am-quote${review.comment ? "" : " none"}`}>
+                  {review.comment || "No comment, rating only."}
+                </p>
+              </div>
+              <Stars rating={review.rating} />
+              <span className="am-acts">
+                <button className="no" type="button" onClick={() => askRemove(review)}>
+                  Remove
+                </button>
+              </span>
+            </div>
           ))}
-        </ul>
+        </div>
+      ) : (
+        <div className="empty">
+          <b>{q ? "Nothing matches your search" : "No reviews here"}</b>
+          <p>{q ? "Try another business, name or word." : "Reviews show up here when visitors rate a business."}</p>
+        </div>
       )}
-    </main>
+
+      <dialog className="am-dlg" ref={dialog} onClose={() => setRemoving(null)}>
+        <form onSubmit={confirmRemove}>
+          <h2>Remove this review?</h2>
+          <p>
+            The review by <b>{removing?.author_name}</b> for <b>{removing?.business_name}</b> will be deleted for
+            everyone, and the author gets a notification. This can't be undone.
+          </p>
+          <div className="fa">
+            <button className="btn btn-ghost" type="button" onClick={closeDialog}>Cancel</button>
+            <button className="btn btn-primary" type="submit" disabled={busy}>Remove review</button>
+          </div>
+        </form>
+      </dialog>
+    </section>
   );
 }

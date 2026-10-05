@@ -3,6 +3,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import CreativeQLessSections from "./CreativeQLessSections";
 import MoreQLessSections from "./MoreQLessSections";
+import ExtraQLessSections from "./ExtraQLessSections";
 import {
 
   ArrowRight,
@@ -347,7 +348,7 @@ function useScrollFrame(update, enabled) {
 
     update();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
 
     window.addEventListener("resize", onScroll);
 
@@ -355,8 +356,7 @@ function useScrollFrame(update, enabled) {
 
     return () => {
 
-      window.removeEventListener("scroll", onScroll);
-
+      document.addEventListener("scroll", onScroll, { capture: true, passive: true });
       window.removeEventListener("resize", onScroll);
 
       cancelAnimationFrame(frame);
@@ -2728,8 +2728,7 @@ export default function LandingPage() {
     <main className="lp">
 
       <Hero reduced={reduced} />
-      import CreativeQLessSections from "./CreativeQLessSections";
-      import MoreQLessSections from "./MoreQLessSections";
+
       <LogoStrip />
 
       <ScrollStory />
@@ -2742,6 +2741,7 @@ export default function LandingPage() {
 
       <CreativeQLessSections />
       <MoreQLessSections />
+      <ExtraQLessSections />
       <Values />
 
       <Numbers reduced={reduced} />

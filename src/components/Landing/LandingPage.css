@@ -4038,13 +4038,13 @@ button.lp-ph__btn:active {
   }
 
   to {
-    transform: translateX(-35%);
+    transform: translateX(-50%);
   }
 }
 
 @keyframes ql-new-marquee-right {
   from {
-    transform: translateX(-35%);
+    transform: translateX(-50%);
   }
 
   to {

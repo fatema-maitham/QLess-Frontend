@@ -44,7 +44,7 @@ function useScrollProgress(ref, callback) {
 
     update();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
     window.addEventListener("resize", onScroll);
 
     return () => {
@@ -87,7 +87,7 @@ function LineToTicket() {
 
     update();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
     window.addEventListener("resize", onScroll);
 
     return () => {
@@ -258,7 +258,7 @@ function TwentyMinutes() {
 
     update();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
     window.addEventListener("resize", onScroll);
 
     return () => {
@@ -374,7 +374,7 @@ function BeforeAfterQLess() {
 
     update();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
     window.addEventListener("resize", onScroll);
 
     return () => {
@@ -530,7 +530,7 @@ function QueueJourney() {
 
     update();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
     window.addEventListener("resize", onScroll);
 
     return () => {
@@ -682,7 +682,7 @@ function NotificationStory() {
 
     update();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
     window.addEventListener("resize", onScroll);
 
     return () => {

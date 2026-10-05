@@ -1,0 +1,806 @@
+/* =========================================================
+   QLess — extra sections (ExtraQLessSections.jsx)
+   ========================================================= */
+
+.qx-wrap {
+  width: min(var(--container-max), calc(100% - var(--gutter) * 2));
+  margin-inline: auto;
+}
+
+.qx-eyebrow {
+  margin: 0 0 16px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.qx-h2 {
+  margin: 0;
+  font-size: clamp(2.6rem, 5.5vw, 5.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+.qx-h2 span {
+  color: var(--color-primary);
+}
+
+.qx-text {
+  max-width: 40ch;
+  margin-top: 22px;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.qx-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.qx-layout {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: clamp(3rem, 7vw, 6rem);
+  align-items: center;
+}
+
+/* =========================================================
+   1. Crowd → Queue
+   ========================================================= */
+.qx-crowd {
+  padding-block: clamp(6rem, 12vw, 10rem);
+  background: var(--color-surface);
+}
+
+.qx-switch {
+  display: inline-flex;
+  margin-top: 32px;
+  padding: 5px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+}
+
+.qx-switch button {
+  padding: 10px 18px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  font: inherit;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color 300ms, color 300ms;
+}
+
+.qx-switch button[aria-pressed="true"] {
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
+.qx-switch button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.qx-stage {
+  position: relative;
+  aspect-ratio: 6 / 4;
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 28px;
+  background: var(--color-bg);
+}
+
+.qx-stage__label {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  left: 50%;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  transform: translateX(-50%);
+}
+
+.qx-dot {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-text);
+  color: transparent;
+  font-size: 0.8rem;
+  font-weight: 800;
+  transform: translate(-50%, -50%) rotate(var(--r));
+  animation: qx-jostle 1.4s ease-in-out var(--delay) infinite alternate;
+  transition:
+    top 900ms var(--ease-out) var(--delay),
+    left 900ms var(--ease-out) var(--delay),
+    width 600ms var(--ease-out) var(--delay),
+    height 600ms var(--ease-out) var(--delay),
+    border-radius 600ms var(--delay),
+    background-color 600ms var(--delay),
+    color 400ms var(--delay),
+    box-shadow 600ms var(--delay),
+    transform 900ms var(--ease-out) var(--delay);
+}
+
+.qx-dot.is-you {
+  background: var(--color-primary);
+}
+
+.qx-dot.is-you::after {
+  content: "You";
+  position: absolute;
+  top: -24px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.qx-stage.is-ordered .qx-dot {
+  top: var(--oy);
+  left: var(--ox);
+  width: 13%;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  transform: translate(-50%, -50%);
+  animation: none;
+}
+
+.qx-stage.is-ordered .qx-dot.is-you {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: none;
+}
+
+/* =========================================================
+   2. Scroll fill text
+   ========================================================= */
+.qx-fill {
+  --p: 0;
+  position: relative;
+  height: 260vh;
+  background: var(--color-bg);
+}
+
+.qx-fill__sticky {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.qx-fill__line {
+  --line: clamp(0, calc(var(--p) * 3.4 - var(--i)), 1);
+  display: block;
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 10rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.065em;
+  background: linear-gradient(90deg,
+      var(--color-primary) 50%,
+      color-mix(in srgb, var(--color-text) 12%, transparent) 50%);
+  background-size: 200% 100%;
+  background-position: calc(100% - var(--line) * 100%) 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.qx-fill__line:nth-child(2) {
+  text-align: right;
+}
+
+.qx-fill__line:nth-child(3) {
+  text-align: center;
+}
+
+.qx-fill__note {
+  max-width: 44ch;
+  margin: 40px auto 0;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* =========================================================
+   3. Swipe deck
+   ========================================================= */
+.qx-swipe {
+  padding-block: clamp(6rem, 12vw, 10rem);
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
+.qx-swipe .qx-text {
+  color: var(--color-text-inverse-muted);
+}
+
+.qx-swipe .qx-eyebrow {
+  color: var(--color-accent);
+}
+
+.qx-tally {
+  display: flex;
+  gap: 28px;
+  margin-top: 32px;
+}
+
+.qx-tally span {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  color: var(--color-text-inverse-muted);
+}
+
+.qx-tally b {
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.qx-deck {
+  position: relative;
+  width: min(340px, 100%);
+  height: 400px;
+  margin-inline: auto;
+}
+
+.qx-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px;
+  border-radius: 28px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(calc(var(--i) * 16px)) scale(calc(1 - var(--i) * 0.05));
+  transform-origin: center bottom;
+  user-select: none;
+  transition: transform 350ms var(--ease-out), opacity 350ms;
+}
+
+.qx-card.is-top {
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.qx-card.is-top:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.qx-card.is-dragging {
+  cursor: grabbing;
+  transition: none;
+}
+
+.qx-card small {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.qx-card strong {
+  font-size: 5rem;
+  line-height: 1;
+  letter-spacing: -0.07em;
+  color: var(--color-primary);
+}
+
+.qx-card__person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--color-surface);
+  font-size: 0.9rem;
+}
+
+.qx-card__avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  font-weight: 800;
+}
+
+.qx-card__person span:last-child {
+  margin-left: auto;
+  color: var(--color-text-muted);
+}
+
+.qx-card__hint {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.qx-card__stamp {
+  position: absolute;
+  top: 26px;
+  padding: 6px 12px;
+  border: 3px solid;
+  border-radius: 10px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+}
+
+.qx-card__stamp--serve {
+  right: 24px;
+  color: var(--color-primary);
+  transform: rotate(-12deg);
+}
+
+.qx-card__stamp--skip {
+  left: 24px;
+  color: var(--color-text-muted);
+  transform: rotate(12deg);
+}
+
+.qx-deck__actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 48px;
+}
+
+.qx-round {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border: 2px solid var(--color-inverse-tint);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-inverse);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 200ms var(--ease-out), background-color 200ms;
+}
+
+.qx-round:hover {
+  transform: translateY(-2px);
+}
+
+.qx-round--serve {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.qx-round:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   4. Orbit
+   ========================================================= */
+.qx-orbit-section {
+  overflow: hidden;
+  padding-block: clamp(6rem, 12vw, 10rem);
+  background: var(--color-bg);
+}
+
+.qx-orbit {
+  --size: min(560px, 86vw);
+  position: relative;
+  width: var(--size);
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
+
+.qx-orbit__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  margin: calc(var(--r) * -1) 0 0 calc(var(--r) * -1);
+  border: 1px dashed var(--color-border);
+  border-radius: 50%;
+  animation: qx-spin var(--speed) linear infinite var(--dir);
+}
+
+.qx-orbit__item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: rotate(var(--a)) translateX(var(--r)) rotate(calc(var(--a) * -1));
+}
+
+/* spins the other way so the label always stays upright */
+.qx-orbit__chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px 7px 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-md);
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  translate: -50% -50%;
+  animation: qx-spin var(--speed) linear infinite var(--cdir);
+}
+
+.qx-orbit__chip i {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.qx-orbit:hover .qx-orbit__ring,
+.qx-orbit:hover .qx-orbit__chip {
+  animation-play-state: paused;
+}
+
+.qx-orbit__core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 100px;
+  height: 100px;
+  margin: -50px 0 0 -50px;
+  border-radius: 30px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 2.6rem;
+  font-weight: 900;
+  box-shadow: var(--shadow-lg);
+}
+
+.qx-orbit__core::before,
+.qx-orbit__core::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--color-primary);
+  border-radius: inherit;
+  animation: qx-core 2.4s ease-out infinite;
+}
+
+.qx-orbit__core::after {
+  animation-delay: 1.2s;
+}
+
+/* =========================================================
+   5. Chat bubbles
+   ========================================================= */
+.qx-chat {
+  padding-block: clamp(6rem, 12vw, 10rem);
+  background: var(--color-accent);
+}
+
+.qx-chat .qx-text {
+  color: var(--color-text);
+  opacity: 0.8;
+}
+
+.qx-replay {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  padding: 12px 22px;
+  border: 2px solid var(--color-text);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.qx-replay:hover {
+  background: var(--color-text);
+  color: var(--color-text-inverse);
+}
+
+.qx-phone {
+  width: min(360px, 100%);
+  height: 620px;
+  margin-inline: auto;
+  padding: 10px;
+  border-radius: 48px;
+  background: var(--color-surface-inverse);
+  box-shadow: var(--shadow-lg);
+}
+
+.qx-phone__screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 39px;
+  background: var(--color-bg);
+}
+
+.qx-phone__top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 38px 16px 14px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.qx-phone__top i {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-style: normal;
+  font-weight: 900;
+}
+
+.qx-phone__top small {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.qx-thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.qx-bubble {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  animation: qx-pop 450ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+.qx-bubble--q {
+  align-self: flex-start;
+  border-bottom-left-radius: 6px;
+  background: var(--color-surface);
+  transform-origin: bottom left;
+}
+
+.qx-bubble--me {
+  align-self: flex-end;
+  border-bottom-right-radius: 6px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  transform-origin: bottom right;
+}
+
+.qx-typing {
+  align-self: flex-start;
+  display: flex;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  border-bottom-left-radius: 6px;
+  background: var(--color-surface);
+  animation: qx-pop 300ms var(--ease-out) both;
+}
+
+.qx-typing i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  animation: qx-bounce 1s ease-in-out infinite;
+}
+
+.qx-typing i:nth-child(2) {
+  animation-delay: 150ms;
+}
+
+.qx-typing i:nth-child(3) {
+  animation-delay: 300ms;
+}
+
+.qx-phone__input {
+  margin: 0 12px 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* =========================================================
+   Animations
+   ========================================================= */
+@keyframes qx-jostle {
+  to {
+    translate: 3px -4px;
+  }
+}
+
+@keyframes qx-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes qx-core {
+  from {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+@keyframes qx-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes qx-bounce {
+
+  0%,
+  60%,
+  100% {
+    transform: none;
+  }
+
+  30% {
+    transform: translateY(-5px);
+  }
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+@media (max-width: 900px) {
+  .qx-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .qx-fill {
+    height: 200vh;
+  }
+}
+
+/* =========================================================
+   Phone
+   ========================================================= */
+@media (max-width: 600px) {
+  .qx-dot {
+    width: 24px;
+    height: 24px;
+  }
+
+  .qx-stage.is-ordered .qx-dot {
+    height: 30px;
+    font-size: 0.62rem;
+  }
+
+  .qx-fill__line,
+  .qx-fill__line:nth-child(2),
+  .qx-fill__line:nth-child(3) {
+    text-align: left;
+  }
+
+  /* orbit: icons only on small screens */
+  .qx-orbit__chip {
+    padding: 6px;
+  }
+
+  .qx-orbit__chip span {
+    display: none;
+  }
+
+  .qx-orbit__core {
+    width: 76px;
+    height: 76px;
+    margin: -38px 0 0 -38px;
+    border-radius: 22px;
+    font-size: 2rem;
+  }
+
+  .qx-card strong {
+    font-size: 4rem;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .qx-fill {
+    height: auto;
+    padding-block: 6rem;
+  }
+
+  .qx-fill__sticky {
+    position: relative;
+    min-height: auto;
+  }
+
+  .qx-fill__line {
+    --line: 1;
+  }
+
+  .qx-dot,
+  .qx-orbit__ring,
+  .qx-orbit__chip,
+  .qx-orbit__core::before,
+  .qx-orbit__core::after,
+  .qx-bubble,
+  .qx-typing,
+  .qx-typing i {
+    animation: none;
+  }
+
+  .qx-dot,
+  .qx-card {
+    transition: none;
+  }
+}

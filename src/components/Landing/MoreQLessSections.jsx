@@ -467,7 +467,7 @@ function DayAcrossTown({ reduced }) {
     };
 
     update();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
     window.addEventListener("resize", onScroll);
 
     return () => {

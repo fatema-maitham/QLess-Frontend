@@ -21,27 +21,46 @@ import logo from "../../assets/qless-logo.png";
 import qIcon from "../../assets/Q.png";
 import {
   PARTNER_LOGOS,
-  REVIEWS,
   STEPS,
   FEATURES,
   VALUES,
   STATS,
-  PLACES,
   FAQS,
 } from "./landingData";
+import {
+  getBusinesses,
+  getBusinessBranches,
+  getBusinessReviews,
+} from "../../services/businessService";
+import { getCategories } from "../../services/categoryService";
+import { getBranchQueues } from "../../services/branchService";
 import "./LandingPage.css";
 
-// The 8 industries shown on the landing page (icon names match ColorIcon.jsx)
-const INDUSTRIES = [
-  { name: "Healthcare", icon: "healthcare" },
-  { name: "Government", icon: "government" },
-  { name: "Banking", icon: "banks" },
-  { name: "Restaurants", icon: "restaurants" },
-  { name: "Veterinary", icon: "veterinary" },
-  { name: "Pharmacies", icon: "pharmacies" },
-  { name: "Salons", icon: "salons" },
-  { name: "Universities", icon: "universities" },
+// Picks a ColorIcon for a real category name (e.g. "Banking" -> banks)
+const CATEGORY_ICONS = [
+  ["bank", "banks"],
+  ["health", "healthcare"],
+  ["clinic", "healthcare"],
+  ["hospital", "healthcare"],
+  ["pharma", "pharmacies"],
+  ["gov", "government"],
+  ["telecom", "telecom"],
+  ["restaurant", "restaurants"],
+  ["cafe", "restaurants"],
+  ["salon", "salons"],
+  ["beauty", "salons"],
+  ["vet", "veterinary"],
+  ["univers", "universities"],
+  ["lab", "labs"],
+  ["post", "post"],
+  ["util", "utilities"],
 ];
+
+function iconFor(name = "") {
+  const key = name.toLowerCase();
+  const match = CATEGORY_ICONS.find(([word]) => key.includes(word));
+  return match ? match[1] : "buildings";
+}
 
 // Simple line icons for the Features cards (names match landingData.js)
 const FEATURE_ICONS = {
@@ -231,6 +250,108 @@ function useCountUp(target, start, reduced, duration = 1800) {
   }, [start, target, reduced, duration]);
 
   return value;
+}
+
+/*
+  Real data for the landing page, all from public API routes:
+  GET /businesses, GET /categories,
+  GET /businesses/:id/branches, GET /branches/:id/queues,
+  GET /businesses/:id/reviews
+*/
+const MAX_BUSINESSES = 20;
+
+function useLandingData() {
+  const [data, setData] = useState({
+    status: "loading",
+    places: [],
+    categories: [],
+    reviews: [],
+    stats: null,
+  });
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    async function load() {
+      try {
+        const [businesses, categories] = await Promise.all([
+          getBusinesses({ signal }),
+          getCategories({ signal }).catch(() => []),
+        ]);
+
+        // branches, queues and reviews for each business
+        const details = await Promise.all(
+          businesses.slice(0, MAX_BUSINESSES).map(async (business) => {
+            const [branches, reviewData] = await Promise.all([
+              getBusinessBranches(business.id, { signal }).catch(() => []),
+              getBusinessReviews(business.id, { signal }).catch(() => null),
+            ]);
+
+            const queueLists = await Promise.all(
+              branches.map((branch) =>
+                getBranchQueues(branch.id, { signal }).catch(() => [])
+              )
+            );
+            const queues = queueLists.flat();
+
+            return {
+              ...business,
+              branchCount: branches.length,
+              waiting: queues.reduce((sum, queue) => sum + (queue.waiting_count || 0), 0),
+              openQueues: queues.filter((queue) => queue.status === "open").length,
+              rating: reviewData?.average_rating ?? null,
+              reviewList: (reviewData?.reviews || []).map((review) => ({
+                ...review,
+                businessName: business.name,
+              })),
+            };
+          })
+        );
+
+        const reviews = details
+          .flatMap((business) => business.reviewList)
+          .filter((review) => review.comment && review.comment.trim())
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .slice(0, 10);
+
+        const stats = [
+          { value: businesses.length, suffix: "", label: "businesses on QLess" },
+          {
+            value: details.reduce((sum, business) => sum + business.branchCount, 0),
+            suffix: "",
+            label: "branches with live queues",
+          },
+          {
+            value: details.reduce((sum, business) => sum + business.openQueues, 0),
+            suffix: "",
+            label: "queues open right now",
+          },
+          {
+            value: details.reduce((sum, business) => sum + business.waiting, 0),
+            suffix: "",
+            label: "people waiting right now",
+          },
+        ];
+
+        setData({
+          status: "ready",
+          places: details.slice(0, 6),
+          categories,
+          reviews,
+          stats,
+        });
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        setData((prev) => ({ ...prev, status: "error" }));
+      }
+    }
+
+    load();
+    return () => controller.abort();
+  }, []);
+
+  return data;
 }
 
 // Stacking cards: as the next card slides over a card,
@@ -1111,6 +1232,8 @@ function LogoStrip() {
 }
 
 function ReviewCard({ review, hidden }) {
+  const stars = Math.max(0, Math.min(5, review.rating || 0));
+
   return (
     <li className="lp-review-item" aria-hidden={hidden ? "true" : undefined}>
       <figure className="lp-review">
@@ -1118,42 +1241,37 @@ function ReviewCard({ review, hidden }) {
           <span className="lp-review__mark" aria-hidden="true">
             “
           </span>
-          <span className="lp-review__stars" role="img" aria-label="5 out of 5 stars">
-            ★★★★★
+          <span className="lp-review__stars" role="img" aria-label={`${stars} out of 5 stars`}>
+            {"★".repeat(stars)}
+            <span className="lp-review__stars-off">{"★".repeat(5 - stars)}</span>
           </span>
         </div>
-        <blockquote>
-          {review.before}
-          {review.highlight}
-          {review.after}
-        </blockquote>
+        <blockquote>{review.comment}</blockquote>
         <figcaption>
-          <strong>{review.name}</strong>
-          <span>{review.place}</span>
+          <strong>{review.author_name || "Visitor"}</strong>
+          <span>{review.businessName}</span>
         </figcaption>
       </figure>
     </li>
   );
 }
 
-// Reviews move slowly in one line, like the logo strip.
+// Real reviews move slowly in one line, like the logo strip.
 // The list is shown twice so the loop has no gap. Hover to pause.
-function Reviews() {
+function Reviews({ reviews }) {
   return (
     <section className="lp-section" aria-labelledby="reviews-title">
       <div className="lp-container">
-        <SectionHead id="reviews-title" eyebrow="Reviews" title="Happy businesses, happy visitors">
-          <span className="lp-sample">Sample</span>
-        </SectionHead>
+        <SectionHead id="reviews-title" eyebrow="Reviews" title="What visitors say" />
       </div>
 
       <div className="lp-reviews">
         <ul className="lp-reviews__track">
-          {[...REVIEWS, ...REVIEWS].map((review, i) => (
+          {[...reviews, ...reviews].map((review, i) => (
             <ReviewCard
-              key={`${review.name}-${i}`}
+              key={`${review.id}-${i}`}
               review={review}
-              hidden={i >= REVIEWS.length}
+              hidden={i >= reviews.length}
             />
           ))}
         </ul>
@@ -1166,7 +1284,7 @@ function Reviews() {
    8. Industries
    ========================================================= */
 
-function Industries() {
+function Industries({ categories }) {
   return (
     <section className="lp-section lp-section--tight" aria-labelledby="industries-title">
       <div className="lp-container">
@@ -1178,14 +1296,11 @@ function Industries() {
         />
 
         <ul className="lp-inds lp-stagger">
-          {INDUSTRIES.map((industry) => (
-            <Reveal as="li" key={industry.name}>
-              <Link
-                className="lp-ind"
-                to={`/businesses?category=${encodeURIComponent(industry.name)}`}
-              >
-                <ColorIcon name={industry.icon} size={64} />
-                <span className="lp-ind__name">{industry.name}</span>
+          {categories.map((category) => (
+            <Reveal as="li" key={category.id}>
+              <Link className="lp-ind" to={`/businesses?category_id=${category.id}`}>
+                <ColorIcon name={iconFor(category.name)} size={64} />
+                <span className="lp-ind__name">{category.name}</span>
               </Link>
             </Reveal>
           ))}
@@ -1193,7 +1308,7 @@ function Industries() {
 
         <div className="lp-more">
           <Link className="btn btn--outline" to="/businesses">
-            See all industries <ArrowRight size={18} weight="bold" />
+            See all businesses <ArrowRight size={18} weight="bold" />
           </Link>
         </div>
       </div>
@@ -1205,32 +1320,7 @@ function Industries() {
    9. Places
    ========================================================= */
 
-// Makes the "waiting" numbers move a little, like a live queue
-function useLiveWaiting(places, reduced) {
-  const [waiting, setWaiting] = useState(() => places.map((place) => place.waiting));
-
-  useEffect(() => {
-    if (reduced || places.length === 0) return;
-    const id = setInterval(() => {
-      setWaiting((prev) => {
-        const next = [...prev];
-        const i = Math.floor(Math.random() * next.length);
-        const change = Math.random() < 0.5 ? -1 : 1;
-        next[i] = Math.max(1, next[i] + change);
-        return next;
-      });
-    }, 2600);
-    return () => clearInterval(id);
-  }, [places.length, reduced]);
-
-  return waiting;
-}
-
-function Places({ reduced }) {
-  // Later: replace PLACES with data from GET /api/businesses
-  const places = PLACES;
-  const waiting = useLiveWaiting(places, reduced);
-
+function Places({ places, status }) {
   return (
     <section className="lp-section lp-places" aria-labelledby="places-title">
       <div className="lp-container">
@@ -1246,35 +1336,45 @@ function Places({ reduced }) {
           </Link>
         </Reveal>
 
-        {places.length === 0 ? (
+        {status === "loading" && <div className="lp-cards--loading" aria-busy="true" />}
+
+        {status !== "loading" && places.length === 0 && (
           <div className="lp-message">
             <h3>No places yet</h3>
             <p>Businesses appear here once they're approved. Check back soon.</p>
           </div>
-        ) : (
+        )}
+
+        {places.length > 0 && (
           <div className="lp-cards lp-stagger">
-            {places.map((place, i) => (
+            {places.map((place) => (
               <Reveal key={place.id}>
                 <article className="lp-card">
                   <div className="lp-card__top">
-                    <span className="lp-card__logo">{place.name.charAt(0)}</span>
+                    <span className="lp-card__logo">
+                      {place.image ? <img src={place.image} alt="" /> : place.name.charAt(0)}
+                    </span>
                     <div>
                       <h3>{place.name}</h3>
-                      <span className="lp-card__meta">{place.city}</span>
+                      <span className="lp-card__meta">
+                        {place.branchCount} {place.branchCount === 1 ? "branch" : "branches"}
+                        {place.rating ? ` · ★ ${place.rating.toFixed(1)}` : ""}
+                      </span>
                     </div>
                   </div>
                   <div className="lp-card__tags">
-                    <span className="lp-badge">{place.category}</span>
-                    <span className="lp-badge lp-badge--peach lp-badge--live">
-                      <i aria-hidden="true" />
-                      <span key={waiting[i]} className="lp-tick">
-                        {waiting[i]}
-                      </span>{" "}
-                      waiting
-                    </span>
+                    {place.category?.name && <span className="lp-badge">{place.category.name}</span>}
+                    {place.openQueues > 0 ? (
+                      <span className="lp-badge lp-badge--peach lp-badge--live">
+                        <i aria-hidden="true" />
+                        {place.waiting} waiting
+                      </span>
+                    ) : (
+                      <span className="lp-badge">No queue open now</span>
+                    )}
                   </div>
-                  <p>{place.description}</p>
-                  <Link className="lp-card__link" to="/businesses">
+                  <p>{place.description || "Join the queue from your phone and come back when it's your turn."}</p>
+                  <Link className="lp-card__link" to={`/businesses/${place.id}`}>
                     Join queue <ArrowRight size={18} weight="bold" />
                   </Link>
                 </article>
@@ -1361,6 +1461,7 @@ function OrangeCta({ reduced }) {
 
 export default function LandingPage() {
   const reduced = useReducedMotion();
+  const landing = useLandingData();
 
   return (
     <main className="lp">
@@ -1373,10 +1474,10 @@ export default function LandingPage() {
       <DayAcrossTown reduced={reduced} />
       <Values />
       <Numbers reduced={reduced} />
-      <Reviews />
-      <Industries />
+      {landing.reviews.length > 0 && <Reviews reviews={landing.reviews} />}
+      {landing.categories.length > 0 && <Industries categories={landing.categories} />}
       <Trust />
-      <Places reduced={reduced} />
+      <Places places={landing.places} status={landing.status} />
       <Faq />
       <OrangeCta reduced={reduced} />
     </main>

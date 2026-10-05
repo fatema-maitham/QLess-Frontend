@@ -45,6 +45,7 @@ import StaffOverview from "./components/Staff/StaffOverview";
 import StaffBranch from "./components/Staff/StaffBranch";
 import StaffProfile from "./components/Staff/StaffProfile";
 import StaffHistory from "./components/Staff/StaffHistory";
+import StaffBookings from "./components/Staff/StaffBookings";
 
 // Bookings
 import BranchBookingsPage from "./components/Bookings/BranchBookingsPage";
@@ -282,6 +283,7 @@ export default function App() {
           <Route index element={<StaffOverview />} />
           <Route path="queues" element={<StaffQueues />} />
           <Route path="history" element={<StaffHistory />} />
+          <Route path="bookings" element={<StaffBookings />} />
           <Route path="branch" element={<StaffBranch />} />
           <Route path="profile" element={<StaffProfile />} />
         </Route>

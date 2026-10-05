@@ -12,12 +12,13 @@ const ForgotPassword = () => {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-
+  const [devLink, setDevLink] = useState('');
   const send = async () => {
     setLoading(true);
     setMessage('');
     try {
-      await forgotPassword(email);
+            const data = await forgotPassword(email);
+      setDevLink(data?.reset_link ? new URL(data.reset_link).search : '');
       setSent(true);
     } catch (err) {
       setMessage(err.message);
@@ -69,7 +70,11 @@ const ForgotPassword = () => {
 
             {message && <div className="auth-alert" role="alert"><AlertIcon /><span>{message}</span></div>}
 
-            <Link to="/sign-in" className="auth-btn fp-btn-link">Back to sign in</Link>
+                        {devLink ? (
+              <Link to={`/reset-password${devLink}`} className="auth-btn fp-btn-link">Open reset link</Link>
+            ) : (
+              <Link to="/sign-in" className="auth-btn fp-btn-link">Back to sign in</Link>
+            )}
             <p className="fp-resend">
               Didn't get it?{' '}
               <button type="button" onClick={send} disabled={loading}>{loading ? 'Sending...' : 'Resend email'}</button>

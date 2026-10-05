@@ -62,7 +62,12 @@ import AdminSuspiciousPage from "./components/Admin/AdminSuspiciousPage";
 import AdminQueuesPage from "./components/Admin/AdminQueuesPage";
 import AdminReviewsPage from "./components/Admin/AdminReviewsPage";
 import AdminCategoriesPage from "./components/Admin/AdminCategoriesPage";
-
+import AdminLayout from "./components/AdminPanel/AdminLayout";
+import AdminOverview from "./components/AdminPanel/AdminOverview";
+import AdminBusinesses from "./components/AdminPanel/AdminBusinesses";
+import AdminUsers from "./components/AdminPanel/AdminUsers";
+import AdminBranches from "./components/AdminPanel/AdminBranches";
+import AdminAuditLogs from "./components/AdminPanel/AdminAuditLogs";
 // Context + helpers
 import { UserContext } from "./contexts/UserContext";
 import { ROLES, getRole, homeFor } from "./lib/helpers/roles";

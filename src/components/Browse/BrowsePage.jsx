@@ -40,9 +40,7 @@ export default function BrowsePage() {
 
         const name = params.get("category");
         if (name) {
-          const match = list.find(
-            (c) => c.name?.toLowerCase() === name.toLowerCase()
-          );
+          const match = list.find((c) => c.name?.toLowerCase() === name.toLowerCase());
           setParams(
             (prev) => {
               const next = new URLSearchParams(prev);
@@ -50,7 +48,7 @@ export default function BrowsePage() {
               if (match) next.set("category_id", match.id);
               return next;
             },
-            { replace: true }
+            { replace: true },
           );
         }
       })
@@ -72,7 +70,7 @@ export default function BrowsePage() {
         else next.delete("search");
         return next;
       },
-      { replace: true }
+      { replace: true },
     );
   }, [debouncedQuery, setParams]);
 
@@ -114,74 +112,70 @@ export default function BrowsePage() {
   const count = results.items.length;
 
   return (
-    <main className="browse">
-      {/* ---------- Header: title, search, categories ---------- */}
-      <section className="browse__head">
-        <div className="browse__container">
-          <p className="browse__eyebrow">Find a place</p>
-          <h1 className="browse__title">Skip the line, wherever you're going</h1>
-          <p className="browse__lead">
-            Search approved clinics, banks and offices, then join their queue
-            from anywhere.
-          </p>
+    <main className="page browse">
+      <div className="page__container">
+        {/* ---------- Title, search, categories ---------- */}
+        <header className="page-head">
+          <div>
+            <h1>Find a place</h1>
+            <p>Search approved clinics, banks and offices, then join their queue from anywhere.</p>
+          </div>
+        </header>
 
-          <form className="browse__search" role="search" onSubmit={(e) => e.preventDefault()}>
-            <MagnifyingGlass size={22} className="browse__search-icon" aria-hidden="true" />
-            <label htmlFor="browse-search" className="browse__sr-only">
-              Search places
-            </label>
-            <input
-              id="browse-search"
-              type="search"
-              placeholder="Search by name…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              autoComplete="off"
-            />
-            {query && (
-              <button
-                type="button"
-                className="browse__clear"
-                onClick={() => setQuery("")}
-                aria-label="Clear search"
-              >
-                <X size={18} weight="bold" />
-              </button>
-            )}
-          </form>
-
-          {categories.length > 0 && (
-            <div className="browse__chips" role="group" aria-label="Filter by category">
-              <button
-                type="button"
-                className={`browse__chip ${!categoryId ? "is-active" : ""}`}
-                aria-pressed={!categoryId}
-                onClick={() => selectCategory("")}
-              >
-                All
-              </button>
-              {categories.map((category) => {
-                const active = String(category.id) === categoryId;
-                return (
-                  <button
-                    key={category.id}
-                    type="button"
-                    className={`browse__chip ${active ? "is-active" : ""}`}
-                    aria-pressed={active}
-                    onClick={() => selectCategory(String(category.id))}
-                  >
-                    {category.name}
-                  </button>
-                );
-              })}
-            </div>
+        <form className="browse__search" role="search" onSubmit={(e) => e.preventDefault()}>
+          <MagnifyingGlass size={22} className="browse__search-icon" aria-hidden="true" />
+          <label htmlFor="browse-search" className="browse__sr-only">
+            Search places
+          </label>
+          <input
+            id="browse-search"
+            type="search"
+            placeholder="Search by name…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            autoComplete="off"
+          />
+          {query && (
+            <button
+              type="button"
+              className="browse__clear"
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+            >
+              <X size={18} weight="bold" />
+            </button>
           )}
-        </div>
-      </section>
+        </form>
 
-      {/* ---------- Results ---------- */}
-      <section className="browse__results" aria-labelledby="browse-results-title">
-        <div className="browse__container">
+        {categories.length > 0 && (
+          <div className="browse__chips" role="group" aria-label="Filter by category">
+            <button
+              type="button"
+              className={`browse__chip ${!categoryId ? "is-active" : ""}`}
+              aria-pressed={!categoryId}
+              onClick={() => selectCategory("")}
+            >
+              All
+            </button>
+            {categories.map((category) => {
+              const active = String(category.id) === categoryId;
+              return (
+                <button
+                  key={category.id}
+                  type="button"
+                  className={`browse__chip ${active ? "is-active" : ""}`}
+                  aria-pressed={active}
+                  onClick={() => selectCategory(String(category.id))}
+                >
+                  {category.name}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* ---------- Results ---------- */}
+        <section className="browse__results" aria-labelledby="browse-results-title">
           <h2 id="browse-results-title" className="browse__sr-only">
             Results
           </h2>
@@ -203,14 +197,10 @@ export default function BrowsePage() {
 
           {/* Error */}
           {results.status === "error" && (
-            <div className="browse__message" role="alert">
+            <div className="page-empty" role="alert">
               <h3>We couldn't load places</h3>
               <p>{results.error}. Check your connection and try again.</p>
-              <button
-                type="button"
-                className="btn btn--primary"
-                onClick={() => setReloadKey((k) => k + 1)}
-              >
+              <button type="button" className="btn btn--primary" onClick={() => setReloadKey((k) => k + 1)}>
                 Try again
               </button>
             </div>
@@ -218,9 +208,9 @@ export default function BrowsePage() {
 
           {/* Empty */}
           {results.status === "ready" && count === 0 && (
-            <div className="browse__message">
-              <span className="browse__message-icon">
-                <Storefront size={36} weight="duotone" />
+            <div className="page-empty">
+              <span className="page-empty__icon">
+                <Storefront size={28} weight="duotone" />
               </span>
               <h3>No places found</h3>
               <p>Try another name or pick a different category.</p>
@@ -240,11 +230,7 @@ export default function BrowsePage() {
                 const logo = business.image;
 
                 return (
-                  <Link
-                    key={business.id}
-                    to={`/businesses/${business.id}`}
-                    className="browse-card"
-                  >
+                  <Link key={business.id} to={`/businesses/${business.id}`} className="browse-card">
                     <span className="browse-card__logo">
                       {logo ? <img src={logo} alt="" /> : business.name?.charAt(0)}
                     </span>
@@ -263,8 +249,8 @@ export default function BrowsePage() {
               })}
             </div>
           )}
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
   );
 }

@@ -13,6 +13,7 @@ const UserIcon = () => <Svg><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.
 const MailIcon = () => <Svg><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M3 7l9 6 9-6" /></Svg>;
 const PhoneIcon = () => <Svg><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" /></Svg>;
 const TrashIcon = ({ color = '#1B191A', size = 16 }) => <Svg color={color} size={size}><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></Svg>;
+const LockIcon = () => <Svg><rect x="4" y="11" width="16" height="10" rx="2.5" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></Svg>;
 
 function Field({ id, label, icon, ...input }) {
   return (
@@ -74,7 +75,6 @@ export default function StaffProfile() {
     }
   }
 
-
   async function handleCover(evt) {
     const file = evt.target.files?.[0];
     evt.target.value = '';
@@ -92,8 +92,7 @@ export default function StaffProfile() {
     }
   }
 
-
-    async function removeImage(field, text) {
+  async function removeImage(field, text) {
     setUploading(true);
     setMessage({ type: '', text: '' });
     try {
@@ -105,7 +104,6 @@ export default function StaffProfile() {
       setUploading(false);
     }
   }
-  
 
   async function saveDetails(evt) {
     evt.preventDefault();
@@ -151,6 +149,7 @@ export default function StaffProfile() {
 
       <div className="pf2">
         <div className="pf-cover">
+          {profile.cover_image && <img src={profile.cover_image} alt="" />}
           <div className="pf-cover-acts">
             {profile.cover_image && (
               <button type="button" className="pf-trash" aria-label="Remove cover" title="Remove cover"
@@ -162,7 +161,8 @@ export default function StaffProfile() {
               <Svg color="#1B191A" size={17}><rect x="3" y="5" width="18" height="14" rx="3" /><circle cx="9" cy="10" r="1.6" /><path d="M21 15l-5-5-8 8" /></Svg>
               <input type="file" accept="image/*" hidden onChange={handleCover} disabled={uploading} />
             </label>
-          </div>          <svg className="pf-wave" viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">
+          </div>
+          <svg className="pf-wave" viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">
             <rect width="1000" height="200" fill="#FCEBD3" />
             <path d="M0 140 C180 60 320 200 520 120 S860 40 1000 110 V200 H0Z" fill="#F9CA87" opacity=".45" />
             <path d="M0 170 C220 110 380 210 600 160 S880 120 1000 150 V200 H0Z" fill="#F8713A" opacity=".22" />
@@ -170,37 +170,24 @@ export default function StaffProfile() {
         </div>
 
         <div className="pf-top">
-          <label className="pf-av" title="Change photo">
-            {photo ? <img src={photo} alt="" /> : <span>{initial(profile.name)}</span>}
-            <i><Svg color="#fff" size={17}><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" /><circle cx="12" cy="13.5" r="3.5" /></Svg></i>
-            <input type="file" accept="image/*" hidden onChange={handlePhoto} disabled={uploading} />
-          </label>
+          <div className="pf-avw">
+            <label className="pf-av" title="Change photo">
+              {photo ? <img src={photo} alt="" /> : <span>{initial(profile.name)}</span>}
+              <i><Svg color="#fff" size={17}><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" /><circle cx="12" cy="13.5" r="3.5" /></Svg></i>
+              <input type="file" accept="image/*" hidden onChange={handlePhoto} disabled={uploading} />
+            </label>
+            {photo && (
+              <button type="button" className="pf-trash photo" aria-label="Remove photo" title="Remove photo"
+                disabled={uploading} onClick={() => removeImage('profile_image', 'Your photo was removed.')}>
+                <TrashIcon color="#fff" size={26} />
+              </button>
+            )}
+          </div>
           <div className="pf-who">
             <h2>{profile.name}</h2>
             <div className="pf-tags">
               <span><Svg size={16}><rect x="3" y="7" width="18" height="13" rx="2.5" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></Svg>{me.position || 'Staff'}</span>
               <span><Svg size={16}><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></Svg>{me.branch.name} · {me.business.name}</span>
-            </div>
-          </div>
-          <div className="pf-upw">
-                        <label className="st-btn ghost pf-up">
-              <Svg color="#1B191A" size={17}><path d="M12 16V4M6 10l6-6 6 6M4 20h16" /></Svg>
-              {uploading ? 'Uploading…' : 'Change cover'}
-              <input type="file" accept="image/*" hidden onChange={handleCover} disabled={uploading} />
-            </label>
-                      <div className="pf-remove">
-              {photo && (
-                <button type="button" className="pf-link" disabled={uploading}
-                  onClick={() => removeImage('profile_image', 'Your photo was removed.')}>
-                  Remove photo
-                </button>
-              )}
-              {profile.cover_image && (
-                <button type="button" className="pf-link" disabled={uploading}
-                  onClick={() => removeImage('cover_image', 'Your cover was removed.')}>
-                  Remove cover
-                </button>
-              )}
             </div>
           </div>
         </div>

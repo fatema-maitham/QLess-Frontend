@@ -132,6 +132,16 @@ textarea {
   color: var(--color-text);
 }
 
+.btn--secondary {
+  border-color: var(--color-border);
+  background: transparent;
+  color: var(--color-text);
+}
+
+.btn--secondary:hover {
+  border-color: var(--color-text);
+}
+
 .btn--outline:hover {
   background: var(--color-text);
   color: var(--color-text-inverse);

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { resetPassword } from '../../services/authService';
 import { LockIcon, EyeIcon, AlertIcon } from './AuthIcons';
-import ForgotArt, { BackArrow, Steps } from './ForgotArt';
+import ForgotArt, { BackArrow } from './ForgotArt';
 import logo from '../../assets/qless-logo.png';
 import './Auth.css';
 import './Forgot.css';
@@ -54,8 +54,7 @@ const ResetPassword = () => {
             <h1>Password <span>changed!</span></h1>
             <p className="fp-sub">Your password was reset. You can sign in with your new password now.</p>
             <Link to="/sign-in" className="auth-btn fp-btn-link">Back to sign in</Link>
-            <Steps on={4} />
-          </section>
+            <Steps on={3} />          </section>
         ) : (
           <section className="fp-screen">
             <ForgotArt name="key" />

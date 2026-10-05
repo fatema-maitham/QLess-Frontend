@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { forgotPassword } from '../../services/authService';
 import { MailIcon, AlertIcon } from './AuthIcons';
-import ForgotArt, { BackArrow, Steps } from './ForgotArt';
+import ForgotArt, { BackArrow } from './ForgotArt';
 import logo from '../../assets/qless-logo.png';
 import './Auth.css';
 import './Forgot.css';
@@ -60,7 +60,7 @@ const ForgotPassword = () => {
             </form>
 
             <Link to="/sign-in" className="fp-back"><BackArrow />Back to sign in</Link>
-            <Steps on={1} />
+            <Steps on={2} />
           </section>
         ) : (
           <section className="fp-screen">
@@ -79,9 +79,7 @@ const ForgotPassword = () => {
               Didn't get it?{' '}
               <button type="button" onClick={send} disabled={loading}>{loading ? 'Sending...' : 'Resend email'}</button>
             </p>
-            <button type="button" className="fp-back" onClick={() => { setSent(false); setMessage(''); }}>
-              <BackArrow />Use a different email
-            </button>
+            
             <Steps on={2} />
           </section>
         )}

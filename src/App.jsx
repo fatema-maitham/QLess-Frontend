@@ -75,7 +75,7 @@ export default function App() {
     !NO_NAV.includes(location.pathname) &&
     !location.pathname.startsWith("/owner") &&
     !location.pathname.startsWith("/staff");
-    
+
   // NEW: the landing page ("/") already has its own footer
   const showFooter = showNav;
 
@@ -271,14 +271,20 @@ export default function App() {
 
         {/* ================= STAFF ================= */}
 
-        <Route
+                <Route
           path="/staff"
           element={
             <ProtectedRoute roles={[ROLES.STAFF]}>
-              <StaffQueues />
+              <StaffLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<StaffOverview />} />
+          <Route path="queues" element={<StaffQueues />} />
+          <Route path="history" element={<StaffHistory />} />
+          <Route path="branch" element={<StaffBranch />} />
+          <Route path="profile" element={<StaffProfile />} />
+        </Route>
 
         {/* ================= BRANCH BOOKINGS ================= */}
 

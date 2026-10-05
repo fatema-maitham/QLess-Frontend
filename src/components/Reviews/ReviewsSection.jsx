@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { Star, PencilSimple, Trash } from "@phosphor-icons/react";
 import { UserContext } from "../../contexts/UserContext";
+import { ROLES, getRole } from "../../lib/helpers/roles";
 import {
   createReview,
   updateReview,
@@ -27,7 +28,7 @@ export default function ReviewsSection({
     ? reviewList.find((review) => review.user_id === user.id)
     : null;
 
-  const isCustomer = user?.role === "customer";
+  const isCustomer = getRole(user) === ROLES.CUSTOMER;
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -127,10 +128,7 @@ export default function ReviewsSection({
   return (
     <section className="reviews" aria-labelledby="reviews-title">
       <div className="reviews__heading">
-        <div>
-          <p className="reviews__eyebrow">Customer feedback</p>
-          <h2 id="reviews-title">Reviews</h2>
-        </div>
+        <h2 id="reviews-title">Reviews</h2>
 
         {reviews?.review_count > 0 && (
           <div className="reviews__summary">

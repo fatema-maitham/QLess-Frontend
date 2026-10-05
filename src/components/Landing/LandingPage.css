@@ -3238,3 +3238,154 @@ button.lp-ph__btn:active {
     transition: none;
   }
 }
+
+Reviews
+/* =========================================================
+   3. Steps — simple, open, no cards
+   ========================================================= */
+
+.lp-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(3rem, 7vw, 7rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* remove old connecting lines completely */
+.lp-steps::before,
+.lp-steps::after {
+  display: none;
+}
+
+.lp-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  text-align: left;
+
+  /* NO card */
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* 01 / 02 / 03 */
+.lp-step__dot {
+  display: block;
+  width: auto;
+  height: auto;
+  margin: 0 0 var(--space-5);
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+
+  font-size: clamp(3rem, 5vw, 5.5rem);
+  font-weight: var(--weight-extrabold);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  color: var(--color-text);
+
+  transform: none;
+}
+
+/* small simple line */
+.lp-step__dot::after {
+  content: "";
+  display: block;
+  width: 36px;
+  height: 2px;
+  margin-top: var(--space-5);
+  background: var(--color-text);
+}
+
+/* change 1 → 01, 2 → 02, 3 → 03 */
+.lp-step:nth-child(1) .lp-step__dot {
+  font-size: 0;
+}
+
+.lp-step:nth-child(1) .lp-step__dot::before {
+  content: "01";
+  font-size: clamp(3rem, 5vw, 5.5rem);
+}
+
+.lp-step:nth-child(2) .lp-step__dot {
+  font-size: 0;
+}
+
+.lp-step:nth-child(2) .lp-step__dot::before {
+  content: "02";
+  font-size: clamp(3rem, 5vw, 5.5rem);
+}
+
+.lp-step:nth-child(3) .lp-step__dot {
+  font-size: 0;
+}
+
+.lp-step:nth-child(3) .lp-step__dot::before {
+  content: "03";
+  font-size: clamp(3rem, 5vw, 5.5rem);
+}
+
+.lp-step h3 {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+}
+
+.lp-step p {
+  max-width: 28ch;
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+/* mobile */
+@media (max-width: 700px) {
+  .lp-steps {
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+  }
+
+  .lp-step {
+    max-width: 420px;
+  }
+
+  .lp-step__dot,
+  .lp-step:nth-child(1) .lp-step__dot::before,
+  .lp-step:nth-child(2) .lp-step__dot::before,
+  .lp-step:nth-child(3) .lp-step__dot::before {
+    font-size: 3.5rem;
+  }
+}
+
+center litle bit .lp-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.lp-step p {
+  max-width: 28ch;
+  margin: 0 auto;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}

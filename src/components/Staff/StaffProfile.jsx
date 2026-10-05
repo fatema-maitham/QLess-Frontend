@@ -75,23 +75,8 @@ export default function StaffProfile() {
   }
 
 
-  async function handleCover(evt) {
-    const file = evt.target.files?.[0];
-    evt.target.value = '';
-    if (!file) return;
-    setUploading(true);
-    setMessage({ type: '', text: '' });
-    try {
-      const url = await uploadImage(file);
-      applyUpdate(await updateMe({ cover_image: url }));
-      setMessage({ type: 'ok', text: 'Your cover was updated.' });
-    } catch (err) {
-      setMessage({ type: 'bad', text: err.message });
-    } finally {
-      setUploading(false);
-    }
-  }
 
+  
 
   async function saveDetails(evt) {
     evt.preventDefault();
@@ -137,6 +122,7 @@ export default function StaffProfile() {
 
       <div className="pf2">
         <div className="pf-cover">
+          {profile.cover_image && <img src={profile.cover_image} alt="" />}
           <svg className="pf-wave" viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">
             <rect width="1000" height="200" fill="#FCEBD3" />
             <path d="M0 140 C180 60 320 200 520 120 S860 40 1000 110 V200 H0Z" fill="#F9CA87" opacity=".45" />

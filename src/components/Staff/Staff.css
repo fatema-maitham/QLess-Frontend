@@ -85,8 +85,7 @@
 .owner .sx .pf-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .owner .sx .pf-wave { width: 100%; height: 100%; display: block; }
 .owner .sx .pf-top { display: flex; align-items: flex-end; gap: 22px; padding: 14px 32px 22px; }
-.owner .sx .pf-av { position: relative; margin-top: -74px; align-self: flex-start; width: 120px; height: 120px; border-radius: 50%; background: var(--peach-soft); border: 5px solid #fff; box-shadow: 0 8px 24px rgba(30, 26, 24, .12); display: flex; align-items: center; justify-content: center; font-size: 44px; font-weight: 800; cursor: pointer; flex-shrink: 0; }
-.owner .sx .pf-av img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.owner .sx .pf-av { position: relative; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .owner .sx .pf-av i { position: absolute; right: 2px; bottom: 4px; width: 36px; height: 36px; border-radius: 50%; background: var(--orange-btn); border: 3px solid #fff; display: flex; align-items: center; justify-content: center; }
 .owner .sx .pf-who { padding-bottom: 6px; min-width: 0; }
 .owner .sx .pf-who h2 { margin: 0 0 8px; font-size: 28px; font-weight: 800; letter-spacing: -.035em; }

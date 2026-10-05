@@ -220,8 +220,8 @@
 }
 
 .lp-hero__title {
-  max-width: 15ch;
-  font-size: clamp(3rem, 7.2vw, 6rem);
+  max-width: 14ch;
+  font-size: clamp(3.75rem, 9.5vw, 8.5rem);
   font-weight: var(--weight-extrabold);
   line-height: 1.02;
   letter-spacing: -0.045em;
@@ -235,7 +235,7 @@
 
 .lp-hero__text {
   max-width: 52ch;
-  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  font-size: clamp(1.125rem, 1.8vw, 1.5rem);
   line-height: 1.65;
   color: var(--color-text-muted);
 }
@@ -1326,6 +1326,31 @@
   font-weight: var(--weight-extrabold);
 }
 
+/* real QLess "Q" icon inside the phone tiles */
+.lp-ph__head i,
+.lp-ph__ntf i {
+  background: var(--color-bg);
+}
+
+.lp-ph__head i img,
+.lp-ph__ntf i img {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+}
+
+/* QLess logo in the phone status bar */
+.lp-ph__logo {
+  display: block;
+  width: auto;
+  height: 14px;
+}
+
+/* lock screen is dark: show the logo in white */
+.lp-ph.is-dark .lp-ph__logo {
+  filter: brightness(0) invert(1);
+}
+
 .lp-ph__head b {
   display: block;
   font-size: var(--text-sm);
@@ -1803,24 +1828,57 @@ button.lp-ph__btn:active {
   margin-top: var(--space-24);
 }
 
+/* reviews move in one line (like the logo strip) */
 .lp-reviews {
-  columns: 3 300px;
-  column-gap: var(--space-6);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 
-.lp-review-wrap {
-  margin-bottom: var(--space-6);
-  break-inside: avoid;
+.lp-reviews__track {
+  display: flex;
+  align-items: stretch;
+  width: max-content;
+  margin: 0;
+  padding: var(--space-2) 0;
+  list-style: none;
+  animation: lp-marquee-left 60s linear infinite;
+}
+
+.lp-reviews:hover .lp-reviews__track {
+  animation-play-state: paused;
+}
+
+.lp-review-item {
+  display: flex;
+  flex: none;
+  width: 380px;
+  margin-right: var(--space-6);
 }
 
 .lp-review {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: var(--space-4);
   margin: 0;
   padding: var(--space-8);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
+}
+
+/* quote mark on the left, stars on the right */
+.lp-review__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.lp-review__stars {
+  font-size: var(--text-lg);
+  letter-spacing: 2px;
+  line-height: 1;
+  color: var(--color-primary);
 }
 
 .lp-review__mark {
@@ -1837,15 +1895,9 @@ button.lp-ph__btn:active {
   line-height: 1.7;
 }
 
-.lp-review mark {
-  padding-inline: 2px;
-  background: linear-gradient(transparent 55%, var(--color-accent) 55%);
-  font-weight: var(--weight-bold);
-  color: inherit;
-}
-
 .lp-review figcaption {
   display: flex;
+  margin-top: auto;
   flex-direction: column;
   font-size: var(--text-sm);
 }
@@ -2535,7 +2587,7 @@ button.lp-ph__btn:active {
   }
 
   .lp-hero__title {
-    font-size: clamp(2.5rem, 12vw, 3.25rem);
+    font-size: clamp(3rem, 14vw, 4.25rem);
   }
 
   .lp-hero__text {
@@ -2579,6 +2631,10 @@ button.lp-ph__btn:active {
 
   .lp-review {
     padding: var(--space-6);
+  }
+
+  .lp-review-item {
+    width: 290px;
   }
 
   .lp-values {
@@ -2674,145 +2730,29 @@ button.lp-ph__btn:active {
   .lp-logo[aria-hidden="true"] {
     display: none;
   }
-}
 
-/* =========================================================
-   SIMPLE SCROLL STORY — separate from the 6-tab phone
-   ========================================================= */
-.lp-story {
-  padding: clamp(5rem, 10vw, 9rem) 0;
-  background: var(--color-surface);
-}
-
-.lp-story__layout {
-  display: grid;
-  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
-  gap: clamp(3rem, 8vw, 8rem);
-  align-items: start;
-}
-
-.lp-story__sticky {
-  position: sticky;
-  top: 120px;
-  max-width: 520px;
-}
-
-.lp-story__sticky .lp-h2 {
-  max-width: 10ch;
-  margin-bottom: 1.25rem;
-  font-size: clamp(2.7rem, 5vw, 5.4rem);
-}
-
-.lp-story__line {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: min(390px, 100%);
-  margin-top: 2.5rem;
-}
-
-.lp-story__line::before {
-  content: "";
-  position: absolute;
-  left: 8px;
-  right: 8px;
-  top: 50%;
-  height: 2px;
-  background: var(--color-border-subtle);
-}
-
-.lp-story__line span,
-.lp-story__line i {
-  position: relative;
-  z-index: 1;
-  width: 16px;
-  height: 16px;
-  border: 3px solid var(--color-surface);
-  border-radius: 50%;
-  background: var(--color-primary);
-}
-
-.lp-story__line i {
-  width: 26px;
-  height: 26px;
-  background: var(--color-accent);
-  box-shadow: 0 0 0 8px color-mix(in srgb, var(--color-accent) 18%, transparent);
-}
-
-.lp-story__moments {
-  display: grid;
-  gap: 28vh;
-  padding: 8vh 0 28vh;
-}
-
-.lp-story__moment {
-  display: grid;
-  grid-template-columns: 74px 1fr;
-  gap: 1.5rem;
-  min-height: 250px;
-  padding: clamp(1.75rem, 4vw, 3rem);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: 28px;
-  background: var(--color-bg);
-  box-shadow: var(--shadow-sm);
-}
-
-.lp-story__number {
-  font-size: .8rem;
-  font-weight: 800;
-  letter-spacing: .12em;
-  color: var(--color-primary);
-}
-
-.lp-story__moment h3 {
-  max-width: 12ch;
-  margin-bottom: .9rem;
-  font-size: clamp(1.7rem, 3vw, 2.8rem);
-  line-height: 1.05;
-  letter-spacing: -.035em;
-}
-
-.lp-story__moment p {
-  max-width: 42ch;
-  color: var(--color-text-muted);
-  font-size: 1.05rem;
-  line-height: 1.7;
-}
-
-@media (max-width: 820px) {
-  .lp-story__layout {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  .lp-reviews {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
-  .lp-story__sticky {
-    position: relative;
-    top: auto;
-  }
-
-  .lp-story__moments {
-    gap: 1.25rem;
-    padding: 1rem 0 0;
-  }
-
-  .lp-story__moment {
-    min-height: 0;
-    grid-template-columns: 48px 1fr;
+  .lp-review-item[aria-hidden="true"] {
+    display: none;
   }
 }
 
 /* =========================================================
-   QLESS — NEW CREATIVE SECTIONS ONLY
+   Take a ticket · A day without a waiting room · Wait less
    ========================================================= */
 
-.ql-new-wrap {
+.qm-wrap {
   width: min(var(--container-max), calc(100% - var(--gutter) * 2));
   margin-inline: auto;
 }
 
-.ql-new-eyebrow {
-  margin: 0 0 18px;
+.qm-eyebrow {
+  margin: 0 0 16px;
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.13em;
@@ -2820,1438 +2760,462 @@ button.lp-ph__btn:active {
   color: var(--color-primary);
 }
 
-
-/* =========================================================
-   1. LINE → TICKET
-   ========================================================= */
-
-.ql-new-line {
-  --line-progress: 0;
-
-  position: relative;
-  height: 350vh;
-  background: var(--color-bg);
-}
-
-.ql-new-line__sticky {
-  position: sticky;
-  top: 0;
-  display: flex;
-  align-items: center;
-  min-height: 100vh;
-  overflow: hidden;
-}
-
-.ql-new-line__sticky::before {
-  content: "";
-  position: absolute;
-  width: 620px;
-  height: 620px;
-  right: -220px;
-  top: -180px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  opacity: 0.28;
-  transform:
-    scale(calc(0.7 + var(--line-progress) * 0.4));
-}
-
-.ql-new-line .ql-new-wrap {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  align-items: center;
-  gap: clamp(3rem, 8vw, 8rem);
-}
-
-.ql-new-line__heading h2 {
+.qm-h2 {
   margin: 0;
-  max-width: 9ch;
-  font-size: clamp(3.5rem, 7vw, 7rem);
+  font-size: clamp(2.6rem, 5.5vw, 5.5rem);
   font-weight: 800;
-  line-height: 0.93;
-  letter-spacing: -0.065em;
-}
-
-.ql-new-line__heading h2 span {
-  color: var(--color-primary);
-}
-
-.ql-new-line__heading>p:last-child {
-  max-width: 37ch;
-  margin-top: 26px;
-  font-size: 1.1rem;
-  line-height: 1.7;
-  color: var(--color-text-muted);
-}
-
-.ql-new-line__scene {
-  position: relative;
-  min-height: 600px;
-}
-
-.ql-new-line__people {
-  position: absolute;
-  inset: 50% 0 auto;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  transform: translateY(-50%);
-}
-
-.ql-new-person {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-
-  opacity: clamp(0,
-      calc(1 - var(--line-progress) * 1.8 + var(--person-index) * 0.055),
-      1);
-
-  transform:
-    translateX(calc(var(--line-progress) * -70px)) scale(calc(1 - var(--line-progress) * 0.25));
-
-  transition: opacity 120ms linear;
-}
-
-.ql-new-person__head {
-  width: 31px;
-  height: 31px;
-  border-radius: 50%;
-  background: var(--color-text);
-}
-
-.ql-new-person__body {
-  width: 46px;
-  height: 70px;
-  border-radius: 23px 23px 10px 10px;
-  background: var(--color-text);
-}
-
-.ql-new-counter {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 95px;
-  height: 125px;
-  border-radius: 20px;
-  background: var(--color-surface-inverse);
-  color: var(--color-text-inverse);
-}
-
-.ql-new-counter span {
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-}
-
-.ql-new-counter b {
-  margin-top: 4px;
-  font-size: 2rem;
-}
-
-.ql-new-line__physical {
-  position: absolute;
-  top: calc(50% + 88px);
-  left: 0;
-  width: 85%;
-  height: 3px;
-  background: var(--color-border);
-  transform-origin: right center;
-  transform: scaleX(calc(1 - var(--line-progress)));
-}
-
-.ql-new-line__physical span {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  transform: translate(50%, -50%);
-}
-
-.ql-new-ticket {
-  position: absolute;
-  z-index: 5;
-  top: 50%;
-  left: 50%;
-  width: min(330px, 80%);
-  padding: 26px;
-  border: 1px solid var(--color-border-subtle);
-  border-radius: 28px;
-  background: var(--color-bg);
-  box-shadow: 0 35px 100px rgb(0 0 0 / 15%);
-
-  opacity: clamp(0, calc((var(--line-progress) - 0.45) * 3), 1);
-
-  transform:
-    translate(-50%, -50%) translateY(calc((1 - var(--line-progress)) * 80px)) scale(calc(0.78 + var(--line-progress) * 0.22));
-}
-
-.ql-new-ticket__top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid var(--color-border-subtle);
-  font-weight: 800;
-}
-
-.ql-new-ticket__logo {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: var(--color-primary);
-}
-
-.ql-new-ticket>small {
-  display: block;
-  margin-top: 28px;
-  color: var(--color-text-muted);
-}
-
-.ql-new-ticket>strong {
-  display: block;
-  margin-block: 4px 25px;
-  font-size: 5rem;
-  line-height: 1;
-  letter-spacing: -0.07em;
-}
-
-.ql-new-ticket__stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.ql-new-ticket__stats span {
-  display: flex;
-  flex-direction: column;
-  padding: 14px;
-  border-radius: 15px;
-  background: var(--color-surface);
-}
-
-.ql-new-ticket__stats small {
-  color: var(--color-text-muted);
-}
-
-.ql-new-ticket__stats b {
-  margin-top: 3px;
-  font-size: 1.1rem;
-}
-
-.ql-new-ticket__live {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 18px;
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-}
-
-.ql-new-ticket__live i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  animation: ql-new-pulse 1.5s infinite;
-}
-
-.ql-new-scroll {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  display: flex;
-  gap: 12px;
-  transform: translateX(-50%);
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-}
-
-.ql-new-scroll span {
-  animation: ql-new-down 1.4s ease-in-out infinite;
-}
-
-
-/* =========================================================
-   2. 20 MINUTES
-   ========================================================= */
-
-.ql-new-time {
-  position: relative;
-  height: 450vh;
-  background: var(--color-surface-inverse);
-  color: var(--color-text-inverse);
-}
-
-.ql-new-time__sticky {
-  position: sticky;
-  top: 0;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  min-height: 100vh;
-  padding: clamp(3rem, 6vw, 5rem) var(--gutter);
-  overflow: hidden;
-}
-
-.ql-new-time__heading {
-  text-align: center;
-}
-
-.ql-new-time__heading .ql-new-eyebrow {
-  color: var(--color-primary);
-}
-
-.ql-new-time__heading h2 {
-  margin: 0;
-  font-size: clamp(2.4rem, 5vw, 5rem);
-  line-height: 0.98;
-  letter-spacing: -0.05em;
-}
-
-.ql-new-time__stage {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  width: min(1050px, 100%);
-  margin-inline: auto;
-}
-
-.ql-new-time__clock {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: clamp(280px, 34vw, 440px);
-  aspect-ratio: 1;
-  margin-inline: auto;
-  border: 1px solid var(--color-inverse-tint);
-  border-radius: 50%;
-  animation: ql-new-clock-in 500ms ease both;
-}
-
-.ql-new-time__clock::before,
-.ql-new-time__clock::after {
-  content: "";
-  position: absolute;
-  border: 1px solid var(--color-inverse-tint);
-  border-radius: 50%;
-}
-
-.ql-new-time__clock::before {
-  inset: -25px;
-}
-
-.ql-new-time__clock::after {
-  inset: -55px;
-  opacity: 0.45;
-}
-
-.ql-new-time__clock strong {
-  font-size: clamp(6rem, 13vw, 11rem);
-  line-height: 0.8;
-  letter-spacing: -0.09em;
-  color: var(--color-primary);
-}
-
-.ql-new-time__clock small {
-  margin-top: 20px;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-}
-
-.ql-new-time__clock.is-done {
-  gap: 20px;
-  background: var(--color-primary);
-  color: var(--color-text);
-}
-
-.ql-new-time__activity {
-  max-width: 430px;
-  animation: ql-new-activity-in 550ms ease both;
-}
-
-.ql-new-time__icon {
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 28px;
-  border-radius: 20px;
-  background: var(--color-primary);
-  color: var(--color-text);
-}
-
-.ql-new-time__index {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  color: var(--color-text-inverse-muted);
-}
-
-.ql-new-time__activity h3 {
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 4rem);
-  line-height: 1;
-  letter-spacing: -0.045em;
-}
-
-.ql-new-time__activity p {
-  max-width: 32ch;
-  margin-top: 20px;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: var(--color-text-inverse-muted);
-}
-
-.ql-new-time__dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-
-.ql-new-time__dots span {
-  width: 45px;
-  height: 3px;
-  background: var(--color-inverse-tint);
-}
-
-.ql-new-time__dots span.is-on {
-  background: var(--color-primary);
-}
-
-
-/* =========================================================
-   3. BEFORE / AFTER
-   ========================================================= */
-
-.ql-new-compare {
-  --compare-progress: 0;
-  position: relative;
-  height: 300vh;
-  background: var(--color-bg);
-}
-
-.ql-new-compare__sticky {
-  position: sticky;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 100vh;
-  overflow: hidden;
-}
-
-.ql-new-compare__title {
-  width: min(900px, calc(100% - var(--gutter) * 2));
-  margin: 0 auto 40px;
-  text-align: center;
-}
-
-.ql-new-compare__title h2 {
-  margin: 0;
-  font-size: clamp(2.5rem, 5vw, 5rem);
   line-height: 0.95;
   letter-spacing: -0.055em;
 }
 
-.ql-new-compare__stage {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: min(1200px, calc(100% - var(--gutter) * 2));
-  min-height: 470px;
-  margin-inline: auto;
-  overflow: hidden;
-  border: 1px solid var(--color-border-subtle);
-  border-radius: 32px;
-}
-
-.ql-new-compare__before,
-.ql-new-compare__after {
-  padding: clamp(2rem, 5vw, 4rem);
-}
-
-.ql-new-compare__before {
-  background: var(--color-surface);
-}
-
-.ql-new-compare__after {
-  background: var(--color-primary);
-}
-
-.ql-new-compare__label {
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-}
-
-.ql-new-compare__content {
-  margin-top: 80px;
-}
-
-.ql-new-compare__content>strong {
-  display: block;
-  margin-bottom: 15px;
-  font-size: 0.75rem;
-  opacity: 0.55;
-}
-
-.ql-new-compare__content h3 {
-  margin: 0;
-  font-size: clamp(2.2rem, 4vw, 4rem);
-  letter-spacing: -0.05em;
-}
-
-.ql-new-compare__content p {
-  max-width: 35ch;
-  margin-top: 15px;
-  line-height: 1.6;
-}
-
-.ql-new-compare__bad-list,
-.ql-new-compare__good-list {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 50px;
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-.ql-new-compare__bad-list i,
-.ql-new-compare__good-list i {
-  width: 25px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.3;
-}
-
-.ql-new-compare__after {
-  clip-path: inset(0 calc((1 - var(--compare-progress)) * 100%) 0 0);
-}
-
-.ql-new-compare__divider {
-  position: absolute;
-  z-index: 4;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--compare-progress) * 100%);
-  width: 2px;
-  background: var(--color-text);
-  transform: translateX(-1px);
-}
-
-.ql-new-compare__divider span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--color-text);
-  color: var(--color-text-inverse);
-  transform: translate(-50%, -50%);
-}
-
-
-/* =========================================================
-   4. QUEUE JOURNEY
-   ========================================================= */
-
-.ql-new-journey {
-  --journey-progress: 0;
-  position: relative;
-  height: 420vh;
-  background: var(--color-bg);
-}
-
-.ql-new-journey__sticky {
-  position: sticky;
-  top: 0;
-  display: flex;
-  align-items: center;
-  min-height: 100vh;
-  overflow: hidden;
-}
-
-.ql-new-journey__heading {
-  position: relative;
-  z-index: 5;
-}
-
-.ql-new-journey__heading h2 {
-  margin: 0;
-  font-size: clamp(3rem, 6vw, 6rem);
-  line-height: 0.94;
-  letter-spacing: -0.06em;
-}
-
-.ql-new-journey__heading h2 span {
+.qm-h2 span {
   color: var(--color-primary);
 }
 
-.ql-new-journey__map {
-  position: relative;
-  height: 470px;
-  margin-top: 40px;
-}
-
-.ql-new-journey__svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.ql-new-journey__path-bg,
-.ql-new-journey__path-live {
-  fill: none;
-  stroke-width: 3;
-}
-
-.ql-new-journey__path-bg {
-  stroke: var(--color-border-subtle);
-}
-
-.ql-new-journey__path-live {
-  stroke: var(--color-primary);
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--journey-progress));
-}
-
-.ql-new-journey__point {
-  position: absolute;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 9px;
-  border: 0;
-  background: transparent;
-  font: inherit;
-  cursor: pointer;
-}
-
-.ql-new-journey__point i {
-  width: 15px;
-  height: 15px;
-  border: 4px solid var(--color-bg);
-  border-radius: 50%;
-  background: var(--color-border);
-  box-shadow: 0 0 0 1px var(--color-border);
-}
-
-.ql-new-journey__point.is-on i {
-  background: var(--color-primary);
-  box-shadow: 0 0 0 5px var(--color-accent);
-}
-
-.ql-new-journey__point span {
-  font-size: 0.72rem;
-  font-weight: 700;
-}
-
-.ql-new-journey__point--1 {
-  left: 2%;
-  top: 68%;
-}
-
-.ql-new-journey__point--2 {
-  left: 18%;
-  top: 24%;
-}
-
-.ql-new-journey__point--3 {
-  left: 39%;
-  top: 48%;
-}
-
-.ql-new-journey__point--4 {
-  left: 58%;
-  top: 73%;
-}
-
-.ql-new-journey__point--5 {
-  left: 77%;
-  top: 45%;
-}
-
-.ql-new-journey__point--6 {
-  right: 1%;
-  top: 13%;
-}
-
-.ql-new-journey__ticket {
-  position: absolute;
-  z-index: 4;
-  right: 7%;
-  bottom: 4%;
-  width: 250px;
-  padding: 22px;
-  border: 1px solid var(--color-border-subtle);
-  border-radius: 24px;
-  background: var(--color-bg);
-  box-shadow: 0 25px 70px rgb(0 0 0 / 12%);
-  animation: ql-new-ticket-in 450ms ease both;
-}
-
-.ql-new-journey__ticket-top {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.67rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
-.ql-new-journey__ticket-top span:last-child {
-  color: var(--color-primary);
-}
-
-.ql-new-journey__ticket>strong {
-  display: block;
-  margin-top: 30px;
-  font-size: 4rem;
-  line-height: 1;
-  letter-spacing: -0.07em;
-}
-
-.ql-new-journey__ticket h3 {
-  margin: 10px 0 0;
-}
-
-.ql-new-journey__ticket p {
-  margin-top: 6px;
-  color: var(--color-text-muted);
-}
-
-
-/* =========================================================
-   5. NOTIFICATIONS
-   ========================================================= */
-
-.ql-new-notifications {
-  position: relative;
-  height: 430vh;
-  background: var(--color-accent);
-}
-
-.ql-new-notifications__sticky {
-  position: sticky;
-  top: 0;
-  display: flex;
-  align-items: center;
-  min-height: 100vh;
-  overflow: hidden;
-}
-
-.ql-new-notifications__layout {
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  align-items: center;
-  gap: clamp(3rem, 9vw, 9rem);
-}
-
-.ql-new-notifications__copy h2 {
-  margin: 0;
-  font-size: clamp(3.2rem, 6vw, 6rem);
-  line-height: 0.94;
-  letter-spacing: -0.06em;
-}
-
-.ql-new-notifications__copy>p:not(.ql-new-eyebrow) {
-  max-width: 38ch;
-  margin-top: 25px;
-  line-height: 1.7;
-}
-
-.ql-new-notifications__counter {
-  margin-top: 50px;
-  font-size: 1.1rem;
-  font-weight: 800;
-}
-
-.ql-new-notifications__counter span {
-  margin-inline: 10px;
-  opacity: 0.35;
-}
-
-.ql-new-notifications__phone {
-  position: relative;
-  width: min(380px, 90%);
-  height: 720px;
-  margin-inline: auto;
-  overflow: hidden;
-  border: 9px solid var(--color-text);
-  border-radius: 52px;
-  background: var(--color-surface-inverse);
-  color: var(--color-text-inverse);
-  box-shadow: 0 45px 100px rgb(0 0 0 / 22%);
-}
-
-.ql-new-notifications__phone-top {
-  position: relative;
-  z-index: 5;
-  display: flex;
-  justify-content: space-between;
-  padding: 15px 24px;
-  font-size: 0.65rem;
-}
-
-.ql-new-notifications__island {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  width: 105px;
-  height: 27px;
-  border-radius: 20px;
-  background: #000;
-  transform: translateX(-50%);
-}
-
-.ql-new-notifications__wallpaper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 55px;
-}
-
-.ql-new-notifications__wallpaper>span {
-  font-size: 0.75rem;
-  opacity: 0.7;
-}
-
-.ql-new-notifications__wallpaper>strong {
-  margin-top: 4px;
-  font-size: 5rem;
-  line-height: 1;
-  letter-spacing: -0.07em;
-}
-
-.ql-new-notifications__stack {
-  position: absolute;
-  inset: 225px 15px 20px;
-}
-
-.ql-new-notification {
-  position: absolute;
-  top: calc(var(--notification-index) * 93px);
-  left: 0;
-  right: 0;
-  padding: 15px;
-  border: 1px solid rgb(255 255 255 / 15%);
-  border-radius: 20px;
-  background: rgb(255 255 255 / 12%);
-  backdrop-filter: blur(18px);
-
-  opacity: calc(1 - var(--notification-index) * 0.15);
-
-  transform:
-    scale(calc(1 - var(--notification-index) * 0.025));
-
-  transform-origin: top center;
-
-  transition:
-    top 500ms ease,
-    transform 500ms ease,
-    opacity 500ms ease;
-}
-
-.ql-new-notification.is-current {
-  z-index: 10;
-  animation: ql-new-notification-in 550ms ease both;
-}
-
-.ql-new-notification__head {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.ql-new-notification__logo {
-  display: grid;
-  place-items: center;
-  width: 27px;
-  height: 27px;
-  border-radius: 8px;
-  background: var(--color-primary);
-  color: var(--color-text);
-  font-weight: 900;
-}
-
-.ql-new-notification__head b,
-.ql-new-notification__head small {
-  font-size: 0.68rem;
-}
-
-.ql-new-notification__head small {
-  opacity: 0.55;
-}
-
-.ql-new-notification>strong {
-  font-size: 0.92rem;
-}
-
-.ql-new-notification>p {
-  margin: 3px 0 0;
-  font-size: 0.76rem;
-  opacity: 0.75;
-}
-
-
-/* =========================================================
-   6. FOUR PERSPECTIVES
-   ========================================================= */
-
-.ql-new-perspectives {
-  overflow: hidden;
-  padding-block: clamp(7rem, 14vw, 12rem);
-  background: var(--color-bg);
-}
-
-.ql-new-perspectives__heading {
-  margin-bottom: clamp(4rem, 9vw, 8rem);
-}
-
-.ql-new-perspectives__heading h2 {
-  margin: 0;
-  font-size: clamp(3.2rem, 7vw, 7rem);
-  line-height: 0.9;
-  letter-spacing: -0.065em;
-}
-
-.ql-new-perspectives__heading>p:last-child {
+.qm-text {
   max-width: 40ch;
-  margin-top: 25px;
+  margin-top: 22px;
+  font-size: 1.1rem;
   line-height: 1.7;
   color: var(--color-text-muted);
 }
 
-.ql-new-perspectives__rows {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ql-new-perspective {
+.qm-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   overflow: hidden;
-  border-top: 1px solid var(--color-border-subtle);
-  border-bottom: 1px solid var(--color-border-subtle);
-}
-
-.ql-new-perspective__track {
-  display: flex;
-  align-items: center;
-  gap: clamp(2rem, 6vw, 6rem);
-  width: max-content;
-  padding: 32px 0;
+  clip: rect(0 0 0 0);
   white-space: nowrap;
 }
 
-.ql-new-perspective--left .ql-new-perspective__track {
-  animation: ql-new-marquee-left 22s linear infinite;
-}
-
-.ql-new-perspective--right .ql-new-perspective__track {
-  animation: ql-new-marquee-right 25s linear infinite;
-}
-
-.ql-new-perspective__role {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--color-primary);
-}
-
-.ql-new-perspective__track strong {
-  font-size: clamp(3rem, 7vw, 6rem);
-  line-height: 0.9;
-  letter-spacing: -0.06em;
-}
-
-.ql-new-perspective__detail {
-  font-size: 1rem;
-  color: var(--color-text-muted);
-}
-
 
 /* =========================================================
-   7. QLESS DAY
+   Take a ticket (magnetic button + printer)
    ========================================================= */
-
-.ql-new-day {
-  padding-block: clamp(7rem, 14vw, 12rem);
-  background: var(--color-surface);
+.qm-printer {
+  padding-block: clamp(6rem, 12vw, 10rem);
+  background: var(--color-bg);
 }
 
-.ql-new-day__heading {
+.qm-printer__layout {
   display: grid;
-  grid-template-columns: 1fr 0.6fr;
-  align-items: end;
-  gap: 50px;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(3rem, 8vw, 7rem);
+  align-items: center;
 }
 
-.ql-new-day__heading h2 {
-  margin: 0;
-  font-size: clamp(3rem, 6vw, 6rem);
-  line-height: 0.94;
-  letter-spacing: -0.06em;
+/* magnetic button: follows the mouse a little */
+.qm-magnet {
+  --mx: 0px;
+  --my: 0px;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 36px;
+  padding: 18px 32px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transform: translate(var(--mx), var(--my));
+  transition: transform 250ms var(--ease-out), box-shadow 250ms;
 }
 
-.ql-new-day__heading>p {
-  max-width: 38ch;
-  line-height: 1.7;
+.qm-magnet:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.qm-magnet:active {
+  transform: translate(var(--mx), var(--my)) scale(0.96);
+}
+
+.qm-magnet:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.qm-magnet svg,
+.qm-magnet__label {
+  position: relative;
+}
+
+.qm-magnet__ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 45%);
+  pointer-events: none;
+  animation: qm-ripple 700ms var(--ease-out) forwards;
+}
+
+.qm-machine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qm-machine__body {
+  position: relative;
+  z-index: 2;
+  width: min(340px, 100%);
+  padding: 28px 28px 22px;
+  border-radius: 32px 32px 18px 18px;
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-lg);
+}
+
+.qm-machine__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-weight: 800;
+}
+
+.qm-machine__screen {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--color-inverse-tint);
+  font-size: 0.8rem;
+  color: var(--color-text-inverse-muted);
+}
+
+.qm-machine__screen b {
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-accent);
+}
+
+.qm-machine__slot {
+  height: 10px;
+  margin-top: 22px;
+  border-radius: var(--radius-full);
+  background: #000;
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 60%);
+}
+
+.qm-machine__out {
+  position: relative;
+  z-index: 1;
+  width: min(280px, 86%);
+  min-height: 280px;
+  margin-top: -6px;
+  filter: drop-shadow(0 18px 30px rgb(0 0 0 / 14%));
+}
+
+/* paper ticket with a wavy torn bottom edge */
+.qm-ticket {
+  padding: 30px 22px 34px;
+  background: var(--color-bg);
+  -webkit-mask: radial-gradient(circle 7px at 50% 100%, #0000 98%, #000) 50% 0 / 20px 100% repeat-x;
+  mask: radial-gradient(circle 7px at 50% 100%, #0000 98%, #000) 50% 0 / 20px 100% repeat-x;
+  animation: qm-print 1100ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.qm-ticket small {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--color-text-muted);
 }
 
-.ql-new-day__dashboard {
-  display: grid;
-  grid-template-columns: 0.38fr 0.62fr;
-  margin-top: clamp(4rem, 8vw, 7rem);
-  overflow: hidden;
-  border: 1px solid var(--color-border-subtle);
-  border-radius: 32px;
-  background: var(--color-bg);
-  box-shadow: 0 30px 80px rgb(0 0 0 / 7%);
-}
-
-.ql-new-day__summary {
-  padding: clamp(2rem, 5vw, 4rem);
-  background: var(--color-surface-inverse);
-  color: var(--color-text-inverse);
-}
-
-.ql-new-day__summary>span {
-  font-size: 0.75rem;
-  color: var(--color-text-inverse-muted);
-}
-
-.ql-new-day__summary>div:nth-child(2) {
-  display: flex;
-  flex-direction: column;
-  margin-top: 65px;
-}
-
-.ql-new-day__summary>div:nth-child(2) small {
+.qm-ticket strong {
+  display: block;
+  margin: 8px 0 18px;
+  font-size: 4.5rem;
+  line-height: 1;
+  letter-spacing: -0.07em;
   color: var(--color-primary);
 }
 
-.ql-new-day__summary>div:nth-child(2) strong {
-  margin-top: 10px;
-  font-size: clamp(5rem, 9vw, 8rem);
-  line-height: 0.8;
-  letter-spacing: -0.08em;
+.qm-ticket__line {
+  margin-bottom: 16px;
+  border-top: 2px dashed var(--color-border);
 }
 
-.ql-new-day__summary>div:nth-child(2) span {
-  margin-top: 10px;
-  color: var(--color-text-inverse-muted);
-}
-
-.ql-new-day__summary>p {
-  margin-top: 45px;
-  font-size: 1.2rem;
-}
-
-.ql-new-day__wait {
-  display: flex;
-  flex-direction: column;
-  margin-top: 35px;
-  padding-top: 25px;
-  border-top: 1px solid var(--color-inverse-tint);
-}
-
-.ql-new-day__wait small {
-  color: var(--color-text-inverse-muted);
-}
-
-.ql-new-day__wait b {
-  margin-top: 4px;
-  font-size: 1.5rem;
-}
-
-.ql-new-day__chart {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 550px;
-  padding: clamp(2rem, 5vw, 4rem);
-}
-
-.ql-new-day__bars {
+.qm-ticket__stats {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  align-items: end;
-  gap: clamp(10px, 2vw, 24px);
-  height: 340px;
-  border-bottom: 1px solid var(--color-border);
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 0.85rem;
 }
 
-.ql-new-day__bars button {
+.qm-ticket__stats b {
+  display: block;
+  font-size: 1.15rem;
+}
+
+/* =========================================================
+   A whole day without a waiting room (horizontal scroll)
+   ========================================================= */
+.qm-h {
+  --h-shift: 0px;
+  position: relative;
+  height: 400vh;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.qm-h__sticky {
+  position: sticky;
+  top: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  height: 100%;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
+  justify-content: center;
+  gap: 48px;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
-.ql-new-day__bars button>span {
-  width: 100%;
-  min-height: 20px;
-  border-radius: 12px 12px 0 0;
-  background: var(--color-border);
-  transition:
-    height 450ms ease,
-    background 300ms ease,
-    transform 300ms ease;
+.qm-h__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
 }
 
-.ql-new-day__bars button:hover>span,
-.ql-new-day__bars button.is-active>span {
-  background: var(--color-primary);
+.qm-h__total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: clamp(3rem, 6vw, 5rem);
+  color: var(--color-primary);
 }
 
-.ql-new-day__bars button.is-active>span {
-  transform: scaleX(1.05);
-}
-
-.ql-new-day__bars small {
-  margin-top: 13px;
+.qm-h__total small {
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--color-text-muted);
 }
 
-.ql-new-day__bars button.is-active small {
-  color: var(--color-text);
-}
-
-.ql-new-day__legend {
+.qm-h__track {
   display: flex;
-  justify-content: space-between;
-  margin-top: 25px;
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
+  gap: 24px;
+  width: max-content;
+  padding-inline: max(var(--gutter), calc((100vw - var(--container-max)) / 2));
+  transform: translateX(var(--h-shift));
+  will-change: transform;
 }
 
-.ql-new-day__legend span:first-child {
+.qm-h__card {
+  flex: none;
   display: flex;
-  align-items: center;
-  gap: 7px;
+  flex-direction: column;
+  gap: 12px;
+  width: clamp(260px, 30vw, 380px);
+  min-height: 300px;
+  padding: 30px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 28px;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-sm);
+  opacity: 0.6;
+  transform: rotate(var(--tilt)) scale(0.94);
+  transition:
+    transform 600ms var(--ease-out),
+    opacity 600ms,
+    background-color 600ms;
 }
 
-.ql-new-day__legend i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.qm-h__card.is-on {
+  border-color: transparent;
   background: var(--color-primary);
+  color: var(--color-on-primary);
+  opacity: 1;
+  transform: none;
 }
 
+.qm-h__time {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
 
-/* =========================================================
-   ANIMATIONS
-   ========================================================= */
+.qm-h__card h3 {
+  margin: 0;
+  font-size: 1.4rem;
+}
 
-@keyframes ql-new-pulse {
-  50% {
-    opacity: 0.35;
-    transform: scale(0.7);
+.qm-h__card p {
+  margin: 0;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.qm-h__saved {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-tint);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.qm-h__bar {
+  display: block;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--color-border-subtle);
+}
+
+.qm-h__bar i {
+  display: block;
+  height: 100%;
+  background: var(--color-primary);
+  transform: scaleX(var(--h-progress, 1));
+  transform-origin: left center;
+}
+
+/* rolling numbers used by the day section */
+.qm-odo {
+  display: inline-flex;
+  height: 1em;
+  overflow: hidden;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+.qm-odo__col {
+  display: block;
+  height: 1em;
+  overflow: hidden;
+}
+
+.qm-odo__strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--n) * -10%));
+  transition: transform 650ms cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+
+.qm-odo__strip span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+/* ---------- animations for these sections ---------- */
+@keyframes qm-ripple {
+  to {
+    opacity: 0;
+    transform: scale(18);
   }
 }
 
-@keyframes ql-new-down {
-  50% {
+@keyframes qm-print {
+  0% {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-30px);
+  }
+
+  70% {
+    clip-path: inset(0 0 0 0);
     transform: translateY(6px);
   }
-}
 
-@keyframes ql-new-clock-in {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-
-  to {
-    opacity: 1;
+  100% {
+    clip-path: inset(0 0 0 0);
     transform: none;
   }
 }
 
-@keyframes ql-new-activity-in {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-    filter: blur(6px);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-}
-
-@keyframes ql-new-ticket-in {
-  from {
-    opacity: 0;
-    transform: translateY(25px) rotate(2deg);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes ql-new-notification-in {
-  from {
-    opacity: 0;
-    transform: translateY(35px) scale(0.94);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes ql-new-marquee-left {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes ql-new-marquee-right {
-  from {
-    transform: translateX(-50%);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
+/* ---------- tablet ---------- */
 @media (max-width: 900px) {
+  .qm-printer__layout {
+    grid-template-columns: 1fr;
+  }
 
-  .ql-new-line,
-  .ql-new-time,
-  .ql-new-compare,
-  .ql-new-journey,
-  .ql-new-notifications {
+  /* horizontal day becomes a normal swipe row */
+  .qm-h {
     height: auto;
   }
 
-  .ql-new-line__sticky,
-  .ql-new-time__sticky,
-  .ql-new-compare__sticky,
-  .ql-new-journey__sticky,
-  .ql-new-notifications__sticky {
+  .qm-h__sticky {
     position: relative;
     min-height: auto;
     padding-block: 90px;
   }
 
-  .ql-new-line .ql-new-wrap,
-  .ql-new-notifications__layout,
-  .ql-new-day__heading,
-  .ql-new-day__dashboard {
-    grid-template-columns: 1fr;
+  .qm-h__total {
+    align-items: flex-start;
   }
 
-  .ql-new-line__scene {
-    min-height: 500px;
-  }
-
-  .ql-new-time__stage {
-    grid-template-columns: 1fr;
-    gap: 80px;
-    padding-block: 70px;
-  }
-
-  .ql-new-time__activity {
-    margin-inline: auto;
-    text-align: center;
-  }
-
-  .ql-new-time__icon {
-    margin-inline: auto;
-  }
-
-  .ql-new-compare__stage {
-    grid-template-columns: 1fr;
-  }
-
-  .ql-new-compare__after {
-    clip-path: none;
-  }
-
-  .ql-new-compare__divider {
-    display: none;
-  }
-
-  .ql-new-journey__map {
-    transform: scale(0.9);
-  }
-
-  .ql-new-notifications__phone {
-    margin-top: 60px;
-  }
-
-  .ql-new-day__heading>p {
-    margin-top: 25px;
-  }
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 600px) {
-
-  .ql-new-line__heading h2,
-  .ql-new-journey__heading h2,
-  .ql-new-notifications__copy h2,
-  .ql-new-perspectives__heading h2,
-  .ql-new-day__heading h2 {
-    font-size: clamp(2.8rem, 14vw, 4.5rem);
-  }
-
-  .ql-new-line__people {
-    transform: translateY(-50%) scale(0.72);
-    transform-origin: center;
-  }
-
-  .ql-new-ticket {
-    width: 280px;
-  }
-
-  .ql-new-time__clock {
-    width: 250px;
-  }
-
-  .ql-new-time__clock::after {
-    inset: -30px;
-  }
-
-  .ql-new-compare__stage {
-    width: calc(100% - 32px);
-  }
-
-  .ql-new-compare__content {
-    margin-top: 45px;
-  }
-
-  .ql-new-journey__map {
-    height: 400px;
+  .qm-h__track {
+    width: auto;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    scroll-snap-type: x mandatory;
     transform: none;
   }
 
-  .ql-new-journey__point span {
-    display: none;
-  }
-
-  .ql-new-journey__ticket {
-    right: 50%;
-    bottom: 0;
-    width: 220px;
-    transform: translateX(50%);
-  }
-
-  .ql-new-notifications__phone {
-    width: 310px;
-    height: 630px;
-    border-radius: 42px;
-  }
-
-  .ql-new-notifications__wallpaper>strong {
-    font-size: 4rem;
-  }
-
-  .ql-new-notifications__stack {
-    inset: 195px 12px 15px;
-  }
-
-  .ql-new-perspective__track strong {
-    font-size: 3rem;
-  }
-
-  .ql-new-day__dashboard {
-    border-radius: 24px;
-  }
-
-  .ql-new-day__chart {
-    min-height: 430px;
-    padding: 25px 15px;
-  }
-
-  .ql-new-day__bars {
-    height: 270px;
-    gap: 7px;
-  }
-
-  .ql-new-day__bars small {
-    font-size: 0.62rem;
-  }
-
-  .ql-new-day__legend {
-    gap: 15px;
+  .qm-h__card {
+    scroll-snap-align: center;
+    opacity: 1;
+    transform: none;
   }
 }
 
+/* ---------- phone ---------- */
+@media (max-width: 600px) {
+  .qm-ticket strong {
+    font-size: 3.5rem;
+  }
+}
 
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
-
+/* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-
-  .ql-new-line,
-  .ql-new-time,
-  .ql-new-compare,
-  .ql-new-journey,
-  .ql-new-notifications {
+  .qm-h {
     height: auto;
   }
 
-  .ql-new-line__sticky,
-  .ql-new-time__sticky,
-  .ql-new-compare__sticky,
-  .ql-new-journey__sticky,
-  .ql-new-notifications__sticky {
+  .qm-h__sticky {
     position: relative;
     min-height: auto;
+    padding-block: 90px;
   }
 
-  .ql-new-perspective__track,
-  .ql-new-scroll span,
-  .ql-new-ticket__live i {
+  .qm-h__track {
+    width: auto;
+    overflow-x: auto;
+    transform: none;
+  }
+
+  .qm-h__card,
+  .qm-magnet {
+    opacity: 1;
+    transform: none;
+  }
+
+  .qm-ticket,
+  .qm-magnet__ripple {
     animation: none;
+  }
+
+  .qm-odo__strip {
+    transition: none;
   }
 }

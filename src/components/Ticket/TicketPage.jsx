@@ -250,7 +250,7 @@ export default function TicketPage() {
             <p>{notFound ? "It may belong to another account." : `${page.error}. Please try again.`}</p>
             {notFound ? (
               <Link className="btn btn--primary" to="/my-tickets">
-                My tickets
+                My queues
               </Link>
             ) : (
               <button type="button" className="btn btn--primary" onClick={() => setReloadKey((k) => k + 1)}>
@@ -274,7 +274,7 @@ export default function TicketPage() {
         <div className="tk__top">
           <Link className="tk__back" to="/my-tickets">
             <ArrowLeft size={18} />
-            My tickets
+            My queues
           </Link>
           {isLive && (
             <span className={`tk-live ${connected ? "" : "is-off"}`} role="status">

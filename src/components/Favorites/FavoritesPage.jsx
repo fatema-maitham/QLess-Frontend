@@ -85,8 +85,7 @@ export default function FavoritesPage() {
       <div className="favorites-container">
         <header className="favorites-header">
           <div>
-            <p className="favorites-eyebrow">Saved places</p>
-            <h1>My Favorites</h1>
+            <h1>My favorites</h1>
             <p>
               Keep your favorite businesses in one place for quick access.
             </p>

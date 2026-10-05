@@ -619,3 +619,982 @@
     justify-content: flex-start
   }
 }
+
+/* Extra styles for the admin pages Live queues, Reviews, Suspicious activity
+   and Categories. The base look (titles, tabs, rows, cards) comes from
+   Owner/Owner.css and AdminPanel/AdminPanel.css, so these pages match
+   Overview, Businesses, Users and Branches. */
+
+/* title row: "Updated 12:05" next to the search */
+.owner .am-page .page-h .am-updated {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--faint);
+  white-space: nowrap
+}
+
+/* number cards that are not buttons */
+.owner .am-kpi.am-kpi--static {
+  cursor: default
+}
+
+.owner .am-kpi.am-kpi--static:hover {
+  border-color: var(--line);
+  transform: none
+}
+
+/* chart card on Reviews: space under it, long names cut with "..." */
+.owner .am-page .am-gap {
+  margin-bottom: 26px
+}
+
+.owner .am-page .am-card h3 {
+  margin-bottom: 22px
+}
+
+.owner .am-page .am-meter div {
+  grid-template-columns: minmax(0, 220px) 1fr 56px
+}
+
+.owner .am-meter__label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis
+}
+
+.owner .am-card__empty {
+  margin: 0;
+  color: var(--faint);
+  font-size: 14px
+}
+
+/* rows with more text: icon and buttons stay at the top */
+.owner .li.am-li.am-li--top {
+  align-items: start
+}
+
+.owner .li.am-li.am-li--top .st,
+.owner .li.am-li.am-li--top .am-stars,
+.owner .li.am-li.am-li--top .am-acts {
+  margin-top: 10px
+}
+
+.owner .am-quote {
+  margin: 8px 0 0;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--bg);
+  font-size: 14px;
+  color: var(--ink);
+  max-width: 70ch
+}
+
+.owner .am-quote.none {
+  color: var(--faint);
+  font-style: italic
+}
+
+.owner .am-reason {
+  font-weight: 600;
+  color: var(--muted)
+}
+
+.owner .am-flag {
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--orange-dk)
+}
+
+.owner .am-handled {
+  display: block;
+  margin-top: 6px
+}
+
+.owner .li.am-li.off .am-quote {
+  background: var(--soft)
+}
+
+/* stars on Reviews */
+.owner .am-stars {
+  display: inline-flex;
+  gap: 2px;
+  white-space: nowrap
+}
+
+.owner .am-stars svg {
+  fill: var(--soft)
+}
+
+.owner .am-stars svg.on {
+  fill: var(--orange-btn)
+}
+
+/* Edit button on Categories */
+.owner .am-acts .edit {
+  color: var(--ink)
+}
+
+.owner .am-acts .edit:hover {
+  color: var(--orange-dk)
+}
+
+/* Live queues: small numbers on the right of each row */
+.owner .li.am-li.am-li--nums {
+  grid-template-columns: 44px minmax(0, 1fr) auto auto
+}
+
+.owner .am-nums {
+  display: flex;
+  gap: 6px
+}
+
+.owner .am-nums span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+  padding: 6px 8px;
+  border-radius: 12px;
+  background: var(--bg);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--faint)
+}
+
+.owner .am-nums b {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.3
+}
+
+/* Live queues: one card per business, its branches and their queues */
+.owner .am-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 22px
+}
+
+.owner .am-biz__head {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 10px
+}
+
+.owner .am-biz__head .ic {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--ink);
+  color: var(--peach);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800
+}
+
+.owner .am-biz__head div b {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.01em
+}
+
+.owner .am-biz__head small {
+  font-size: 13px;
+  color: var(--faint)
+}
+
+.owner .am-biz__wait {
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted)
+}
+
+.owner .am-biz__wait b {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-right: 4px
+}
+
+.owner .am-branch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--muted)
+}
+
+.owner .am-branch b {
+  color: var(--ink);
+  font-size: 14px
+}
+
+.owner .am-branch small {
+  font-size: 13px;
+  color: var(--faint)
+}
+
+.owner .am-branch .sp {
+  flex: 1
+}
+
+.owner .am-branch svg {
+  color: var(--orange-dk);
+  flex-shrink: 0
+}
+
+.owner .am-none {
+  margin: 0;
+  padding: 14px 20px;
+  font-size: 13.5px;
+  color: var(--faint);
+  border-bottom: 1px solid var(--line)
+}
+
+.owner .list>.am-none:last-child {
+  border-bottom: 0
+}
+
+/* note under a list */
+.owner .am-note {
+  margin: 14px 0 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #9A3A14
+}
+
+/* popups: fields */
+.owner .am-dlg .am-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px
+}
+
+.owner .am-dlg .f textarea {
+  width: 100%;
+  box-sizing: border-box
+}
+
+.owner .am-dlg .form-error {
+  margin: 0 0 14px
+}
+
+@media (max-width:1100px) {
+  .owner .am-nums span:nth-child(n+3) {
+    display: none
+  }
+}
+
+@media (max-width:820px) {
+  .owner .am-branch small:not(:last-child) {
+    display: none
+  }
+
+  .owner .am-page .page-h {
+    flex-wrap: wrap
+  }
+
+  .owner .am-page .page-h .am-search {
+    flex: 1 1 100%;
+    width: auto
+  }
+
+  .owner .li.am-li,
+  .owner .li.am-li.am-li--nums {
+    grid-template-columns: 44px minmax(0, 1fr)
+  }
+
+  .owner .li.am-li>.st,
+  .owner .li.am-li>.am-stars,
+  .owner .li.am-li>.am-nums,
+  .owner .li.am-li>.am-acts {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 0
+  }
+
+  .owner .am-acts {
+    min-width: 0;
+    justify-content: flex-start
+  }
+}
+
+/* Extra styles for the admin pages Live queues, Reviews, Suspicious activity
+   and Categories. The base look (titles, tabs, rows, cards) comes from
+   Owner/Owner.css and AdminPanel/AdminPanel.css, so these pages match
+   Overview, Businesses, Users and Branches. */
+
+/* title row: "Updated 12:05" next to the search */
+.owner .am-page .page-h .am-updated {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--faint);
+  white-space: nowrap
+}
+
+/* number cards that are not buttons */
+.owner .am-kpi.am-kpi--static {
+  cursor: default
+}
+
+.owner .am-kpi.am-kpi--static:hover {
+  border-color: var(--line);
+  transform: none
+}
+
+/* chart card on Reviews: space under it, long names cut with "..." */
+.owner .am-page .am-gap {
+  margin-bottom: 26px
+}
+
+.owner .am-page .am-card h3 {
+  margin-bottom: 22px
+}
+
+.owner .am-page .am-meter div {
+  grid-template-columns: minmax(0, 220px) 1fr 56px
+}
+
+.owner .am-meter__label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis
+}
+
+.owner .am-card__empty {
+  margin: 0;
+  color: var(--faint);
+  font-size: 14px
+}
+
+/* rows with more text: icon and buttons stay at the top */
+.owner .li.am-li.am-li--top {
+  align-items: start
+}
+
+.owner .li.am-li.am-li--top .st,
+.owner .li.am-li.am-li--top .am-stars,
+.owner .li.am-li.am-li--top .am-acts {
+  margin-top: 10px
+}
+
+.owner .am-quote {
+  margin: 8px 0 0;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--bg);
+  font-size: 14px;
+  color: var(--ink);
+  max-width: 70ch
+}
+
+.owner .am-quote.none {
+  color: var(--faint);
+  font-style: italic
+}
+
+.owner .am-reason {
+  font-weight: 600;
+  color: var(--muted)
+}
+
+.owner .am-flag {
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--orange-dk)
+}
+
+.owner .am-handled {
+  display: block;
+  margin-top: 6px
+}
+
+.owner .li.am-li.off .am-quote {
+  background: var(--soft)
+}
+
+/* stars on Reviews */
+.owner .am-stars {
+  display: inline-flex;
+  gap: 2px;
+  white-space: nowrap
+}
+
+.owner .am-stars svg {
+  fill: var(--soft)
+}
+
+.owner .am-stars svg.on {
+  fill: var(--orange-btn)
+}
+
+/* Edit button on Categories */
+.owner .am-acts .edit {
+  color: var(--ink)
+}
+
+.owner .am-acts .edit:hover {
+  color: var(--orange-dk)
+}
+
+/* Live queues: small numbers on the right of each row */
+.owner .li.am-li.am-li--nums {
+  grid-template-columns: 44px minmax(0, 1fr) auto auto
+}
+
+.owner .am-nums {
+  display: flex;
+  gap: 6px
+}
+
+.owner .am-nums span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+  padding: 6px 8px;
+  border-radius: 12px;
+  background: var(--bg);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--faint)
+}
+
+.owner .am-nums b {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.3
+}
+
+/* Live queues: one card per business, its branches and their queues */
+.owner .am-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 22px
+}
+
+.owner .am-biz__head {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 10px
+}
+
+.owner .am-biz__head .ic {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--ink);
+  color: var(--peach);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800
+}
+
+.owner .am-biz__head div b {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.01em
+}
+
+.owner .am-biz__head small {
+  font-size: 13px;
+  color: var(--faint)
+}
+
+.owner .am-biz__wait {
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted)
+}
+
+.owner .am-biz__wait b {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-right: 4px
+}
+
+.owner .am-branch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--muted)
+}
+
+.owner .am-branch b {
+  color: var(--ink);
+  font-size: 14px
+}
+
+.owner .am-branch small {
+  font-size: 13px;
+  color: var(--faint)
+}
+
+.owner .am-branch .sp {
+  flex: 1
+}
+
+.owner .am-branch svg {
+  color: var(--orange-dk);
+  flex-shrink: 0
+}
+
+.owner .am-none {
+  margin: 0;
+  padding: 14px 20px;
+  font-size: 13.5px;
+  color: var(--faint);
+  border-bottom: 1px solid var(--line)
+}
+
+.owner .list>.am-none:last-child {
+  border-bottom: 0
+}
+
+/* note under a list */
+.owner .am-note {
+  margin: 14px 0 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #9A3A14
+}
+
+/* popups: fields */
+.owner .am-dlg .am-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px
+}
+
+.owner .am-dlg .f textarea {
+  width: 100%;
+  box-sizing: border-box
+}
+
+.owner .am-dlg .form-error {
+  margin: 0 0 14px
+}
+
+@media (max-width:1150px) {
+  .owner .am-page .page-h {
+    flex-wrap: wrap;
+    row-gap: 12px
+  }
+
+  .owner .am-page .page-h h1 {
+    white-space: nowrap
+  }
+
+  .owner .am-nums span:nth-child(n+3) {
+    display: none
+  }
+}
+
+@media (max-width:820px) {
+  .owner .am-branch small:not(:last-child) {
+    display: none
+  }
+
+  .owner .am-page .page-h {
+    flex-wrap: wrap
+  }
+
+  .owner .am-page .page-h .am-search {
+    flex: 1 1 100%;
+    width: auto
+  }
+
+  .owner .li.am-li,
+  .owner .li.am-li.am-li--nums {
+    grid-template-columns: 44px minmax(0, 1fr)
+  }
+
+  .owner .li.am-li>.st,
+  .owner .li.am-li>.am-stars,
+  .owner .li.am-li>.am-nums,
+  .owner .li.am-li>.am-acts {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 0
+  }
+
+  .owner .am-acts {
+    min-width: 0;
+    justify-content: flex-start
+  }
+}
+
+/* Extra styles for the admin pages Live queues, Reviews, Suspicious activity
+   and Categories. The base look (titles, tabs, rows, cards) comes from
+   Owner/Owner.css and AdminPanel/AdminPanel.css, so these pages match
+   Overview, Businesses, Users and Branches. */
+
+/* title row: "Updated 12:05" next to the search */
+.owner .am-page .page-h .am-updated {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--faint);
+  white-space: nowrap
+}
+
+/* number cards that are not buttons */
+.owner .am-kpi.am-kpi--static {
+  cursor: default
+}
+
+.owner .am-kpi.am-kpi--static:hover {
+  border-color: var(--line);
+  transform: none
+}
+
+/* chart card on Reviews: space under it, long names cut with "..." */
+.owner .am-page .am-gap {
+  margin-bottom: 26px
+}
+
+.owner .am-page .am-card h3 {
+  margin-bottom: 22px
+}
+
+.owner .am-page .am-meter div {
+  grid-template-columns: minmax(0, 220px) 1fr 56px
+}
+
+.owner .am-meter__label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis
+}
+
+.owner .am-card__empty {
+  margin: 0;
+  color: var(--faint);
+  font-size: 14px
+}
+
+/* rows with more text: icon and buttons stay at the top */
+.owner .li.am-li.am-li--top {
+  align-items: start
+}
+
+.owner .li.am-li.am-li--top .st,
+.owner .li.am-li.am-li--top .am-stars,
+.owner .li.am-li.am-li--top .am-acts {
+  margin-top: 10px
+}
+
+.owner .am-quote {
+  margin: 8px 0 0;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--bg);
+  font-size: 14px;
+  color: var(--ink);
+  max-width: 70ch
+}
+
+.owner .am-quote.none {
+  color: var(--faint);
+  font-style: italic
+}
+
+.owner .am-reason {
+  font-weight: 600;
+  color: var(--muted)
+}
+
+.owner .am-flag {
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--orange-dk)
+}
+
+.owner .am-handled {
+  display: block;
+  margin-top: 6px
+}
+
+.owner .li.am-li.off .am-quote {
+  background: var(--soft)
+}
+
+/* stars on Reviews */
+.owner .am-stars {
+  display: inline-flex;
+  gap: 2px;
+  white-space: nowrap
+}
+
+.owner .am-stars svg {
+  fill: var(--soft)
+}
+
+.owner .am-stars svg.on {
+  fill: var(--orange-btn)
+}
+
+/* Edit button on Categories */
+.owner .am-acts .edit {
+  color: var(--ink)
+}
+
+.owner .am-acts .edit:hover {
+  color: var(--orange-dk)
+}
+
+
+/* Live queues: a business row opens to show its branches and queues */
+.owner .li.am-li.am-biz {
+  width: 100%;
+  grid-template-columns: 44px minmax(0, 1fr) auto 32px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background .2s
+}
+
+.owner .li.am-li.am-biz:hover,
+.owner .li.am-li.am-biz.is-open {
+  background: var(--bg)
+}
+
+.owner .list>.li.am-li.am-biz:last-child {
+  border-bottom: 0
+}
+
+.owner .am-chev {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--muted);
+  transition: transform .25s var(--ease)
+}
+
+.owner .am-biz.is-open .am-chev {
+  transform: rotate(180deg);
+  background: var(--surface)
+}
+
+.owner .am-sub {
+  padding: 2px 20px 18px 80px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line)
+}
+
+.owner .list>.am-sub:last-child {
+  border-bottom: 0
+}
+
+.owner .am-qrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 86px 72px 72px 80px 64px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  margin-top: 6px;
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 14px
+}
+
+.owner .am-qrow.off {
+  opacity: .6
+}
+
+.owner .am-qrow b {
+  display: block;
+  font-size: 14.5px
+}
+
+.owner .am-qrow small {
+  font-size: 12.5px;
+  color: var(--faint)
+}
+
+.owner .am-qrow .num {
+  font-weight: 800;
+  text-align: right;
+  font-variant-numeric: tabular-nums
+}
+
+.owner .am-qrow--head {
+  margin: 0;
+  padding-top: 4px;
+  padding-bottom: 0;
+  background: none;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--faint)
+}
+
+.owner .am-qrow--head span:nth-child(n+3) {
+  text-align: right
+}
+
+.owner .am-branch {
+  margin-top: 14px
+}
+
+.owner .am-branch__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--muted)
+}
+
+.owner .am-none {
+  margin: 6px 0 0;
+  padding: 10px 14px;
+  border: 1.5px dashed var(--line);
+  border-radius: 12px;
+  font-size: 13.5px;
+  color: var(--faint)
+}
+
+/* note under a list */
+.owner .am-note {
+  margin: 14px 0 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #9A3A14
+}
+
+/* popups: fields */
+.owner .am-dlg .am-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px
+}
+
+.owner .am-dlg .f textarea {
+  width: 100%;
+  box-sizing: border-box
+}
+
+.owner .am-dlg .form-error {
+  margin: 0 0 14px
+}
+
+
+@media (max-width:1150px) {
+  .owner .am-page .page-h {
+    flex-wrap: wrap;
+    row-gap: 12px
+  }
+
+  .owner .am-page .page-h h1 {
+    white-space: nowrap
+  }
+
+  .owner .am-sub {
+    padding-left: 20px
+  }
+}
+
+@media (max-width:820px) {
+  .owner .am-page .page-h .am-search {
+    flex: 1 1 100%;
+    width: auto
+  }
+
+  .owner .li.am-li:not(.am-biz) {
+    grid-template-columns: 44px minmax(0, 1fr)
+  }
+
+  .owner .li.am-li:not(.am-biz)>.st,
+  .owner .li.am-li>.am-stars,
+  .owner .li.am-li>.am-acts {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 0
+  }
+
+  .owner .am-acts {
+    min-width: 0;
+    justify-content: flex-start
+  }
+
+  .owner .li.am-li.am-biz {
+    grid-template-columns: 44px minmax(0, 1fr) 32px;
+    row-gap: 8px
+  }
+
+  .owner .li.am-li.am-biz>.st {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start
+  }
+
+  .owner .li.am-li.am-biz>.am-chev {
+    grid-column: 3;
+    grid-row: 1
+  }
+
+  .owner .am-sub {
+    padding: 2px 12px 14px
+  }
+
+  .owner .am-qrow {
+    grid-template-columns: repeat(4, auto);
+    justify-content: start;
+    row-gap: 6px
+  }
+
+  .owner .am-qrow>span:first-child {
+    grid-column: 1/-1
+  }
+
+  .owner .am-qrow>span:nth-child(2) {
+    grid-column: 1/-1
+  }
+
+  .owner .am-qrow--head {
+    display: none
+  }
+
+  .owner .am-qrow .num {
+    text-align: left;
+    font-size: 13px
+  }
+
+  .owner .am-qrow .num::before {
+    content: attr(data-label) " ";
+    font-weight: 600;
+    color: var(--faint)
+  }
+}

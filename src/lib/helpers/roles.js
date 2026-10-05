@@ -23,6 +23,6 @@ export function homeFor(user) {
     case ROLES.STAFF:
       return '/staff';
     default:
-      return '/businesses';
+      return '/dashboard';
   }
 }

@@ -19,13 +19,29 @@ const getScrollTop = () =>
     document.getElementById("root")?.scrollTop || 0,
   );
 
+// True on phones and tablets (same size where NavBar.css shows the menu button)
+const PHONE_QUERY = "(max-width: 1100px)";
+
+const useIsPhone = () => {
+  const [isPhone, setIsPhone] = useState(() => window.matchMedia(PHONE_QUERY).matches);
+
+  useEffect(() => {
+    const media = window.matchMedia(PHONE_QUERY);
+    const onChange = () => setIsPhone(media.matches);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+
+  return isPhone;
+};
+
 const NavBar = () => {
   const { user, setUser } = useContext(UserContext);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const role = getRole(user);
-
+  const isPhone = useIsPhone();
   // Close the phone menu when the page changes
   useEffect(() => {
     setOpen(false);
@@ -53,6 +69,13 @@ const NavBar = () => {
         <Link to={user ? homeFor(user) : "/"} className="qnav__logo" aria-label="QLess home">
           <img src={logo} alt="QLess logo" className="qnav__logo-img" />
         </Link>
+
+        {/* On phones the bell stays in the top bar, not inside the menu */}
+        {user && isPhone && (
+          <div className="qnav__bell">
+            <NotificationBell />
+          </div>
+        )}
 
         <button
           type="button"
@@ -131,7 +154,7 @@ const NavBar = () => {
               </ul>
 
               <div className="qnav__actions">
-                <NotificationBell />
+                {!isPhone && <NotificationBell />}
 
                 <span className="qnav__user">
                   <span className="qnav__avatar" aria-hidden="true">

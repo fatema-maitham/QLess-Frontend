@@ -23,6 +23,7 @@ import TicketPage from "./components/Ticket/TicketPage";
 import MyTicketsPage from "./components/Ticket/MyTicketsPage";
 import FavoritesPage from "./components/Favorites/FavoritesPage";
 import MyBookingsPage from "./components/Bookings/MyBookingsPage";
+import CustomerDashboard from "./components/Dashboard/CustomerDashboard";
 
 // Owner pages
 import OwnerHome from "./components/Business/OwnerHome";
@@ -63,7 +64,7 @@ import AdminCategoriesPage from "./components/Admin/AdminCategoriesPage";
 
 // Context + helpers
 import { UserContext } from "./contexts/UserContext";
-import { ROLES, homeFor } from "./lib/helpers/roles";
+import { ROLES, getRole, homeFor } from "./lib/helpers/roles";
 
 import "./App.css";
 
@@ -126,7 +127,7 @@ export default function App() {
           }
         />
 
-               <Route
+        <Route
           path="/forgot-password"
           element={user ? <Navigate to={homeFor(user)} replace /> : <ForgotPassword />}
         />
@@ -136,10 +137,12 @@ export default function App() {
         <Route
           path="/dashboard"
           element={
-            user ? (
-              <Navigate to={homeFor(user)} replace />
-            ) : (
+            !user ? (
               <Navigate to="/sign-in" replace />
+            ) : getRole(user) === ROLES.CUSTOMER ? (
+              <CustomerDashboard />
+            ) : (
+              <Navigate to={homeFor(user)} replace />
             )
           }
         />

@@ -335,50 +335,24 @@ export default function App() {
         {/* ================= ADMIN ================= */}
 
         {/* Temporary: send /admin here until the admin dashboard is built */}
-        <Route
+                <Route
           path="/admin"
           element={
             <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <Navigate to="/admin/suspicious-activity" replace />
+              <AdminLayout />
             </ProtectedRoute>
           }
-        />
-
-        <Route
-          path="/admin/suspicious-activity"
-          element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <AdminSuspiciousPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/queues"
-          element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <AdminQueuesPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/reviews"
-          element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <AdminReviewsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/categories"
-          element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <AdminCategoriesPage />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route index element={<AdminOverview />} />
+          <Route path="businesses" element={<AdminBusinesses />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="branches" element={<AdminBranches />} />
+          <Route path="audit-logs" element={<AdminAuditLogs />} />
+          <Route path="categories" element={<AdminCategoriesPage />} />
+          <Route path="queues" element={<AdminQueuesPage />} />
+          <Route path="reviews" element={<AdminReviewsPage />} />
+          <Route path="suspicious-activity" element={<AdminSuspiciousPage />} />
+        </Route>
 
         {/* ================= NO ACCESS ================= */}
 

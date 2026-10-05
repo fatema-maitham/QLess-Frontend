@@ -88,8 +88,39 @@
   grid-template-columns: minmax(0, 1fr) 340px;
   align-items: center;
   gap: 32px;
+  min-height: 246px;
+  box-sizing: border-box;
   padding: 28px 30px;
   border-radius: 26px;
+}
+
+.owner .am-overview .am-hero h2 {
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -.025em;
+}
+
+.owner .am-overview .am-hero p.am-line {
+  font-size: 14.5px;
+  max-width: 42ch;
+}
+
+.owner .am-overview .am-art {
+  display: block;
+  width: 340px;
+  height: 190px;
+  max-width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .owner .am-overview .am-hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .owner .am-overview .am-art {
+    display: none;
+  }
 }
 
 .owner .am-overview .am-art {

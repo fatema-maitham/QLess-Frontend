@@ -14,6 +14,8 @@ import Footer from "./components/Footer/Footer"; // NEW
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import NoAccess from "./components/NoAccess/NoAccess";
 import AuthPage from "./components/Auth/AuthPage";
+import ForgotPassword from "./components/Auth/ForgotPassword";
+import ResetPassword from "./components/Auth/ResetPassword";
 
 // Customer pages
 import JoinQueuePage from "./components/Ticket/JoinQueuePage";
@@ -65,7 +67,7 @@ import { ROLES, homeFor } from "./lib/helpers/roles";
 import "./App.css";
 
 // Pages that have their own full-screen layout (no NavBar)
-const NO_NAV = ["/sign-in", "/sign-up"];
+const NO_NAV = ["/sign-in", "/sign-up", "/forgot-password", "/reset-password"];
 
 export default function App() {
   const { user } = useContext(UserContext);
@@ -120,6 +122,13 @@ export default function App() {
             )
           }
         />
+
+               <Route
+          path="/forgot-password"
+          element={user ? <Navigate to={homeFor(user)} replace /> : <ForgotPassword />}
+        />
+
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route
           path="/dashboard"

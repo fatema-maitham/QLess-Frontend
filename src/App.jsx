@@ -62,7 +62,12 @@ import AdminSuspiciousPage from "./components/Admin/AdminSuspiciousPage";
 import AdminQueuesPage from "./components/Admin/AdminQueuesPage";
 import AdminReviewsPage from "./components/Admin/AdminReviewsPage";
 import AdminCategoriesPage from "./components/Admin/AdminCategoriesPage";
-
+import AdminLayout from "./components/AdminPanel/AdminLayout";
+import AdminOverview from "./components/AdminPanel/AdminOverview";
+import AdminBusinesses from "./components/AdminPanel/AdminBusinesses";
+import AdminUsers from "./components/AdminPanel/AdminUsers";
+import AdminBranches from "./components/AdminPanel/AdminBranches";
+import AdminAuditLogs from "./components/AdminPanel/AdminAuditLogs";
 // Context + helpers
 import { UserContext } from "./contexts/UserContext";
 import { ROLES, getRole, homeFor } from "./lib/helpers/roles";
@@ -83,7 +88,8 @@ export default function App() {
   const showNav =
     !NO_NAV.includes(location.pathname) &&
     !location.pathname.startsWith("/owner") &&
-    !location.pathname.startsWith("/staff");
+    !location.pathname.startsWith("/staff") &&
+    !location.pathname.startsWith("/admin");
 
   // NEW: the landing page ("/") already has its own footer
   const showFooter = showNav;
@@ -333,50 +339,24 @@ export default function App() {
         {/* ================= ADMIN ================= */}
 
         {/* Temporary: send /admin here until the admin dashboard is built */}
-        <Route
+                <Route
           path="/admin"
           element={
             <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <Navigate to="/admin/suspicious-activity" replace />
+              <AdminLayout />
             </ProtectedRoute>
           }
-        />
-
-        <Route
-          path="/admin/suspicious-activity"
-          element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <AdminSuspiciousPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/queues"
-          element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <AdminQueuesPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/reviews"
-          element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <AdminReviewsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/categories"
-          element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
-              <AdminCategoriesPage />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route index element={<AdminOverview />} />
+          <Route path="businesses" element={<AdminBusinesses />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="branches" element={<AdminBranches />} />
+          <Route path="audit-logs" element={<AdminAuditLogs />} />
+          <Route path="categories" element={<AdminCategoriesPage />} />
+          <Route path="queues" element={<AdminQueuesPage />} />
+          <Route path="reviews" element={<AdminReviewsPage />} />
+          <Route path="suspicious-activity" element={<AdminSuspiciousPage />} />
+        </Route>
 
         {/* ================= NO ACCESS ================= */}
 

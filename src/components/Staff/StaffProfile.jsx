@@ -144,10 +144,10 @@ export default function StaffProfile() {
             </div>
           </div>
           <div className="pf-upw">
-            <label className="st-btn ghost pf-up">
+                        <label className="st-btn ghost pf-up">
               <Svg color="#1B191A" size={17}><path d="M12 16V4M6 10l6-6 6 6M4 20h16" /></Svg>
-              {uploading ? 'Uploading…' : 'Upload new photo'}
-              <input type="file" accept="image/*" hidden onChange={handlePhoto} disabled={uploading} />
+              {uploading ? 'Uploading…' : 'Change cover'}
+              <input type="file" accept="image/*" hidden onChange={handleCover} disabled={uploading} />
             </label>
           </div>
         </div>

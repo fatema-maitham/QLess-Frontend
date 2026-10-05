@@ -60,7 +60,7 @@ const ForgotPassword = () => {
             </form>
 
             <Link to="/sign-in" className="fp-back"><BackArrow />Back to sign in</Link>
-            <Steps on={2} />
+
           </section>
         ) : (
           <section className="fp-screen">
@@ -79,8 +79,8 @@ const ForgotPassword = () => {
               Didn't get it?{' '}
               <button type="button" onClick={send} disabled={loading}>{loading ? 'Sending...' : 'Resend email'}</button>
             </p>
+        
             
-            <Steps on={2} />
           </section>
         )}
       </main>

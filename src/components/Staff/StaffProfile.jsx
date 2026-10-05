@@ -178,6 +178,20 @@ export default function StaffProfile() {
               {uploading ? 'Uploading…' : 'Change cover'}
               <input type="file" accept="image/*" hidden onChange={handleCover} disabled={uploading} />
             </label>
+                      <div className="pf-remove">
+              {photo && (
+                <button type="button" className="pf-link" disabled={uploading}
+                  onClick={() => removeImage('profile_image', 'Your photo was removed.')}>
+                  Remove photo
+                </button>
+              )}
+              {profile.cover_image && (
+                <button type="button" className="pf-link" disabled={uploading}
+                  onClick={() => removeImage('cover_image', 'Your cover was removed.')}>
+                  Remove cover
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

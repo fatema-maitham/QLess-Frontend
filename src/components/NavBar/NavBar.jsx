@@ -37,7 +37,7 @@ const NavBar = () => {
     onScroll();
     // "capture: true" catches scrolling from #root too, not only the window
     document.addEventListener("scroll", onScroll, { capture: true, passive: true });
-    return () => document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    return () => document.removeEventListener("scroll", onScroll, { capture: true });
   }, [location.pathname]);
 
   const handleSignOut = () => {

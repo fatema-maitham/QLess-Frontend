@@ -172,3 +172,40 @@
     justify-self: center;
   }
 }
+
+
+@media (min-width: 1101px) {
+  .owner .main > .content:has(.am-overview) {
+    height: 100% !important;
+    box-sizing: border-box;
+    padding-bottom: 28px !important;
+  }
+
+  .owner .am-overview {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .owner .am-overview .am-hero,
+  .owner .am-overview .am-kpis {
+    flex-shrink: 0;
+    margin-bottom: 0;
+  }
+
+  .owner .am-overview .am-split {
+    flex: 1;
+  }
+
+  .owner .am-overview .am-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 240px;
+  }
+
+  .owner .am-overview .am-meter {
+    flex: 1;
+    justify-content: space-evenly;
+  }
+}

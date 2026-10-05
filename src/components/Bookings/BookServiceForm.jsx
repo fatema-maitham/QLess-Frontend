@@ -1,6 +1,8 @@
 import { useContext, useState } from "react";
+import { Link, useLocation } from "react-router";
 import { CalendarBlank, Clock } from "@phosphor-icons/react";
 import { UserContext } from "../../contexts/UserContext";
+import { ROLES, getRole } from "../../lib/helpers/roles";
 import { createBooking } from "../../services/bookingService";
 import "./Bookings.css";
 
@@ -18,6 +20,7 @@ export default function BookServiceForm({
   onBooked,
 }) {
   const { user } = useContext(UserContext);
+  const location = useLocation();
 
   const [serviceId, setServiceId] = useState("");
   const [bookingDate, setBookingDate] = useState("");
@@ -26,8 +29,34 @@ export default function BookServiceForm({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const isCustomer = user?.role === "customer";
+  const isCustomer = getRole(user) === ROLES.CUSTOMER;
 
+  // Nothing to book
+  if (!services?.length) {
+    return null;
+  }
+
+  // Guests: show that booking exists, and send them back here after signing in
+  if (!user) {
+    return (
+      <section className="booking-form-card" aria-labelledby="book-service-title">
+        <div className="booking-section-heading">
+          <div>
+            <h2 id="book-service-title">Book a service</h2>
+            <p>Sign in to choose a service and a time that works for you.</p>
+          </div>
+
+          <CalendarBlank size={30} weight="duotone" />
+        </div>
+
+        <Link to="/sign-in" state={{ from: location.pathname }} className="btn btn--primary">
+          Sign in to book
+        </Link>
+      </section>
+    );
+  }
+
+  // Owners, staff and admins can't book
   if (!isCustomer) {
     return null;
   }
@@ -66,10 +95,6 @@ export default function BookServiceForm({
     }
   }
 
-  if (!services?.length) {
-    return null;
-  }
-
   return (
     <section
       className="booking-form-card"
@@ -77,7 +102,6 @@ export default function BookServiceForm({
     >
       <div className="booking-section-heading">
         <div>
-          <p className="booking-eyebrow">Plan ahead</p>
           <h2 id="book-service-title">Book a service</h2>
           <p>
             Choose a service and request a time that works for you.

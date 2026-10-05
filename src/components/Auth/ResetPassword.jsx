@@ -54,7 +54,7 @@ const ResetPassword = () => {
             <h1>Password <span>changed!</span></h1>
             <p className="fp-sub">Your password was reset. You can sign in with your new password now.</p>
             <Link to="/sign-in" className="auth-btn fp-btn-link">Back to sign in</Link>
-            <Steps on={3} />          </section>
+                     </section>
         ) : (
           <section className="fp-screen">
             <ForgotArt name="key" />
@@ -96,7 +96,7 @@ const ResetPassword = () => {
                 {loading ? 'Saving...' : 'Reset password'}
               </button>
             </form>
-            <Steps on={3} />
+            
           </section>
         )}
       </main>

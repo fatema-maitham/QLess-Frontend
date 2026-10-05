@@ -142,3 +142,116 @@
   .owner .sx .pf-tabs { margin: 0 20px; }
   .owner .sx .pf-panel { padding: 20px; }
 }
+/* =========================================================
+   Page titles with a small line under them
+   (Live queues, Queue history, Bookings)
+   ========================================================= */
+.owner .sx .cp-title { display: flex; flex-direction: column; min-width: 0; }
+.owner .sx .cp-sub { margin: 2px 0 0; font-size: 14px; font-weight: 600; color: var(--muted); }
+.owner .sx .page-h { flex-wrap: wrap; }
+
+/* loading block */
+.owner .sx .sh-skeleton { height: 220px; border-radius: 28px; background: linear-gradient(90deg, var(--row), #F1ECE6, var(--row)); background-size: 200% 100%; animation: st-shimmer 1.4s ease-in-out infinite; }
+.owner .sx .sh-skeleton--in { height: 160px; margin: 0 24px 24px; border-radius: 18px; }
+@keyframes st-shimmer { to { background-position: -200% 0; } }
+
+/* round filter buttons (history + bookings) */
+.owner .sx .sh-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px; border-radius: 999px; background: var(--row); }
+.owner .sx .sh-filters button { height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: none; font-weight: 700; font-size: 13.5px; color: var(--muted); cursor: pointer; transition: background .2s, color .2s; }
+.owner .sx .sh-filters button:hover { color: var(--ink); }
+.owner .sx .sh-filters button.on { background: var(--ink); color: #fff; }
+.owner .sx .chip.warn { background: #FDEEE6; color: #9A3A14; }
+.owner .sx .chip.off { background: var(--soft); color: var(--muted); }
+
+/* =========================================================
+   Live queues (same look as the rest of the staff pages)
+   ========================================================= */
+.owner .sx .st-queues .cp-toolbar { border: 1px solid var(--line); border-radius: 22px; padding: 12px 16px; }
+.owner .sx .st-queues .cp-serving { border: 0; border-radius: 28px; padding: 26px 30px; background: var(--peach-soft); }
+.owner .sx .st-queues .cp-serving span { font-size: 12.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #8A4A18; }
+.owner .sx .st-queues .cp-serving strong { font-size: 60px; letter-spacing: -.04em; color: var(--orange-btn); }
+.owner .sx .st-queues .cp-counter { border: 0; border-radius: 16px; background: #fff; padding: 10px 14px; }
+.owner .sx .st-queues .cp-counter.mine { box-shadow: inset 0 0 0 2px var(--ink); }
+.owner .sx .st-queues .cp-serving .cp-counter strong { font-size: 30px; }
+.owner .sx .st-queues .cp-call { height: 54px; min-width: 200px; padding: 0 28px; border-radius: 999px; font-weight: 800; font-size: 15.5px; }
+.owner .sx .st-queues .cp-call-wrap .sel { background-color: #fff; border-color: transparent; }
+.owner .sx .st-queues .cp-section { border: 1px solid var(--line); border-radius: 24px; }
+.owner .sx .st-queues .cp-section-head { min-height: 60px; padding: 0 22px; }
+.owner .sx .st-queues .cp-section-head h2 { font-size: 16px; font-weight: 800; }
+.owner .sx .st-queues .cp-row { padding: 12px 22px; }
+.owner .sx .st-queues .cp-number { border-radius: 14px; background: var(--row); }
+.owner .sx .st-queues .cp-row.next .cp-number { background: var(--orange-btn); }
+.owner .sx .st-queues .cp-mini-stats { padding: 12px 6px 2px; }
+
+/* =========================================================
+   Queue history
+   ========================================================= */
+.owner .sx .sh-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.owner .sx .sh-stat { display: flex; flex-direction: column; gap: 4px; padding: 20px 22px; border: 1.5px solid var(--line); border-radius: 24px; background: #fff; }
+.owner .sx .sh-stat small { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+.owner .sx .sh-stat b { font-size: 32px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+.owner .sx .sh-stat--main { border-color: transparent; background: var(--peach-soft); }
+.owner .sx .sh-stat--main small { color: #8A4A18; }
+.owner .sx .sh-stat--main b { color: var(--orange-btn); }
+
+.owner .sx .sh-sheet { border: 1px solid var(--line); border-radius: 28px; background: #fff; overflow: hidden; }
+.owner .sx .sh-sheet__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 24px; border-bottom: 1px solid var(--line); }
+.owner .sx .sh-sheet__head h2 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
+.owner .sx .sh-note { margin: 0; padding: 40px 24px; text-align: center; color: var(--muted); }
+.owner .sx .sh-list { margin: 0; padding: 8px 12px 12px; list-style: none; }
+.owner .sx .sh-row { display: grid; grid-template-columns: 48px minmax(0, 1fr) 110px 150px 110px; align-items: center; gap: 16px; padding: 12px; border-radius: 16px; }
+.owner .sx .sh-row + .sh-row { margin-top: 4px; }
+.owner .sx .sh-row:hover { background: var(--row); }
+.owner .sx .sh-num { width: 48px; height: 48px; border-radius: 14px; background: var(--peach-soft); display: grid; place-items: center; font-weight: 800; font-variant-numeric: tabular-nums; }
+.owner .sx .sh-who { min-width: 0; }
+.owner .sx .sh-who b { display: block; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.owner .sx .sh-who span { display: block; font-size: 13px; color: var(--faint); }
+.owner .sx .sh-time small { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.owner .sx .sh-time b { font-size: 14.5px; white-space: nowrap; }
+.owner .sx .sh-row .chip { justify-self: end; }
+
+/* =========================================================
+   Bookings
+   ========================================================= */
+.owner .sx .sb-count { font-size: 14px; font-weight: 700; padding: 8px 14px; border-radius: 999px; background: var(--row); color: var(--muted); }
+.owner .sx .sb-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 20px; }
+.owner .sx .sb-date { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); }
+.owner .sx .sb-date:focus-within { border-color: var(--ink); box-shadow: 0 0 0 4px var(--peach-soft); }
+.owner .sx .sb-date input { border: 0; outline: 0; background: none; font: 600 14px var(--sans); color: var(--ink); }
+.owner .sx .sb-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.owner .sx .sb-error { margin: 0 0 16px; padding: 10px 14px; border-radius: 12px; background: #FDEEE6; color: #7A2E10; font-size: 14px; font-weight: 600; }
+
+.owner .sx .sb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.owner .sx .sb-card { display: flex; flex-direction: column; gap: 14px; padding: 22px; border: 1.5px solid var(--line); border-radius: 24px; background: #fff; transition: border-color .2s, transform .3s; }
+.owner .sx .sb-card:hover { border-color: var(--ink); transform: translateY(-2px); }
+.owner .sx .sb-card.is-cancelled { opacity: .65; }
+.owner .sx .sb-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.owner .sx .sb-when { display: flex; flex-direction: column; padding: 10px 14px; border-radius: 16px; background: var(--peach-soft); }
+.owner .sx .sb-when b { font-size: 22px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; color: var(--orange-btn); }
+.owner .sx .sb-when span { font-size: 12.5px; font-weight: 700; color: #8A4A18; }
+.owner .sx .sb-card h2 { margin: 0; font-size: 19px; font-weight: 800; letter-spacing: -.02em; }
+.owner .sx .sb-details { display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: var(--muted); }
+.owner .sx .sb-details span { display: flex; align-items: center; gap: 10px; }
+.owner .sx .sb-details svg { flex-shrink: 0; color: var(--faint); }
+.owner .sx .sb-status { font-size: 12.5px; font-weight: 800; padding: 5px 12px; border-radius: 999px; text-transform: capitalize; white-space: nowrap; }
+.owner .sx .sb-status--pending { background: var(--peach-soft); color: #8A4A18; }
+.owner .sx .sb-status--confirmed { background: var(--green-bg); color: var(--green); }
+.owner .sx .sb-status--completed { background: var(--ink); color: #fff; }
+.owner .sx .sb-status--cancelled { background: var(--soft); color: var(--muted); }
+.owner .sx .sb-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 4px; }
+.owner .sx .sb-btn { flex: 1; height: 44px; padding: 0 16px; font-size: 14px; }
+
+/* ===== phones ===== */
+@media (max-width: 860px) {
+  .owner .sx .sh-stats { grid-template-columns: repeat(2, 1fr); }
+  .owner .sx .sh-row { grid-template-columns: 44px minmax(0, 1fr) auto; }
+  .owner .sx .sh-row .sh-time { display: none; }
+  .owner .sx .sh-sheet__head { padding: 16px; }
+  .owner .sx .st-queues .cp-serving strong { font-size: 44px; }
+  .owner .sx .st-queues .cp-call { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .owner .sx .sh-skeleton { animation: none; }
+  .owner .sx .sb-card { transition: none; }
+}

@@ -7,8 +7,13 @@ import "./Control.css";
 export default function ControlPage({
   branches,
   title = "Live Queues",
+  subtitle = "",
   onQueueChange,
   showSettings = false,
+  // where the Bookings button goes (staff stay inside their own dashboard)
+  bookingsTo = "",
+  // the analytics page is owner only
+  showAnalytics = true,
 }) {
   const [params, setParams] = useSearchParams();
 
@@ -86,7 +91,10 @@ export default function ControlPage({
   return (
     <section className="cp-page">
       <div className="page-h cp-page-head">
-        <h1>{title}</h1>
+        <div className="cp-title">
+          <h1>{title}</h1>
+          {subtitle && <p className="cp-sub">{subtitle}</p>}
+        </div>
 
         <span className="sp" />
 
@@ -105,7 +113,7 @@ export default function ControlPage({
           </select>
         )}
         {branchId && (
-          <Link className="btn" to={`/branches/${branchId}/bookings`}>
+          <Link className="btn btn-ghost" to={bookingsTo || `/branches/${branchId}/bookings`}>
             Bookings
           </Link>
         )}
@@ -178,6 +186,7 @@ export default function ControlPage({
             <QueueControl
               key={current.id}
               queueId={current.id}
+              showAnalytics={showAnalytics}
             />
           )}
         </>

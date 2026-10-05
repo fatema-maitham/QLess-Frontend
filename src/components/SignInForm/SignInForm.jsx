@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { signIn } from '../../services/authService';
 import { UserContext } from '../../contexts/UserContext';
 import { MailIcon, LockIcon, EyeIcon, AlertIcon } from '../Auth/AuthIcons';
@@ -7,6 +7,7 @@ import { homeFor } from '../../lib/helpers/roles';
 
 const SignInForm = ({ onSwitch }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setUser } = useContext(UserContext);
   const [showPw, setShowPw] = useState(false);
   const [message, setMessage] = useState('');
@@ -24,11 +25,12 @@ const SignInForm = ({ onSwitch }) => {
   const handleSubmit = async (evt) => {
     evt.preventDefault();
     if (!isValid) return;
+
     setLoading(true);
     try {
       const user = await signIn({ email, password });
       setUser(user);
-      navigate(homeFor(user));
+      navigate(location.state?.from || homeFor(user), { replace: true });
     } catch (err) {
       setMessage(err.message);
     } finally {
@@ -92,9 +94,11 @@ const SignInForm = ({ onSwitch }) => {
 
       <div className="auth-row">
         <label className="auth-check">
-                    <input type="checkbox" defaultChecked /> Keep me signed in
+          <input type="checkbox" defaultChecked /> Keep me signed in
         </label>
-        <Link to="/forgot-password" className="auth-forgot">Forgot password?</Link>
+        <Link to="/forgot-password" className="auth-forgot">
+          Forgot password?
+        </Link>
       </div>
 
       <button type="submit" className="auth-btn" disabled={!isValid || loading}>
@@ -103,7 +107,9 @@ const SignInForm = ({ onSwitch }) => {
 
       <p className="auth-mobile-switch">
         New to QLess?{' '}
-        <button type="button" onClick={onSwitch}>Create an account</button>
+        <button type="button" onClick={onSwitch}>
+          Create an account
+        </button>
       </p>
     </form>
   );

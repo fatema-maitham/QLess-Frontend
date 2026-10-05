@@ -7,12 +7,12 @@ import './Auth.css';
 /* One page for both /sign-in and /sign-up.
    Both forms stay on the page; the dark panel slides over the one that is not in use. */
 const AuthPage = () => {
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const navigate = useNavigate();
   const isSignUp = pathname === '/sign-up';
 
-  const goSignUp = () => navigate('/sign-up');
-  const goSignIn = () => navigate('/sign-in');
+  const goSignUp = () => navigate('/sign-up', { state });
+  const goSignIn = () => navigate('/sign-in', { state });
 
   return (
     <div className="auth-page">

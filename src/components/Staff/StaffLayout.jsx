@@ -96,7 +96,7 @@ export default function StaffLayout() {
         <p className="grp">Queues</p>
         <Item to="/staff/queues" icon="queues">Live queues</Item>
         <Item to="/staff/history" icon="history">Queue history</Item>
-        {me && <Item to={`/branches/${me.branch.id}/bookings`} icon="bookings">Bookings</Item>}
+        <Item to="/staff/bookings" icon="bookings">Bookings</Item>
         <p className="grp">Account</p>
         <Item to="/staff/branch" icon="branch">My branch</Item>
         <Item to="/staff/profile" icon="profile">My profile</Item>

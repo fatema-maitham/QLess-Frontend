@@ -12,34 +12,55 @@ import {
   Plus,
   ShieldCheck,
   Star,
+  Ticket,
   UserGear,
   UsersThree,
 } from "@phosphor-icons/react";
 import ColorIcon from "./ColorIcon";
+import logo from "../../assets/qless-logo.png";
+import qIcon from "../../assets/Q.png";
 import {
   PARTNER_LOGOS,
-  REVIEWS,
   STEPS,
   FEATURES,
   VALUES,
   STATS,
-  PLACES,
   FAQS,
-  FOOTER_LINKS,
 } from "./landingData";
+import {
+  getBusinesses,
+  getBusinessBranches,
+  getBusinessReviews,
+} from "../../services/businessService";
+import { getCategories } from "../../services/categoryService";
+import { getBranchQueues } from "../../services/branchService";
 import "./LandingPage.css";
 
-// The 8 industries shown on the landing page (icon names match ColorIcon.jsx)
-const INDUSTRIES = [
-  { name: "Healthcare", icon: "healthcare" },
-  { name: "Government", icon: "government" },
-  { name: "Banks", icon: "banks" },
-  { name: "Restaurants", icon: "restaurants" },
-  { name: "Veterinary", icon: "veterinary" },
-  { name: "Pharmacies", icon: "pharmacies" },
-  { name: "Salons and beauty", icon: "salons" },
-  { name: "Universities", icon: "universities" },
+// Picks a ColorIcon for a real category name (e.g. "Banking" -> banks)
+const CATEGORY_ICONS = [
+  ["bank", "banks"],
+  ["health", "healthcare"],
+  ["clinic", "healthcare"],
+  ["hospital", "healthcare"],
+  ["pharma", "pharmacies"],
+  ["gov", "government"],
+  ["telecom", "telecom"],
+  ["restaurant", "restaurants"],
+  ["cafe", "restaurants"],
+  ["salon", "salons"],
+  ["beauty", "salons"],
+  ["vet", "veterinary"],
+  ["univers", "universities"],
+  ["lab", "labs"],
+  ["post", "post"],
+  ["util", "utilities"],
 ];
+
+function iconFor(name = "") {
+  const key = name.toLowerCase();
+  const match = CATEGORY_ICONS.find(([word]) => key.includes(word));
+  return match ? match[1] : "buildings";
+}
 
 // Simple line icons for the Features cards (names match landingData.js)
 const FEATURE_ICONS = {
@@ -88,29 +109,6 @@ const ROLES = [
     points: ["Business approvals", "User and role management", "Searchable audit log"],
   },
 ];
-
-/* ---------- Live dashboard (example data) ---------- */
-const BOARD_SERVICES = ["General services", "Payments", "Documents"];
-
-const BOARD_START = {
-  rows: [
-    { number: "A104", service: "General services", counter: "Counter 2", status: "called" },
-    { number: "A105", service: "Payments", counter: "—", status: "waiting" },
-    { number: "A106", service: "General services", counter: "—", status: "waiting" },
-    { number: "A103", service: "Documents", counter: "Counter 1", status: "served" },
-  ],
-  next: 107,
-  counter: 2,
-  waiting: 6,
-  served: 48,
-  average: 9,
-};
-
-const BOARD_STATUS = {
-  called: "Called",
-  waiting: "Waiting",
-  served: "Served",
-};
 
 /* ---------- Privacy and security ---------- */
 const TRUST = [
@@ -172,11 +170,11 @@ function useScrollFrame(update, enabled) {
     };
 
     update();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
     window.addEventListener("resize", onScroll);
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("scroll", onScroll, { capture: true });
       window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(frame);
     };
@@ -252,6 +250,108 @@ function useCountUp(target, start, reduced, duration = 1800) {
   }, [start, target, reduced, duration]);
 
   return value;
+}
+
+/*
+  Real data for the landing page, all from public API routes:
+  GET /businesses, GET /categories,
+  GET /businesses/:id/branches, GET /branches/:id/queues,
+  GET /businesses/:id/reviews
+*/
+const MAX_BUSINESSES = 20;
+
+function useLandingData() {
+  const [data, setData] = useState({
+    status: "loading",
+    places: [],
+    categories: [],
+    reviews: [],
+    stats: null,
+  });
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    async function load() {
+      try {
+        const [businesses, categories] = await Promise.all([
+          getBusinesses({ signal }),
+          getCategories({ signal }).catch(() => []),
+        ]);
+
+        // branches, queues and reviews for each business
+        const details = await Promise.all(
+          businesses.slice(0, MAX_BUSINESSES).map(async (business) => {
+            const [branches, reviewData] = await Promise.all([
+              getBusinessBranches(business.id, { signal }).catch(() => []),
+              getBusinessReviews(business.id, { signal }).catch(() => null),
+            ]);
+
+            const queueLists = await Promise.all(
+              branches.map((branch) =>
+                getBranchQueues(branch.id, { signal }).catch(() => [])
+              )
+            );
+            const queues = queueLists.flat();
+
+            return {
+              ...business,
+              branchCount: branches.length,
+              waiting: queues.reduce((sum, queue) => sum + (queue.waiting_count || 0), 0),
+              openQueues: queues.filter((queue) => queue.status === "open").length,
+              rating: reviewData?.average_rating ?? null,
+              reviewList: (reviewData?.reviews || []).map((review) => ({
+                ...review,
+                businessName: business.name,
+              })),
+            };
+          })
+        );
+
+        const reviews = details
+          .flatMap((business) => business.reviewList)
+          .filter((review) => review.comment && review.comment.trim())
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .slice(0, 10);
+
+        const stats = [
+          { value: businesses.length, suffix: "", label: "businesses on QLess" },
+          {
+            value: details.reduce((sum, business) => sum + business.branchCount, 0),
+            suffix: "",
+            label: "branches with live queues",
+          },
+          {
+            value: details.reduce((sum, business) => sum + business.openQueues, 0),
+            suffix: "",
+            label: "queues open right now",
+          },
+          {
+            value: details.reduce((sum, business) => sum + business.waiting, 0),
+            suffix: "",
+            label: "people waiting right now",
+          },
+        ];
+
+        setData({
+          status: "ready",
+          places: details.slice(0, 6),
+          categories,
+          reviews,
+          stats,
+        });
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        setData((prev) => ({ ...prev, status: "error" }));
+      }
+    }
+
+    load();
+    return () => controller.abort();
+  }, []);
+
+  return data;
 }
 
 // Stacking cards: as the next card slides over a card,
@@ -339,177 +439,6 @@ function Hero({ reduced }) {
           <Link className="btn lp-btn-light" to="/business/register">
             For businesses
           </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* =========================================================
-   Live dashboard (right under the hero text)
-   Rows move every few seconds, like a real branch.
-   The window tilts back and settles flat as you scroll to it.
-   ========================================================= */
-
-function useLiveBoard(reduced) {
-  const [board, setBoard] = useState(BOARD_START);
-
-  useEffect(() => {
-    if (reduced) return;
-
-    const id = setInterval(() => {
-      setBoard((prev) => {
-        const called = prev.rows.find((row) => row.status === "called");
-        const waiting = prev.rows.filter((row) => row.status === "waiting");
-        const counter = (prev.counter % 3) + 1;
-
-        const rows = [
-          { ...waiting[0], status: "called", counter: `Counter ${counter}` },
-          ...waiting.slice(1),
-          {
-            number: `A${prev.next}`,
-            service: BOARD_SERVICES[prev.next % 3],
-            counter: "—",
-            status: "waiting",
-          },
-          { ...called, status: "served" },
-        ];
-
-        return {
-          rows,
-          next: prev.next + 1,
-          counter,
-          served: prev.served + 1,
-          waiting: Math.min(9, Math.max(3, prev.waiting + (Math.random() < 0.5 ? -1 : 1))),
-          average: 7 + Math.floor(Math.random() * 4),
-        };
-      });
-    }, 3400);
-
-    return () => clearInterval(id);
-  }, [reduced]);
-
-  return board;
-}
-
-function LiveBoard({ reduced }) {
-  const sectionRef = useRef(null);
-  useScrollVars(sectionRef, reduced);
-  const board = useLiveBoard(reduced);
-
-  const stats = [
-    { label: "Waiting now", value: board.waiting },
-    { label: "Average wait", value: `${board.average} min` },
-    { label: "Served today", value: board.served },
-    { label: "Counters open", value: 3 },
-  ];
-
-  // The visitor's ticket on the phone moves with the board: 3 → 2 → 1 ahead
-  const ahead = 3 - ((board.served - BOARD_START.served) % 3);
-
-  return (
-    <section ref={sectionRef} className="lp-board-section" aria-label="Example of the QLess live queue">
-      <div className="lp-container lp-board-stage">
-        <div className="lp-board">
-          <div className="lp-board__bar">
-            <span className="lp-board__dots" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </span>
-            <span>QLess · City Centre Branch · Live queue</span>
-          </div>
-
-          <div className="lp-board__app">
-            <nav className="lp-board__side" aria-hidden="true">
-              <span className="is-on">Live queue</span>
-              <span>Branches</span>
-              <span>Services</span>
-              <span>Opening hours</span>
-              <span>Staff</span>
-              <span>Announcements</span>
-              <small>Example data</small>
-            </nav>
-
-            <div className="lp-board__main">
-              <div className="lp-board__head">
-                <b>General services</b>
-                <span className="lp-board__live">Live</span>
-              </div>
-
-              <div className="lp-board__stats">
-                {stats.map((stat) => (
-                  <div key={stat.label} className="lp-board__stat">
-                    <small>{stat.label}</small>
-                    <b key={stat.value}>{stat.value}</b>
-                  </div>
-                ))}
-              </div>
-
-              <ul className="lp-board__rows" aria-live="polite">
-                {board.rows.map((row, i) => (
-                  <li
-                    key={`${row.number}-${row.status}`}
-                    className={`lp-board__row is-${row.status} ${i === 0 ? "is-new" : ""}`}
-                  >
-                    <b>{row.number}</b>
-                    <span>{row.service}</span>
-                    <span className="lp-board__counter">{row.counter}</span>
-                    <em className={`lp-board__tag lp-board__tag--${row.status}`}>
-                      {BOARD_STATUS[row.status]}
-                    </em>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Visitor's phone with their ticket */}
-        <div className="lp-phone" aria-hidden="true">
-          <div className="lp-phone__screen">
-            <span className="lp-phone__island" />
-            <div className="lp-phone__status">
-              <span>9:41</span>
-              <span>QLess</span>
-            </div>
-
-            <div className="lp-phone__app">
-              <i className="lp-phone__logo">Q</i>
-              <div>
-                <b>City Centre Branch</b>
-                <small>General services</small>
-              </div>
-            </div>
-
-            <div className="lp-phone__ticket">
-              <small>Your number</small>
-              <b>A107</b>
-              <span className={`lp-phone__bar lp-phone__bar--${ahead}`}>
-                <i />
-              </span>
-              <span key={ahead} className="lp-phone__ahead">
-                {ahead === 1 ? "You're next!" : `${ahead} ahead of you`} · ~{ahead * 4} min
-              </span>
-            </div>
-
-            <div className="lp-phone__chips">
-              <span>
-                <b>~{ahead * 4} min</b>
-                estimated wait
-              </span>
-              <span>
-                <b>Counter 2</b>
-                when called
-              </span>
-            </div>
-
-            <div className="lp-phone__note">
-              <b>Return by 6:20 PM.</b> You can leave the branch. We'll tell you when to come back.
-            </div>
-
-            <span className="lp-phone__leave">Leave queue</span>
-          </div>
         </div>
       </div>
     </section>
@@ -709,21 +638,25 @@ function PhoneScreen({ icon, serving, onCallNext }) {
         <div className="lp-ph__time">6:08</div>
         <div className="lp-ph__date">Friday, 2 October</div>
         <div className="lp-ph__ntf">
-          <i>Q</i>
+          <i>
+            <img src={qIcon} alt="" />
+          </i>
           <div>
-            <b>QLess</b>
             <span>You joined the queue at City Centre Branch. Your number is A107.</span>
           </div>
         </div>
         <div className="lp-ph__ntf">
-          <i>Q</i>
+          <i>
+            <img src={qIcon} alt="" />
+          </i>
           <div>
-            <b>QLess</b>
             <span>2 people are ahead of you. About 8 minutes left.</span>
           </div>
         </div>
         <div className="lp-ph__ntf lp-ph__ntf--hot">
-          <i>Q</i>
+          <i>
+            <img src={qIcon} alt="" />
+          </i>
           <div>
             <b>It's almost your turn</b>
             <span>Please head to counter 2.</span>
@@ -855,7 +788,9 @@ function PhoneScreen({ icon, serving, onCallNext }) {
 function PhoneHead({ title, sub }) {
   return (
     <div className="lp-ph__head">
-      <i>Q</i>
+      <i>
+        <img src={qIcon} alt="" />
+      </i>
       <div>
         <b>{title}</b>
         <small>{sub}</small>
@@ -933,7 +868,7 @@ function Features({ reduced }) {
               <span className="lp-ph__island" aria-hidden="true" />
               <div className="lp-ph__status" aria-hidden="true">
                 <span>9:41</span>
-                <span>QLess</span>
+                <img className="lp-ph__logo" src={logo} alt="" />
               </div>
               <div className="lp-ph__screen" key={active}>
                 {current && (
@@ -946,6 +881,234 @@ function Features({ reduced }) {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* Rolling number, like a car odometer */
+function Odometer({ value }) {
+  const digits = String(value).split("");
+
+  return (
+    <span className="qm-odo" aria-hidden="true">
+      {digits.map((digit, i) => (
+        <span key={digits.length - i} className="qm-odo__col">
+          <span className="qm-odo__strip" style={{ "--n": digit }}>
+            {"0123456789".split("").map((n) => (
+              <span key={n}>{n}</span>
+            ))}
+          </span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/* =========================================================
+   2. Ticket printer (magnetic button)
+   ========================================================= */
+const FIRST_TICKET = 107;
+
+function TicketPrinter({ reduced }) {
+  const btnRef = useRef(null);
+  const [count, setCount] = useState(FIRST_TICKET);
+  const [ticket, setTicket] = useState(null);
+
+  const onMove = (e) => {
+    if (reduced || e.pointerType !== "mouse") return;
+    const el = btnRef.current;
+    const box = el.getBoundingClientRect();
+    const x = e.clientX - (box.left + box.width / 2);
+    const y = e.clientY - (box.top + box.height / 2);
+    el.style.setProperty("--mx", `${x * 0.25}px`);
+    el.style.setProperty("--my", `${y * 0.35}px`);
+  };
+
+  const onLeave = () => {
+    const el = btnRef.current;
+    if (!el) return;
+    el.style.setProperty("--mx", "0px");
+    el.style.setProperty("--my", "0px");
+  };
+
+  const takeTicket = () => {
+    const next = count + 1;
+    const ahead = (next % 4) + 2;
+    setCount(next);
+    setTicket({ id: next, number: `A${next}`, ahead, wait: ahead * 4 });
+  };
+
+  return (
+    <section className="qm-printer" aria-labelledby="qm-printer-title">
+      <div className="qm-wrap qm-printer__layout">
+        <div>
+          <p className="qm-eyebrow">Try it yourself</p>
+          <h2 id="qm-printer-title" className="qm-h2">
+            Take a ticket.
+            <br />
+            <span>Keep your day.</span>
+          </h2>
+          <p className="qm-text">
+            Press the button. That&apos;s all it takes to hold your place in line.
+          </p>
+
+          <button
+            ref={btnRef}
+            type="button"
+            className="qm-magnet"
+            onPointerMove={onMove}
+            onPointerLeave={onLeave}
+            onClick={takeTicket}
+          >
+            {count > FIRST_TICKET && (
+              <span key={count} className="qm-magnet__ripple" aria-hidden="true" />
+            )}
+            <Ticket size={22} weight="bold" />
+            <span className="qm-magnet__label">Take a ticket</span>
+          </button>
+        </div>
+
+        <div className="qm-machine" aria-live="polite">
+          <div className="qm-machine__body">
+            <div className="qm-machine__brand">
+              City Centre
+            </div>
+            <div className="qm-machine__screen">
+              <span>Last ticket</span>
+              <b>A{count}</b>
+            </div>
+            <div className="qm-machine__slot" aria-hidden="true" />
+          </div>
+
+          <div className="qm-machine__out">
+            {ticket && (
+              <div key={ticket.id} className="qm-ticket">
+                <small>Your number</small>
+                <strong>{ticket.number}</strong>
+                <div className="qm-ticket__line" />
+                <div className="qm-ticket__stats">
+                  <span>
+                    <small>Ahead</small>
+                    <b>{ticket.ahead}</b>
+                  </span>
+                  <span>
+                    <small>Est. wait</small>
+                    <b>~{ticket.wait} min</b>
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* =========================================================
+   5. Horizontal scroll: a day with six queues
+   ========================================================= */
+const DAY_STOPS = [
+  { time: "8:00", place: "Clinic", text: "Joined from home. Left the house at 8:40.", saved: 35 },
+  { time: "9:30", place: "Bank", text: "Joined from the car. Walked straight to counter 3.", saved: 22 },
+  { time: "11:00", place: "Ministry", text: "Booked an 11:20 slot. In and out in 15 minutes.", saved: 48 },
+  { time: "13:15", place: "Pharmacy", text: "Got the alert at the café next door.", saved: 12 },
+  { time: "16:00", place: "Salon", text: "Finished work first, then walked in on time.", saved: 30 },
+  { time: "18:30", place: "Vet", text: "Waited in the car with the dog, not the waiting room.", saved: 25 },
+];
+
+function DayAcrossTown({ reduced }) {
+  const sectionRef = useRef(null);
+  const stickyRef = useRef(null);
+  const trackRef = useRef(null);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    let raf = 0;
+    const flat = () => reduced || window.matchMedia("(max-width: 900px)").matches;
+
+    const update = () => {
+      raf = 0;
+      const section = sectionRef.current;
+      const sticky = stickyRef.current;
+      const track = trackRef.current;
+      if (!section || !sticky || !track) return;
+
+      // tablet, phone and reduced motion: normal swipe row, show the full total
+      if (flat()) {
+        section.style.setProperty("--h-shift", "0px");
+        section.style.removeProperty("--h-progress");
+        setActive(DAY_STOPS.length - 1);
+        return;
+      }
+
+      const rect = section.getBoundingClientRect();
+      const progress = clamp01(-rect.top / Math.max(1, rect.height - window.innerHeight));
+      const maxShift = Math.max(0, track.scrollWidth - sticky.clientWidth);
+
+      section.style.setProperty("--h-shift", `${(-progress * maxShift).toFixed(1)}px`);
+      section.style.setProperty("--h-progress", progress.toFixed(3));
+      setActive(Math.min(DAY_STOPS.length - 1, Math.floor(progress * DAY_STOPS.length)));
+    };
+
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+
+    update();
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    window.addEventListener("resize", onScroll);
+
+    return () => {
+      document.removeEventListener("scroll", onScroll, { capture: true });
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, [reduced]);
+
+  const saved = DAY_STOPS.slice(0, active + 1).reduce((sum, stop) => sum + stop.saved, 0);
+
+  return (
+    <section ref={sectionRef} className="qm-h" aria-labelledby="qm-h-title">
+      <div ref={stickyRef} className="qm-h__sticky">
+        <div className="qm-wrap qm-h__head">
+          <div>
+            <p className="qm-eyebrow">One day, six queues</p>
+            <h2 id="qm-h-title" className="qm-h2">
+              A whole day
+              <br />
+              <span>without a waiting room.</span>
+            </h2>
+          </div>
+
+          <div className="qm-h__total">
+            <small>Minutes not spent standing</small>
+            <Odometer value={saved} />
+            <span className="qm-sr">{saved} minutes</span>
+          </div>
+        </div>
+
+        <div ref={trackRef} className="qm-h__track">
+          {DAY_STOPS.map((stop, i) => (
+            <article
+              key={stop.time}
+              className={`qm-h__card ${i === active ? "is-on" : ""}`}
+              style={{ "--tilt": `${i % 2 ? 2 : -2}deg` }}
+            >
+              <span className="qm-h__time">{stop.time}</span>
+              <h3>{stop.place}</h3>
+              <p>{stop.text}</p>
+              <span className="qm-h__saved">+{stop.saved} min back</span>
+            </article>
+          ))}
+        </div>
+
+        <div className="qm-wrap">
+          <span className="qm-h__bar" aria-hidden="true">
+            <i />
+          </span>
         </div>
       </div>
     </section>
@@ -1068,34 +1231,50 @@ function LogoStrip() {
   );
 }
 
-function Reviews() {
+function ReviewCard({ review, hidden }) {
+  const stars = Math.max(0, Math.min(5, review.rating || 0));
+
+  return (
+    <li className="lp-review-item" aria-hidden={hidden ? "true" : undefined}>
+      <figure className="lp-review">
+        <div className="lp-review__top">
+          <span className="lp-review__mark" aria-hidden="true">
+            “
+          </span>
+          <span className="lp-review__stars" role="img" aria-label={`${stars} out of 5 stars`}>
+            {"★".repeat(stars)}
+            <span className="lp-review__stars-off">{"★".repeat(5 - stars)}</span>
+          </span>
+        </div>
+        <blockquote>{review.comment}</blockquote>
+        <figcaption>
+          <strong>{review.author_name || "Visitor"}</strong>
+          <span>{review.businessName}</span>
+        </figcaption>
+      </figure>
+    </li>
+  );
+}
+
+// Real reviews move slowly in one line, like the logo strip.
+// The list is shown twice so the loop has no gap. Hover to pause.
+function Reviews({ reviews }) {
   return (
     <section className="lp-section" aria-labelledby="reviews-title">
       <div className="lp-container">
-        <SectionHead id="reviews-title" eyebrow="Reviews" title="Happy businesses, happy visitors">
-          <span className="lp-sample">Sample</span>
-        </SectionHead>
+        <SectionHead id="reviews-title" eyebrow="Reviews" title="What visitors say" />
+      </div>
 
-        <div className="lp-reviews">
-          {REVIEWS.map((review) => (
-            <Reveal key={review.name} className="lp-review-wrap">
-              <figure className="lp-review">
-                <span className="lp-review__mark" aria-hidden="true">
-                  “
-                </span>
-                <blockquote>
-                  “{review.before}
-                  <mark>{review.highlight}</mark>
-                  {review.after}”
-                </blockquote>
-                <figcaption>
-                  <strong>{review.name}</strong>
-                  <span>{review.place}</span>
-                </figcaption>
-              </figure>
-            </Reveal>
+      <div className="lp-reviews">
+        <ul className="lp-reviews__track">
+          {[...reviews, ...reviews].map((review, i) => (
+            <ReviewCard
+              key={`${review.id}-${i}`}
+              review={review}
+              hidden={i >= reviews.length}
+            />
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );
@@ -1105,7 +1284,7 @@ function Reviews() {
    8. Industries
    ========================================================= */
 
-function Industries() {
+function Industries({ categories }) {
   return (
     <section className="lp-section lp-section--tight" aria-labelledby="industries-title">
       <div className="lp-container">
@@ -1117,14 +1296,11 @@ function Industries() {
         />
 
         <ul className="lp-inds lp-stagger">
-          {INDUSTRIES.map((industry) => (
-            <Reveal as="li" key={industry.name}>
-              <Link
-                className="lp-ind"
-                to={`/businesses?category=${encodeURIComponent(industry.name)}`}
-              >
-                <ColorIcon name={industry.icon} size={64} />
-                <span className="lp-ind__name">{industry.name}</span>
+          {categories.map((category) => (
+            <Reveal as="li" key={category.id}>
+              <Link className="lp-ind" to={`/businesses?category_id=${category.id}`}>
+                <ColorIcon name={iconFor(category.name)} size={64} />
+                <span className="lp-ind__name">{category.name}</span>
               </Link>
             </Reveal>
           ))}
@@ -1132,7 +1308,7 @@ function Industries() {
 
         <div className="lp-more">
           <Link className="btn btn--outline" to="/businesses">
-            See all industries <ArrowRight size={18} weight="bold" />
+            See all businesses <ArrowRight size={18} weight="bold" />
           </Link>
         </div>
       </div>
@@ -1144,32 +1320,7 @@ function Industries() {
    9. Places
    ========================================================= */
 
-// Makes the "waiting" numbers move a little, like a live queue
-function useLiveWaiting(places, reduced) {
-  const [waiting, setWaiting] = useState(() => places.map((place) => place.waiting));
-
-  useEffect(() => {
-    if (reduced || places.length === 0) return;
-    const id = setInterval(() => {
-      setWaiting((prev) => {
-        const next = [...prev];
-        const i = Math.floor(Math.random() * next.length);
-        const change = Math.random() < 0.5 ? -1 : 1;
-        next[i] = Math.max(1, next[i] + change);
-        return next;
-      });
-    }, 2600);
-    return () => clearInterval(id);
-  }, [places.length, reduced]);
-
-  return waiting;
-}
-
-function Places({ reduced }) {
-  // Later: replace PLACES with data from GET /api/businesses
-  const places = PLACES;
-  const waiting = useLiveWaiting(places, reduced);
-
+function Places({ places, status }) {
   return (
     <section className="lp-section lp-places" aria-labelledby="places-title">
       <div className="lp-container">
@@ -1185,34 +1336,44 @@ function Places({ reduced }) {
           </Link>
         </Reveal>
 
-        {places.length === 0 ? (
+        {status === "loading" && <div className="lp-cards--loading" aria-busy="true" />}
+
+        {status !== "loading" && places.length === 0 && (
           <div className="lp-message">
             <h3>No places yet</h3>
             <p>Businesses appear here once they're approved. Check back soon.</p>
           </div>
-        ) : (
+        )}
+
+        {places.length > 0 && (
           <div className="lp-cards lp-stagger">
-            {places.map((place, i) => (
+            {places.map((place) => (
               <Reveal key={place.id}>
                 <article className="lp-card">
                   <div className="lp-card__top">
-                    <span className="lp-card__logo">{place.name.charAt(0)}</span>
+                    <span className="lp-card__logo">
+                      {place.image ? <img src={place.image} alt="" /> : place.name.charAt(0)}
+                    </span>
                     <div>
                       <h3>{place.name}</h3>
-                      <span className="lp-card__meta">{place.city}</span>
+                      <span className="lp-card__meta">
+                        {place.branchCount} {place.branchCount === 1 ? "branch" : "branches"}
+                        {place.rating ? ` · ★ ${place.rating.toFixed(1)}` : ""}
+                      </span>
                     </div>
                   </div>
                   <div className="lp-card__tags">
-                    <span className="lp-badge">{place.category}</span>
-                    <span className="lp-badge lp-badge--peach lp-badge--live">
-                      <i aria-hidden="true" />
-                      <span key={waiting[i]} className="lp-tick">
-                        {waiting[i]}
-                      </span>{" "}
-                      waiting
-                    </span>
+                    {place.category?.name && <span className="lp-badge">{place.category.name}</span>}
+                    {place.openQueues > 0 ? (
+                      <span className="lp-badge lp-badge--peach lp-badge--live">
+                        <i aria-hidden="true" />
+                        {place.waiting} waiting
+                      </span>
+                    ) : (
+                      <span className="lp-badge">No queue open now</span>
+                    )}
                   </div>
-                  <p>{place.description}</p>
+                  <p>{place.description || "Join the queue from your phone and come back when it's your turn."}</p>
                   <Link className="lp-card__link" to={`/businesses/${place.id}`}>
                     Join queue <ArrowRight size={18} weight="bold" />
                   </Link>
@@ -1295,69 +1456,30 @@ function OrangeCta({ reduced }) {
 }
 
 /* =========================================================
-   12. Footer
-   ========================================================= */
-
-function Footer() {
-  return (
-    <footer className="lp-footer">
-      <div className="lp-container">
-        <div className="lp-footer__grid">
-          <div className="lp-footer__brand">
-            <Link className="lp-footer__logo" to="/">
-              <i aria-hidden="true">Q</i>QLess
-            </Link>
-            <p>
-              The virtual waiting room for clinics, banks, government offices
-              and every place people wait.
-            </p>
-          </div>
-
-          {FOOTER_LINKS.map((column) => (
-            <nav key={column.title} className="lp-footer__col" aria-label={column.title}>
-              <b>{column.title}</b>
-              {column.links.map((link) => (
-                <Link key={link.label} to={link.to}>
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          ))}
-        </div>
-
-        <div className="lp-footer__legal">
-          <span>© 2026 QLess</span>
-          <span>Your place. Your time.</span>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-/* =========================================================
    Page
    ========================================================= */
 
 export default function LandingPage() {
   const reduced = useReducedMotion();
+  const landing = useLandingData();
 
   return (
     <main className="lp">
       <Hero reduced={reduced} />
-      <LiveBoard reduced={reduced} />
       <LogoStrip />
       <Steps reduced={reduced} />
       <Roles reduced={reduced} />
       <Features reduced={reduced} />
+      <TicketPrinter reduced={reduced} />
+      <DayAcrossTown reduced={reduced} />
       <Values />
       <Numbers reduced={reduced} />
-      <Reviews />
-      <Industries />
+      {landing.reviews.length > 0 && <Reviews reviews={landing.reviews} />}
+      {landing.categories.length > 0 && <Industries categories={landing.categories} />}
       <Trust />
-      <Places reduced={reduced} />
+      <Places places={landing.places} status={landing.status} />
       <Faq />
       <OrangeCta reduced={reduced} />
-      <Footer />
     </main>
   );
 }

@@ -252,7 +252,7 @@ function DeskCard({
   );
 }
 
-export default function QueueControl({ queueId }) {
+export default function QueueControl({ queueId, showAnalytics = true }) {
   const [data, setData] = useState({
     status: "loading",
     error: "",
@@ -478,13 +478,16 @@ export default function QueueControl({ queueId }) {
         </div>
 
         <div className="cp-toolbar-actions">
-          <Link
-            to={`/owner/queues/${queue.id}/analytics`}
-            className="btn cp-analytics-btn"
-          >
-            <ChartBar size={16} />
-            View analytics
-          </Link>
+          {/* analytics is an owner page, so staff don't get this button */}
+          {showAnalytics && (
+            <Link
+              to={`/owner/queues/${queue.id}/analytics`}
+              className="btn cp-analytics-btn"
+            >
+              <ChartBar size={16} />
+              View analytics
+            </Link>
+          )}
 
           {(STATUS_ACTIONS[queue.status] || []).map(
             ({ to, label, Icon }) => (

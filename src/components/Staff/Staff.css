@@ -116,20 +116,18 @@
 .owner .sx .pf-eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: 0; background: none; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .owner .sx .pf-eye:hover { background: var(--bg); }
 .owner .sx .pf-end { display: flex; justify-content: flex-end; margin-top: 22px; }
-
-/* ===== phones ===== */
-@media (max-width: 860px) {
-  .owner .content.sx { padding: 16px; }
-  .owner .st-date { display: none; }
-  .owner .sx .ovh { grid-template-columns: 1fr; }
-  .owner .sx .ovh h2 { font-size: 32px; }
-  .owner .sx .st-tiles,
-  .owner .sx .branch-sections,
-  .owner .sx .branch-details dl,
-  .owner .sx .pf-grid { grid-template-columns: 1fr; }
-  .owner .sx .branch-sections > section + section { padding: 24px 0 0; border-left: 0; border-top: 1px solid var(--line); }
-  .owner .sx .pf-top { flex-wrap: wrap; padding: 14px 20px 20px; }
-  .owner .sx .pf-upw { margin-left: 0; }
-  .owner .sx .pf-tabs { margin: 0 20px; }
-  .owner .sx .pf-panel { padding: 20px; }
-}
+/* remove photo / cover */
+.owner .sx .pf-avw { position: relative; margin-top: -74px; align-self: flex-start; flex-shrink: 0; }
+.owner .sx .pf-trash { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 36px; height: 36px; border-radius: 50%; border: 0; background: #fff; box-shadow: 0 4px 14px rgba(30, 26, 24, .18); display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transition: opacity .2s, transform .2s; }
+.owner .sx .pf-trash:hover { transform: scale(1.08); }
+.owner .sx .pf-trash:focus-visible,
+.owner .sx .pf-cover:hover .pf-trash,
+.owner .sx .pf-avw:hover .pf-trash { opacity: 1; }
+.owner .sx .pf-trash.photo { background: none; box-shadow: none; width: 48px; height: 48px; }
+.owner .sx .pf-trash:disabled { opacity: .5; cursor: not-allowed; }
+.owner .sx .pf-cover-acts { position: absolute; top: 14px; right: 14px; z-index: 1; display: flex; gap: 8px; }
+.owner .sx .pf-cover-acts .pf-trash { position: static; translate: none; }
+.owner .sx .pf-av img { transition: filter .2s; }
+.owner .sx .pf-avw:hover .pf-av img { filter: brightness(.55); }
+.owner .sx .pf-icon-btn { width: 36px; height: 36px; border-radius: 50%; background: #fff; box-shadow: 0 4px 14px rgba(30, 26, 24, .18); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform .2s; }
+.owner .sx .pf-icon-btn:hover { transform: scale(1.08); }

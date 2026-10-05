@@ -84,7 +84,8 @@ export default function App() {
   const showNav =
     !NO_NAV.includes(location.pathname) &&
     !location.pathname.startsWith("/owner") &&
-    !location.pathname.startsWith("/staff");
+    !location.pathname.startsWith("/staff") &&
+    !location.pathname.startsWith("/admin");
 
   // NEW: the landing page ("/") already has its own footer
   const showFooter = showNav;

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Heart } from "@phosphor-icons/react";
 import { UserContext } from "../../contexts/UserContext";
+import { ROLES, getRole } from "../../lib/helpers/roles";
 import {
   addFavorite,
   getFavorites,
@@ -16,7 +17,7 @@ export default function FavoriteButton({ businessId }) {
   const [checking, setChecking] = useState(true);
   const [error, setError] = useState("");
 
-  const isCustomer = user?.role === "customer";
+  const isCustomer = getRole(user) === ROLES.CUSTOMER;
 
   useEffect(() => {
     if (!isCustomer) {

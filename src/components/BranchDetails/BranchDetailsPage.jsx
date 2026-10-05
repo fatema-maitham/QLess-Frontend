@@ -9,6 +9,7 @@ import {
   getBranchServices,
 } from "../../services/branchService";
 import BookServiceForm from "../Bookings/BookServiceForm";
+import { formatTime, nextOpening } from "../../lib/helpers/openingHours";
 import "../Details/Details.css";
 
 const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -21,14 +22,6 @@ const QUEUE_STATUS = {
   paused: { label: "Paused", className: "dt__status--paused" },
   closed: { label: "Closed", className: "dt__status--closed" },
 };
-
-// "09:00:00" -> "9:00 AM"
-function formatTime(value) {
-  if (!value) return "";
-  const [h, m] = value.split(":").map(Number);
-  const suffix = h < 12 ? "AM" : "PM";
-  return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${suffix}`;
-}
 
 export default function BranchDetailsPage() {
   const { branchId } = useParams();
@@ -138,6 +131,10 @@ export default function BranchDetailsPage() {
   const serviceName = (id) => services.find((s) => s.id === id)?.name;
   const hoursByDay = Object.fromEntries(hours.map((h) => [h.day_of_week, h]));
 
+  // Closed right now (only when the owner has set opening hours, same rule as the backend)
+  const branchClosed = !branch.is_open_now && hours.length > 0;
+  const opensAt = branchClosed ? nextOpening(hours) : null;
+
   return (
     <main className="dt">
       <div className="dt__container">
@@ -180,6 +177,7 @@ export default function BranchDetailsPage() {
               >
                 {branch.is_open_now ? "Open now" : "Closed now"}
               </span>
+              {opensAt && <span className="dt__opens">Opens {opensAt}</span>}
             </div>
 
             <ul className="dt__meta">
@@ -225,13 +223,27 @@ export default function BranchDetailsPage() {
                 <span>Updates every 30 seconds</span>
               </div>
 
+              {branchClosed && queues.length > 0 && (
+                <div className="dt__closed" role="status">
+                  <Clock size={22} weight="duotone" />
+                  <p>
+                    <strong>This branch is closed right now.</strong>{" "}
+                    {opensAt ? `You can join a queue when it opens ${opensAt}.` : "You can join a queue when it opens."}{" "}
+                    You can still book a service for later.
+                  </p>
+                </div>
+              )}
+
               {queues.length === 0 ? (
                 <p className="dt__empty">This branch has no queues yet.</p>
               ) : (
                 <ul className="dt__queues">
                   {queues.map((queue) => {
-                    const status = QUEUE_STATUS[queue.status] || QUEUE_STATUS.closed;
-                    const isOpen = queue.status === "open";
+                    // When the branch is closed, every queue shows as closed
+                    const status = branchClosed
+                      ? QUEUE_STATUS.closed
+                      : QUEUE_STATUS[queue.status] || QUEUE_STATUS.closed;
+                    const isOpen = queue.status === "open" && !branchClosed;
                     const wait = queue.waiting_count * queue.average_service_minutes;
                     const service = serviceName(queue.service_id);
 
@@ -264,7 +276,7 @@ export default function BranchDetailsPage() {
                           </Link>
                         ) : (
                           <span className="btn dt__btn-off" aria-disabled="true">
-                            {queue.status === "paused" ? "Paused" : "Closed"}
+                            {branchClosed ? "Branch closed" : queue.status === "paused" ? "Paused" : "Closed"}
                           </span>
                         )}
                       </li>
@@ -303,8 +315,7 @@ export default function BranchDetailsPage() {
                 </ul>
               )}
             </section>
-            {/* Book Service */}
-            {/* Book Service */}
+            {/* Book a service (guests see a "Sign in to book" box) */}
             <BookServiceForm services={services} />
           </div>
 
@@ -344,6 +355,6 @@ export default function BranchDetailsPage() {
           </aside>
         </div>
       </div>
-    </main >
+    </main>
   );
 }

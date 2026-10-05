@@ -4,12 +4,13 @@ import { ArrowLeft, BellRinging, Clock, PersonSimpleWalk, Ticket, Users, Warning
 import { UserContext } from "../../contexts/UserContext";
 import { getRole, ROLES } from "../../lib/helpers/roles";
 import { getQueue } from "../../services/queueService";
-import { getBranch } from "../../services/branchService";
+import { getBranch, getBranchHours } from "../../services/branchService";
 import { getBusiness } from "../../services/businessService";
 import { getMyTickets, joinQueue } from "../../services/ticketService";
 import useNoShowStatus from "../../hooks/useNoShowStatus";
 import NoShowBanner from "../NoShow/NoShowBanner";
 import { minutesText } from "./ticketHelpers";
+import { nextOpening } from "../../lib/helpers/openingHours";
 import "./Ticket.css";
 
 const STEPS = [
@@ -39,7 +40,11 @@ export default function JoinQueuePage() {
     async function load() {
       const queue = await getQueue(queueId, { signal });
       const branch = await getBranch(queue.branch_id, { signal });
-      const business = await getBusiness(branch.business_id, { signal });
+      const [business, hours] = await Promise.all([
+        getBusiness(branch.business_id, { signal }),
+        // Opening hours are only used for the "closed now" message
+        getBranchHours(branch.id, { signal }).catch(() => []),
+      ]);
 
       // Signed-in customer: are they already in this queue?
       let myTicket = null;
@@ -48,7 +53,7 @@ export default function JoinQueuePage() {
         myTicket = mine.active.find((t) => t.queue_id === queue.id) || null;
       }
 
-      setPage({ status: "ready", queue, branch, business, myTicket });
+      setPage({ status: "ready", queue, branch, business, hours, myTicket });
     }
 
     load().catch((err) => {
@@ -114,11 +119,16 @@ export default function JoinQueuePage() {
   }
 
   /* ---------- ready ---------- */
-  const { queue, branch, business, myTicket } = page;
+  const { queue, branch, business, hours, myTicket } = page;
   const wait = queue.waiting_count * queue.average_service_minutes;
   const isFull = queue.max_capacity != null && queue.waiting_count >= queue.max_capacity;
-  const canJoin = queue.status === "open" && !isFull;
-  const chipLabel = { open: isFull ? "Full" : "Open", paused: "Paused" }[queue.status] || "Closed";
+  // Closed right now (only when the owner has set opening hours, same rule as the backend)
+  const branchClosed = !branch.is_open_now && hours.length > 0;
+  const opensAt = branchClosed ? nextOpening(hours) : null;
+  const canJoin = queue.status === "open" && !isFull && !branchClosed;
+  const chipLabel = branchClosed
+    ? "Closed now"
+    : { open: isFull ? "Full" : "Open", paused: "Paused" }[queue.status] || "Closed";
 
   let action;
   if (myTicket) {
@@ -130,6 +140,16 @@ export default function JoinQueuePage() {
         <Link className="btn btn--primary tk-btn-wide" to={`/tickets/${myTicket.id}`}>
           View my ticket
         </Link>
+      </div>
+    );
+  } else if (branchClosed) {
+    action = (
+      <div className="tk-join__note">
+        <Warning size={20} weight="duotone" />
+        <p>
+          This branch is closed right now.{" "}
+          {opensAt ? `You can join this queue when it opens ${opensAt}.` : "You can join this queue when it opens."}
+        </p>
       </div>
     );
   } else if (queue.status !== "open") {

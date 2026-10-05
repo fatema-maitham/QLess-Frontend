@@ -81,6 +81,10 @@ export default function App() {
   const { user } = useContext(UserContext);
   const location = useLocation();
 
+  // After signing in, go back to the page the user came from
+  // (for example the branch page after "Sign in to book")
+  const afterSignIn = location.state?.from || homeFor(user);
+
   const showNav =
     !NO_NAV.includes(location.pathname) &&
     !location.pathname.startsWith("/owner") &&
@@ -117,7 +121,7 @@ export default function App() {
           path="/sign-up"
           element={
             user ? (
-              <Navigate to={homeFor(user)} replace />
+              <Navigate to={afterSignIn} replace />
             ) : (
               <AuthPage />
             )
@@ -128,7 +132,7 @@ export default function App() {
           path="/sign-in"
           element={
             user ? (
-              <Navigate to={homeFor(user)} replace />
+              <Navigate to={afterSignIn} replace />
             ) : (
               <AuthPage />
             )

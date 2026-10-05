@@ -236,6 +236,15 @@
     display: flex;
   }
 
+  /* Bell sits on the right, next to the menu button */
+  .qnav__inner {
+    gap: var(--space-2);
+  }
+
+  .qnav__bell {
+    margin-left: auto;
+  }
+
   .qnav__menu {
     position: absolute;
     top: 68px;

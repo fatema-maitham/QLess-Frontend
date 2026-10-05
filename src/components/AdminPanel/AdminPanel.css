@@ -112,3 +112,32 @@
     justify-self: center;
   }
 }
+.owner .am-overview .am-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  align-items: center;
+  gap: 32px;
+  padding: 28px 30px;
+  border-radius: 26px;
+}
+
+.owner .am-overview .am-art {
+  width: 100%;
+  height: auto;
+  max-height: 190px;
+  align-self: end;
+}
+
+@media (max-width: 820px) {
+  .owner .am-overview .am-hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 24px;
+    gap: 20px;
+  }
+
+  .owner .am-overview .am-art {
+    width: 220px;
+    max-width: 100%;
+    justify-self: center;
+  }
+}

@@ -1,0 +1,43 @@
+/* Forgot / reset password. Uses the .auth-page background and fields from Auth.css. */
+.fp-card {
+  position: relative;
+  width: min(560px, 100%);
+  height: min(720px, calc(100vh - 48px));
+  min-height: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--surface);
+  border-radius: 36px;
+  box-shadow: 0 30px 80px rgba(30, 26, 24, .14);
+  padding: 40px 56px 32px;
+  text-align: center;
+}
+.fp-logo { display: block; flex-shrink: 0; margin-bottom: 22px; }
+.fp-logo img { height: 44px; display: block; }
+.fp-screen { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 34px; }
+.fp-screen form { width: 100%; text-align: left; }
+.fp-art { width: 150px; height: 120px; display: block; margin: 0 auto 14px; }
+.fp-card h1 { margin: 0 0 8px; font-size: 32px; font-weight: 800; letter-spacing: -.035em; line-height: 1.15; }
+.fp-card h1 span { color: var(--orange-btn); }
+.fp-sub { margin: 0 auto 26px; color: var(--muted); font-size: 16px; line-height: 1.55; max-width: 38ch; }
+.fp-sub b { color: var(--ink); overflow-wrap: anywhere; }
+.fp-card .auth-alert { width: 100%; text-align: left; }
+.fp-card .auth-btn { color: #fff; }
+.fp-btn-link { display: flex; align-items: center; justify-content: center; text-decoration: none; }
+.fp-back { display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; border: 0; background: none; padding: 0; font-weight: 700; font-size: 15px; color: var(--muted); text-decoration: none; cursor: pointer; }
+.fp-back:hover { color: var(--ink); }
+.fp-resend { margin: 16px 0 0; font-size: 14.5px; color: var(--muted); }
+.fp-resend button { border: 0; background: none; padding: 0; font-weight: 800; color: var(--ink); cursor: pointer; border-bottom: 1.5px solid var(--peach); }
+.fp-resend button:disabled { opacity: .5; cursor: not-allowed; }
+.fp-rules { display: flex; gap: 8px; flex-wrap: wrap; margin: -2px 0 16px; }
+.fp-rules span { font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--soft); color: var(--muted); }
+.fp-rules span.ok { background: #E3F1E4; color: #2F6B37; }
+.fp-steps { position: absolute; left: 0; right: 0; bottom: 28px; display: flex; gap: 6px; justify-content: center; }
+.fp-steps i { width: 28px; height: 6px; border-radius: 999px; background: var(--soft); }
+.fp-steps i.on { background: var(--orange-btn); }
+
+@media (max-width: 600px) {
+  .fp-card { height: auto; min-height: calc(100vh - 48px); padding: 32px 22px; }
+  .fp-card h1 { font-size: 27px; }
+}

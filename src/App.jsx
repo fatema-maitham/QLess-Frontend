@@ -98,6 +98,8 @@ export default function App() {
           }
         />
 
+        <Route path="/business/register" element={<Navigate to="/sign-up?type=owner" replace />} />
+
         {/* ================= AUTH ================= */}
 
         <Route
@@ -272,7 +274,7 @@ export default function App() {
 
         {/* ================= STAFF ================= */}
 
-                <Route
+        <Route
           path="/staff"
           element={
             <ProtectedRoute roles={[ROLES.STAFF]}>

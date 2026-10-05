@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { signUp } from '../../services/authService';
 import { UserContext } from '../../contexts/UserContext';
 import {
@@ -21,7 +21,9 @@ const getStrength = (p) => {
 const SignUpForm = ({ onSwitch }) => {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
-  const [role, setRole] = useState('customer');
+  const location = useLocation();
+  const [params] = useSearchParams();
+  const [role, setRole] = useState(params.get('type') === 'owner' ? 'owner' : 'customer');
   const [showPw, setShowPw] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -47,7 +49,7 @@ const SignUpForm = ({ onSwitch }) => {
     try {
       const user = await signUp({ name, email, password, role, phone: phone || null });
       setUser(user);
-      navigate(homeFor(user));
+      navigate(location.state?.from || homeFor(user), { replace: true });
     } catch (err) {
       setMessage(err.message);
     } finally {
@@ -91,11 +93,11 @@ const SignUpForm = ({ onSwitch }) => {
       </div>
 
       <p className="auth-hint">
-                Staff? Sign up as a visitor and ask your owner to add you.
+        Staff? Sign up as a visitor and ask your owner to add you.
       </p>
 
-        <div className="auth-two">
-          <div className="auth-field">
+      <div className="auth-two">
+        <div className="auth-field">
           <label htmlFor="up-name">Full name</label>
           <div className="auth-inp">
             <UserIcon className="lead-ic" />

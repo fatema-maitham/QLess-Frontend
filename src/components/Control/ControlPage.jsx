@@ -19,7 +19,7 @@ export default function ControlPage({
   canServe = true,
 }) {
   const [params, setParams] = useSearchParams();
-  
+  const [search, setSearch] = useState('');
   const [queues, setQueues] = useState({
     status: "loading",
     list: [],

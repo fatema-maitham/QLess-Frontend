@@ -248,6 +248,7 @@ export default function CustomerProfile({ settings = false }) {
       setPasswords({ current: '', next: '', confirm: '' });
       setShowPasswords({ current: false, next: false, confirm: false });
       setMessage('Your password has been updated.');
+      setChangingPassword(false);
     } catch (error) {
       setMessage(error.message);
     } finally {

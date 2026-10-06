@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router';
 import { getAdminBranches, setBranchActive } from '../../services/adminManageService';
 import { initial } from '../Owner/ownerSetup';
-import { SearchBox, Tabs, matches } from './AdminParts';
+import { SearchBox, Tabs } from './AdminParts';
+import { matches } from './adminUtils';
 
 export default function AdminBranches() {
   const { toast } = useOutletContext();

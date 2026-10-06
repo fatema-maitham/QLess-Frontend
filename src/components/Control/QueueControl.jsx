@@ -130,6 +130,7 @@ function DeskCard({
   confirming,
   onMark,
   onConfirm,
+  canServe,
 }) {
   const isCalled = entry.status === "called";
 
@@ -186,7 +187,8 @@ function DeskCard({
         )}
       </div>
 
-      <div className="cp-actions">
+      {canServe && (
+        <div className="cp-actions">
         {confirming ? (
           <>
             <button
@@ -247,12 +249,13 @@ function DeskCard({
             )}
           </>
         )}
-      </div>
+        </div>
+      )}
     </li>
   );
 }
 
-export default function QueueControl({ queueId, showAnalytics = true, canManageStatus = true, fixedCounter = null }) {
+export default function QueueControl({ queueId, showAnalytics = true, canManageStatus = true, fixedCounter = null, canServe = true }) {
   const [data, setData] = useState({
     status: "loading",
     error: "",
@@ -340,11 +343,15 @@ export default function QueueControl({ queueId, showAnalytics = true, canManageS
     (entry) => entry.status === "waiting"
   );
 
-  const atDesk = entries.filter(
+  const allAtDesk = entries.filter(
     (entry) =>
       entry.status === "called" ||
       entry.status === "checked_in"
   );
+
+  const atDesk = fixedCounter != null
+    ? allAtDesk.filter((entry) => entry.counter_number === fixedCounter)
+    : allAtDesk;
 
   const now = useNow(
     atDesk.length > 0 || waiting.length > 0
@@ -554,6 +561,7 @@ export default function QueueControl({ queueId, showAnalytics = true, canManageS
           </div>
         )}
 
+        {canServe && (
         <div className="cp-call-wrap">
           {counterCount > 1 && fixedCounter == null && (
             <label className="cp-counter-pick">
@@ -594,6 +602,7 @@ export default function QueueControl({ queueId, showAnalytics = true, canManageS
               : "Call next"}
           </button>
         </div>
+        )}
       </div>
 
       <div className="cp-mini-stats">
@@ -631,6 +640,7 @@ export default function QueueControl({ queueId, showAnalytics = true, canManageS
                 confirming={confirmId === entry.id}
                 onMark={handleMark}
                 onConfirm={setConfirmId}
+                canServe={canServe}
               />
             ))}
           </ul>

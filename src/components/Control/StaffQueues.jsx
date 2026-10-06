@@ -18,6 +18,7 @@ export default function StaffQueues() {
         showAnalytics={false}
         canManageStatus={false}
         fixedCounter={me.counter_number}
+        canServe
       />
     </div>
   );

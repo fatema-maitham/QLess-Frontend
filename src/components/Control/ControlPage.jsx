@@ -16,6 +16,7 @@ export default function ControlPage({
   showAnalytics = true,
   canManageStatus = true,
   fixedCounter = null,
+  canServe = true,
 }) {
   const [params, setParams] = useSearchParams();
 
@@ -191,6 +192,7 @@ export default function ControlPage({
               showAnalytics={showAnalytics}
               canManageStatus={canManageStatus}
               fixedCounter={fixedCounter}
+              canServe={canServe}
             />
           )}
         </>

@@ -157,15 +157,17 @@ export const getQueueEntries = (queueId) =>
 
 /* loads one branch with its hours, services and staff */
 export async function loadBranch(branch) {
-  const [hours, services, staff] = await Promise.all([
+  const [hours, services, staff, queues] = await Promise.all([
     getHours(branch.id).catch(() => []),
     getServices(branch.id).catch(() => []),
     getStaff(branch.id).catch(() => []),
+    getQueues(branch.id),
   ]);
 
-    return {
+  return {
     ...branch,
     hours,
+    queues,
     services: services.filter((item) => item.is_active),
     staff: staff.filter((item) => item.is_active),
   };

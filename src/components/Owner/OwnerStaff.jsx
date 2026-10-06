@@ -102,6 +102,11 @@ export default function OwnerStaff() {
       <div className="page-h">
         <h1>Staff</h1>
         <span className="sp" />
+        <OwnerPageSearch
+          value={query}
+          onChange={setQuery}
+          placeholder="Search staff"
+        />
 
         {branches.length > 1 && (
           <select

@@ -106,6 +106,13 @@ export default function ControlPage({
         </div>
 
         <span className="sp" />
+        {showSettings && (
+        <OwnerPageSearch
+          value={search}
+          onChange={setSearch}
+          placeholder="Search queues"
+        />
+        )}
 
         {branches.length > 1 && (
           <select

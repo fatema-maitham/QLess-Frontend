@@ -65,7 +65,7 @@ export default function CustomerProfile({ settings = false }) {
   const [profile, setProfile] = useState(null);
   const [loadError, setLoadError] = useState('');
   const [editing, setEditing] = useState(false);
-    const [changingPassword, setChangingPassword] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -290,10 +290,9 @@ export default function CustomerProfile({ settings = false }) {
   return (
     <main className="page cp-page">
       <div className="page__container">
-        <header className="page-head">
+                <header className="page-head">
           <div>
-            <h1>My profile</h1>
-            <p>Your personal information, all in one place.</p>
+            <h1>{settings ? 'Settings' : 'My profile'}</h1>
           </div>
         </header>
 

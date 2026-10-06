@@ -59,7 +59,7 @@ export default function StaffHistory() {
   useEffect(() => {
     if (!queueId) return;
     const controller = new AbortController();
-    setEntries({ status: "loading", list: [], error: "" });
+    
 
     getQueueEntries(queueId, { signal: controller.signal })
       .then((list) => {

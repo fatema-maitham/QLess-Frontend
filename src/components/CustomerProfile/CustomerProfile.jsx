@@ -291,9 +291,14 @@ export default function CustomerProfile({ settings = false }) {
   return (
     <main className="page cp-page">
       <div className="page__container">
-        <header className="page-head">
+                <header className="page-head">
           <div>
             <h1>{settings ? 'Settings' : 'My profile'}</h1>
+            <p>
+              {settings
+                ? 'Manage your password and account.'
+                : 'View and update your personal details.'}
+            </p>
           </div>
         </header>
 

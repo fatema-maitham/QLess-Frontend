@@ -3,7 +3,8 @@ import { useOutletContext } from "react-router";
 import { createCategory, deleteCategory, getCategories, updateCategory } from "../../services/categoryService";
 import { getAdminBusinesses } from "../../services/adminManageService";
 import { initial } from "../Owner/ownerSetup";
-import { SearchBox, matches } from "../AdminPanel/AdminParts";
+import { SearchBox } from '../AdminPanel/AdminParts';
+import { matches } from '../AdminPanel/adminUtils';
 import { plural } from "./adminHelpers";
 import "./Admin.css";
 

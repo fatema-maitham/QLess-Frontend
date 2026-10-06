@@ -17,13 +17,15 @@ export default function AdminUsers() {
   const [q, setQ] = useState('');
   const [busyId, setBusyId] = useState(null);
 
-  const load = useCallback(async () => {
-    try {
-      setList(await getAdminUsers());
-      setError('');
-    } catch (err) {
-      setError(err.message);
-    }
+    const load = useCallback(() => {
+    return getAdminUsers()
+      .then((data) => {
+        setList(data);
+        setError('');
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
   }, []);
 
   useEffect(() => { load(); }, [load]);

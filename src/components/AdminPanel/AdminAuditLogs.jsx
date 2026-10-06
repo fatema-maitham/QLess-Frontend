@@ -37,7 +37,6 @@ export default function AdminAuditLogs() {
 
   useEffect(() => {
     const controller = new AbortController();
-    setList(null);
     getAuditLogs({ entity_type: type, signal: controller.signal })
       .then((data) => { setList(data); setError(''); })
       .catch((err) => { if (err.name !== 'AbortError') setError(err.message); });

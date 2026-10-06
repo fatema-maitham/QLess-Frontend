@@ -112,6 +112,11 @@ export default function OwnerAnnouncements() {
       <div className="page-h">
         <h1>Announcements</h1>
         <span className="sp" />
+        <OwnerPageSearch
+          value={query}
+          onChange={setQuery}
+          placeholder="Search announcements"
+        />
 
         <button
           className="btn btn-primary"

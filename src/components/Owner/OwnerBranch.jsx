@@ -32,6 +32,7 @@ import { BizLogo, Empty } from './OwnerParts';
 import OwnerServiceEdit from './OwnerServiceEdit';
 import OwnerStaffEdit from './OwnerStaffEdit';
 import OwnerAvailability from './OwnerAvailability';
+import OwnerPageSearch from './OwnerPageSearch';
 
 function rowsFrom(hours) {
   return DAYS.map(({ n, name }) => {

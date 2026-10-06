@@ -27,7 +27,10 @@
 .owner .who b{color:var(--ink)}
 .owner .av{width:40px;height:40px;border-radius:50%;background:var(--orange-btn);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
 .owner .side{background:var(--ink);color:#fff;border-top-right-radius:44px;display:flex;flex-direction:column;padding:34px 20px 24px;gap:4px;overflow:hidden;position:relative}
-.owner .side::after{content:"";position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(242,107,58,.22),transparent 65%);left:-170px;bottom:-190px;pointer-events:none}
+.owner .side::after {
+  content: none;
+  display: none;
+}
 .owner .pill{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:999px;background:var(--surface);color:var(--ink);font-weight:700;font-size:14.5px;margin:0 6px 24px;border:0;cursor:pointer;transition:transform .3s var(--ease),background .2s;position:relative}
 .owner .pill:hover{background:var(--peach)}
 .owner .pill:active{transform:scale(.98)}
@@ -1282,3 +1285,8 @@ body,
 
 /* new logo in the top-left corner */
 .owner .logo img { height: 34px; width: auto; display: block; }
+
+/* Remove the decorative glow below Sign out */
+.owner .side::after {
+  display: none;
+}

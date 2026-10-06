@@ -345,7 +345,15 @@ export default function App() {
           <Route path="history" element={<StaffHistory />} />
           <Route path="bookings" element={<StaffBookings />} />
           <Route path="branch" element={<StaffBranch />} />
-          <Route path="profile" element={<StaffProfile />} />
+          <Route
+            path="profile"
+            element={<StaffProfile key="profile" />}
+          />
+
+          <Route
+            path="settings"
+            element={<StaffProfile key="settings" />}
+          />
         </Route>
 
         {/* ================= BRANCH BOOKINGS ================= */}

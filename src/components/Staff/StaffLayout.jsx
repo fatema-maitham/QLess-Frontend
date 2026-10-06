@@ -12,6 +12,12 @@ import '../Owner/Owner.css';
 import './Staff.css';
 
 const ICONS = {
+  settings: (
+  <>
+    <circle cx="12" cy="12" r="4" />
+    <path d="m9 3-1 3-3 1-2 5 2 5 3 1 1 3h6l1-3 3-1 2-5-2-5-3-1-1-3Z" />
+  </>
+),
   overview: <path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />,
   queues: <><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M7 10h4M7 14h7" /></>,
   history: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
@@ -100,6 +106,7 @@ export default function StaffLayout() {
         <p className="grp">Account</p>
         <Item to="/staff/branch" icon="branch">My branch</Item>
         <Item to="/staff/profile" icon="profile">My profile</Item>
+        <Item to="/staff/settings" icon="settings">Settings</Item>
 
         <div className="meter">
           <button className="signout" type="button" onClick={signOut}>

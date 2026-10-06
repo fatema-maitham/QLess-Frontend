@@ -418,3 +418,100 @@
     overflow-wrap: anywhere;
   }
 }
+/* Compact mobile header and collapsible navigation. */
+.owner.owner-business .owner-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 820px) {
+  .owner.owner-business.app {
+    grid-template-rows: auto auto auto auto;
+  }
+
+  .owner.owner-business .logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+  }
+
+  .owner.owner-business .logo img {
+    width: 110px;
+    height: auto;
+    max-width: 100%;
+  }
+
+  .owner.owner-business .owner-menu-toggle {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .owner.owner-business .top {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px 12px;
+  }
+
+  .owner.owner-business .owner-date {
+    display: none;
+  }
+
+  .owner.owner-business .top .who {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .owner.owner-business .top .who > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+
+  .owner.owner-business .top .av {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .owner.owner-business .side {
+    display: none;
+  }
+
+  .owner.owner-business .side.owner-menu-open {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 4px;
+    padding: 12px 16px;
+  }
+
+  .owner.owner-business .side .nav {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .owner.owner-business .side .meter {
+    flex: none;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 8px;
+  }
+}

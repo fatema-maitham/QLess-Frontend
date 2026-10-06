@@ -206,7 +206,16 @@ export default function OwnerLayout() {
         </div>
       </header>
 
-      <nav className="side" aria-label="Owner menu">
+      <nav
+  id="owner-navigation"
+  className={`side${menuOpen ? ' owner-menu-open' : ''}`}
+  aria-label="Owner menu"
+  onClick={(event) => {
+    if (event.target.closest('a')) {
+      setMenuOpen(false);
+    }
+  }}
+>
         <Item to="/owner/dashboard" icon="overview" end>Overview</Item>
         <p className="grp">Manage</p>
         <Item to="/owner/branches" icon="branches">Branches{needsSetup && <span className="soon">Setup</span>}</Item>

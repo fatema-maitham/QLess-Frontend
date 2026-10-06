@@ -63,14 +63,20 @@ export default function AdminQueuesPage() {
   const [q, setQ] = useState("");
   const [openIds, setOpenIds] = useState([]); // businesses that are expanded
 
-  const load = useCallback(async (signal) => {
-    try {
-      setQueues(await getAdminQueues({ signal }));
-      setUpdatedAt(new Date());
-      setError("");
-    } catch (err) {
-      if (err.name !== "AbortError") setError(err.message);
-    }
+    const load = useCallback((signal) => {
+    return getAdminQueues({ signal })
+      .then((data) => {
+        if (signal?.aborted) return;
+
+        setQueues(data);
+        setUpdatedAt(new Date());
+        setError("");
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError" && !signal?.aborted) {
+          setError(err.message);
+        }
+      });
   }, []);
 
   // Queues now and every 30 seconds. Branches once (they rarely change)

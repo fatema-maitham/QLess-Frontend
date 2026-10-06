@@ -1,0 +1,528 @@
+.cp-page {
+  --cp-line: var(--color-border-subtle);
+}
+
+.cp-page svg {
+  flex-shrink: 0;
+}
+
+.cp-page button,
+.cp-page input {
+  font-family: var(--font-sans);
+}
+
+.cp-page .btn {
+  gap: 8px;
+}
+
+.cp-profile {
+  border: 1px solid var(--cp-line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+/* Cover */
+
+.cp-cover {
+  position: relative;
+  height: 160px;
+  background: var(--color-accent);
+}
+
+.cp-cover > img,
+.cp-cover > svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cp-cover-tools {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  gap: 8px;
+}
+
+.cp-image-tool {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-text);
+  box-shadow: 0 4px 14px rgba(30, 26, 24, 0.18);
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.cp-image-tool:hover {
+  transform: scale(1.08);
+}
+
+.cp-cover-trash {
+  opacity: 0;
+}
+
+.cp-cover:hover .cp-cover-trash,
+.cp-cover-tools:focus-within .cp-cover-trash {
+  opacity: 1;
+}
+
+/* Photo and identity */
+
+.cp-identity-row {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 32px 28px;
+}
+
+.cp-avatar {
+  position: relative;
+  width: 106px;
+  height: 106px;
+  margin-top: -35px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: 5px solid var(--color-bg);
+  border-radius: 50%;
+  background: var(--color-accent);
+  font-size: 34px;
+  font-weight: 800;
+}
+
+.cp-avatar > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.cp-photo-upload {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  cursor: pointer;
+}
+
+.cp-photo-upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.cp-photo-upload:focus-within {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.cp-photo-trash {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(27, 25, 26, 0.65);
+  color: #fff;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.cp-avatar:hover .cp-photo-trash,
+.cp-photo-trash:focus-visible {
+  opacity: 1;
+}
+
+.cp-photo-trash svg {
+  width: 24px;
+  height: 24px;
+}
+
+.cp-identity {
+  flex: 1;
+  min-width: 0;
+  margin-top: 20px;
+}
+
+.cp-identity h2 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-extrabold);
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 7px;
+}
+
+.cp-identity p {
+  margin-top: 9px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.cp-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.cp-role svg {
+  width: 14px;
+  height: 14px;
+}
+
+.cp-button {
+  margin-top: 20px;
+}
+
+/* Personal details */
+
+.cp-details-card {
+  padding: 28px 32px;
+  border-top: 1px solid var(--cp-line);
+}
+
+.cp-section-heading h2,
+.cp-setting-card h2 {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  margin: 0;
+}
+
+.cp-section-heading p,
+.cp-setting-card > p {
+  margin: 7px 0 0;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.cp-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px 36px;
+  margin: 28px 0 4px;
+}
+
+.cp-facts dt {
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.cp-facts dd {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* Editing fields */
+
+.cp-edit-form {
+  margin-top: 28px;
+}
+
+.cp-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.cp-fields label {
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.cp-fields input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.cp-fields input:focus {
+  outline: 2px solid var(--color-primary-soft);
+  border-color: var(--color-primary);
+}
+
+.cp-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.cp-actions .btn {
+  min-height: 42px;
+  padding: 10px 20px;
+  font-size: 13px;
+}
+
+/* Tabs */
+
+.cp-tabs {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid var(--cp-line);
+  margin-bottom: 24px;
+}
+
+.cp-tabs button {
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  padding: 12px 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.cp-tabs button.is-active {
+  border-bottom-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+/* Account settings */
+
+.cp-settings-content {
+  display: grid;
+  gap: 20px;
+}
+
+.cp-setting-card {
+  padding: 28px 32px;
+  border: 1px solid var(--cp-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.cp-setting-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cp-setting-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.cp-fields.password {
+  margin-top: 24px;
+}
+
+.cp-password-input {
+  position: relative;
+  display: block;
+}
+
+.cp-password-input input {
+  padding-right: 44px;
+}
+
+.cp-eye {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.cp-eye:hover {
+  background: var(--color-surface);
+}
+
+.cp-security .cp-actions .btn {
+  min-height: 42px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: var(--weight-semibold, 600);
+}
+
+.cp-danger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.cp-danger p {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.cp-danger .cp-delete {
+  flex-shrink: 0;
+  min-height: 42px;
+  padding: 10px 20px;
+  color: #c9481f;
+  font-size: 13px;
+}
+
+/* Messages and confirmation */
+
+.cp-message {
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  background: var(--color-primary-soft);
+  font-size: 14px;
+}
+
+.cp-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(27, 25, 26, 0.45);
+}
+
+.cp-modal {
+  width: min(650px, 100%);
+  max-height: 90dvh;
+  overflow: auto;
+  padding: 30px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-lg);
+}
+
+.cp-modal h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.cp-modal p {
+  margin-top: 8px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.cp-page button:disabled {
+  cursor: not-allowed;
+}
+
+/* Responsive */
+
+@media (max-width: 960px) {
+  .cp-identity-row {
+    flex-wrap: wrap;
+  }
+
+  .cp-button {
+    margin-left: auto;
+  }
+
+  .cp-facts {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 850px) {
+  .cp-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .cp-cover {
+    height: 125px;
+  }
+
+  .cp-identity-row {
+    padding: 0 22px 22px;
+  }
+
+  .cp-details-card,
+  .cp-setting-card {
+    padding: 22px;
+  }
+
+  .cp-identity {
+    margin-top: 16px;
+  }
+
+  .cp-identity h2 {
+    font-size: 22px;
+  }
+
+  .cp-button {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .cp-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .cp-facts {
+    gap: 20px;
+  }
+
+  .cp-danger {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cp-modal {
+    padding: 22px;
+  }
+
+  .cp-modal-backdrop {
+    padding: 16px;
+  }
+}
+
+@media (hover: none) {
+  .cp-photo-trash,
+  .cp-cover-trash {
+    opacity: 1;
+  }
+}

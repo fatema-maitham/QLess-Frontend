@@ -113,6 +113,7 @@ function Item({ to, icon, children, end }) {
 // }
 
 export default function OwnerLayout() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [data, setData] = useState({ business: null, branches: [], announcements: [] });

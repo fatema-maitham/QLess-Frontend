@@ -302,7 +302,6 @@ export default function CustomerProfile({ settings = false }) {
           </p>
         )}
 
-        <div className="cp-tabs">
           <button
             type="button"
             className={!settings ? 'is-active' : ''}

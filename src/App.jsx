@@ -83,7 +83,41 @@ export default function App() {
 
   // After signing in, go back to the page the user came from
   // (for example the branch page after "Sign in to book")
-  const afterSignIn = location.state?.from || homeFor(user);
+  const requestedPage = location.state?.from;
+
+  const canReturnToPage = (path, user) => {
+    if (!path || !user) return false;
+
+    const role = getRole(user);
+
+    if (path.startsWith("/owner")) {
+      return role === ROLES.OWNER;
+    }
+
+    if (path.startsWith("/staff")) {
+      return role === ROLES.STAFF;
+    }
+
+    if (path.startsWith("/admin")) {
+      return role === ROLES.ADMIN;
+    }
+
+    if (
+      path.startsWith("/dashboard") ||
+      path.startsWith("/my-tickets") ||
+      path.startsWith("/tickets/") ||
+      path.startsWith("/favorites") ||
+      path.startsWith("/my-bookings")
+    ) {
+      return role === ROLES.CUSTOMER;
+    }
+
+    return true;
+  };
+
+  const afterSignIn = canReturnToPage(requestedPage, user)
+    ? requestedPage
+    : homeFor(user);
 
   const showNav =
     !NO_NAV.includes(location.pathname) &&
@@ -339,7 +373,7 @@ export default function App() {
         {/* ================= ADMIN ================= */}
 
         {/* Temporary: send /admin here until the admin dashboard is built */}
-                <Route
+        <Route
           path="/admin"
           element={
             <ProtectedRoute roles={[ROLES.ADMIN]}>

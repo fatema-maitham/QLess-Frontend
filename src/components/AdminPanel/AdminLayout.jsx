@@ -44,7 +44,7 @@ const today = () =>
   new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
 export default function AdminLayout() {
-    const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [pending, setPending] = useState(0);

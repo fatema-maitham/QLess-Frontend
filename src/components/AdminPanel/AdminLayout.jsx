@@ -52,13 +52,14 @@ export default function AdminLayout() {
   const timer = useRef(null);
 
   // How many businesses are waiting for approval (the orange number in the sidebar)
-  const refreshPending = useCallback(async () => {
-    try {
-      const list = await getAdminBusinesses({ approval_status: 'pending' });
-      setPending(list.length);
-    } catch {
-      setPending(0);
-    }
+    const refreshPending = useCallback(() => {
+    return getAdminBusinesses({ approval_status: 'pending' })
+      .then((list) => {
+        setPending(list.length);
+      })
+      .catch(() => {
+        setPending(0);
+      });
   }, []);
 
   useEffect(() => { refreshPending(); }, [refreshPending]);

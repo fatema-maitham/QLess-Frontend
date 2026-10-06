@@ -4,6 +4,7 @@ import { createStaff, deleteStaff } from '../../services/ownerApi';
 import { initial } from './ownerSetup';
 import { Empty } from './OwnerParts';
 import OwnerStaffEdit from './OwnerStaffEdit';
+import OwnerPageSearch from './OwnerPageSearch';
 
 export default function OwnerStaff() {
   const { branches, reload, toast } = useOutletContext();

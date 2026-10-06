@@ -33,7 +33,7 @@ import OwnerServiceEdit from './OwnerServiceEdit';
 import OwnerStaffEdit from './OwnerStaffEdit';
 import OwnerAvailability from './OwnerAvailability';
 import OwnerPageSearch from './OwnerPageSearch';
-import StaffAssignmentFields from './StaffAssignmentFields';
+import StaffAssignmentFields from '../Staff/StaffAssignmentFields';
 
 function rowsFrom(hours) {
   return DAYS.map(({ n, name }) => {

@@ -73,10 +73,6 @@ function HoursTab({ branch, branches, onSaved }) {
     (item) => item.id !== branch.id && item.hours.length
   );
 
-  useEffect(() => {
-    setRows(rowsFrom(branch.hours));
-    setSameAs('');
-  }, [branch.id, branch.hours]);
 
   function edit(index, patch) {
     setSameAs('');

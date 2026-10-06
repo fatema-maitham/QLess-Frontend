@@ -10,6 +10,7 @@ import { initial } from './staffHelpers';
 import logo from '../../assets/qless-logo.png';
 import '../Owner/Owner.css';
 import './Staff.css';
+import './StaffResponsive.css';
 
 const ICONS = {
   settings: (
@@ -41,6 +42,7 @@ const today = () =>
   new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
 export default function StaffLayout() {
+    const [menuOpen, setMenuOpen] = useState(false);
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [state, setState] = useState({ status: 'loading', error: '' });
@@ -50,28 +52,41 @@ export default function StaffLayout() {
   const [services, setServices] = useState([]);
   const [profile, setProfile] = useState(null); // /users/me: name, email, phone, profile_image
 
-  const load = useCallback(async () => {
-    setState({ status: 'loading', error: '' });
-    try {
-      const [staffMe, account] = await Promise.all([getStaffMe(), getMe()]);
-      const branchId = staffMe.branch.id;
-      const [fullBranch, branchHours, branchServices] = await Promise.all([
-        getBranch(branchId),
-        getBranchHours(branchId),
-        getBranchServices(branchId),
-      ]);
-      setMe(staffMe);
-      setProfile(account);
-      setBranch(fullBranch);
-      setHours(branchHours);
-      setServices(branchServices);
-      setState({ status: 'ready', error: '' });
-    } catch (err) {
-      setState({ status: err.status === 404 ? 'unassigned' : 'error', error: err.message });
-    }
+    const load = useCallback(() => {
+    return Promise.all([getStaffMe(), getMe()])
+      .then(async ([staffMe, account]) => {
+        const branchId = staffMe.branch.id;
+
+        const [fullBranch, branchHours, branchServices] =
+          await Promise.all([
+            getBranch(branchId),
+            getBranchHours(branchId),
+            getBranchServices(branchId),
+          ]);
+
+        setMe(staffMe);
+        setProfile(account);
+        setBranch(fullBranch);
+        setHours(branchHours);
+        setServices(branchServices);
+        setState({ status: 'ready', error: '' });
+      })
+      .catch((err) => {
+        setState({
+          status: err.status === 404 ? 'unassigned' : 'error',
+          error: err.message,
+        });
+      });
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  function retryLoad() {
+    setState({ status: 'loading', error: '' });
+    load();
+  }
 
   function signOut() {
     removeToken();
@@ -83,8 +98,35 @@ export default function StaffLayout() {
   const position = me?.position || 'Staff';
 
   return (
-    <div className="owner app">
-      <div className="logo"><img src={logo} alt="QLess" /></div>
+        <div className="owner app owner-staff">
+      <div className="logo">
+        <img src={logo} alt="QLess" />
+
+        <button
+          type="button"
+          className="staff-menu-toggle"
+          aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={menuOpen}
+          aria-controls="staff-navigation"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            {menuOpen ? (
+              <path d="m6 6 12 12M6 18 18 6" />
+            ) : (
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
+      </div>
 
       <header className="top">
         <span className="st-date">{today()}</span>
@@ -97,7 +139,21 @@ export default function StaffLayout() {
         </div>
       </header>
 
-      <nav className="side" aria-label="Staff menu">
+           <nav
+        id="staff-navigation"
+        className={`side${menuOpen ? ' staff-menu-open' : ''}`}
+        aria-label="Staff menu"
+        onClick={(event) => {
+          if (event.target.closest('a, .signout')) {
+            setMenuOpen(false);
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setMenuOpen(false);
+          }
+        }}
+      >
         <Item to="/staff" icon="overview" end>Overview</Item>
         <p className="grp">Queues</p>
         <Item to="/staff/queues" icon="queues">Live queues</Item>
@@ -122,7 +178,7 @@ export default function StaffLayout() {
             <div className="st-msg">
               <h2>You're not assigned to a branch yet</h2>
               <p>Ask the business owner to add you to a branch, then check again.</p>
-              <button type="button" className="st-btn" onClick={load}>Check again</button>
+              <button type="button" className="st-btn" onClick={retryLoad}>Check again</button>
             </div>
           )}
 
@@ -130,7 +186,7 @@ export default function StaffLayout() {
             <div className="st-msg" role="alert">
               <h2>We couldn't load your branch</h2>
               <p>{state.error}</p>
-              <button type="button" className="st-btn" onClick={load}>Try again</button>
+              <button type="button" className="st-btn" onClick={retryLoad}>Try again</button>
             </div>
           )}
 

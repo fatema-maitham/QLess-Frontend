@@ -45,7 +45,10 @@ export default function StaffHistory() {
     getBranchQueues(branchId, { signal: controller.signal })
       .then((list) => {
         setQueues({ status: "ready", list, error: "" });
-        if (list.length > 0) setQueueId(list[0].id);
+                if (list.length > 0) {
+          setEntries({ status: "loading", list: [], error: "" });
+          setQueueId(list[0].id);
+        }
       })
       .catch((err) => {
         if (err.name === "AbortError") return;
@@ -59,7 +62,7 @@ export default function StaffHistory() {
   useEffect(() => {
     if (!queueId) return;
     const controller = new AbortController();
-    setEntries({ status: "loading", list: [], error: "" });
+    
 
     getQueueEntries(queueId, { signal: controller.signal })
       .then((list) => {
@@ -126,7 +129,16 @@ export default function StaffHistory() {
                   role="tab"
                   aria-selected={queue.id === queueId}
                   className={`tab ${queue.id === queueId ? "on" : ""}`}
-                  onClick={() => setQueueId(queue.id)}
+                                    onClick={() => {
+                    if (queue.id === queueId) return;
+
+                    setEntries({
+                      status: "loading",
+                      list: [],
+                      error: "",
+                    });
+                    setQueueId(queue.id);
+                  }}
                 >
                   {queue.name}
                 </button>

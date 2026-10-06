@@ -52,10 +52,8 @@ export default function StaffBookings() {
   const [dateFilter, setDateFilter] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
 
-  useEffect(() => {
+    useEffect(() => {
     const controller = new AbortController();
-    setPageStatus("loading");
-    setError("");
 
     getBranchBookings(branchId, {
       status: statusFilter || undefined,
@@ -117,7 +115,13 @@ export default function StaffBookings() {
               type="button"
               aria-pressed={statusFilter === item.id}
               className={statusFilter === item.id ? "on" : ""}
-              onClick={() => setStatusFilter(item.id)}
+                            onClick={() => {
+                if (item.id === statusFilter) return;
+
+                setPageStatus("loading");
+                setError("");
+                setStatusFilter(item.id);
+              }}
             >
               {item.label}
             </button>
@@ -130,7 +134,14 @@ export default function StaffBookings() {
           <input
             type="date"
             value={dateFilter}
-            onChange={(event) => setDateFilter(event.target.value)}
+                        onChange={(event) => {
+              const nextDate = event.target.value;
+              if (nextDate === dateFilter) return;
+
+              setPageStatus("loading");
+              setError("");
+              setDateFilter(nextDate);
+            }}
           />
         </label>
 
@@ -138,7 +149,9 @@ export default function StaffBookings() {
           <button
             type="button"
             className="btn btn-ghost btn-sm"
-            onClick={() => {
+                       onClick={() => {
+              setPageStatus("loading");
+              setError("");
               setStatusFilter("");
               setDateFilter("");
             }}

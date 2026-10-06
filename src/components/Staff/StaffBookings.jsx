@@ -149,7 +149,9 @@ export default function StaffBookings() {
           <button
             type="button"
             className="btn btn-ghost btn-sm"
-            onClick={() => {
+                       onClick={() => {
+              setPageStatus("loading");
+              setError("");
               setStatusFilter("");
               setDateFilter("");
             }}

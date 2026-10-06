@@ -42,6 +42,7 @@ const today = () =>
   new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
 export default function StaffLayout() {
+    const [menuOpen, setMenuOpen] = useState(false);
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [state, setState] = useState({ status: 'loading', error: '' });

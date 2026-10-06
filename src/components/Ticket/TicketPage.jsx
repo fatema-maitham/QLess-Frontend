@@ -24,6 +24,7 @@ import {
 import CalledAlert from "./CalledAlert";
 import useNoShowStatus from "../../hooks/useNoShowStatus";
 import NoShowBanner from "../NoShow/NoShowBanner";
+import TicketAnnouncements from "./TicketAnnouncements";
 import "./Ticket.css";
 
 const BACKUP_REFRESH_MS = 15000; // only used while the live connection is down
@@ -309,7 +310,13 @@ export default function TicketPage() {
             </strong>
           </div>
         </section>
-
+        <TicketAnnouncements queueId={ticket.queue_id} />        <TicketAnnouncements
+          key={`${page.queue?.business_id}-${page.queue?.branch_id}`}
+          businessId={page.queue?.business_id}
+          branchId={page.queue?.branch_id}
+          businessName={ticket.business_name}
+          branchName={ticket.branch_name}
+        />
         {actionError && (
           <div className="tk-alert" role="alert">
             <Warning size={20} weight="duotone" />

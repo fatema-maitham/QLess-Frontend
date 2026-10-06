@@ -1019,3 +1019,109 @@
   font-size: 1.25rem;
   font-weight: 800;
 }
+
+
+/* Branch announcements on the customer ticket */
+.tk-branch-updates {
+  margin: 24px 0;
+  padding: 24px;
+  border: 1px solid var(--color-border-subtle, #e2dcd4);
+  border-radius: 24px;
+  background: #f5f2ee;
+}
+
+.tk-branch-updates__heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.tk-branch-updates__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #fcebd3;
+  color: var(--color-primary);
+}
+
+.tk-branch-updates h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.tk-branch-updates__heading p {
+  margin: 3px 0 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.tk-branch-update {
+  padding: 20px;
+  border: 1px solid var(--color-border-subtle, #e2dcd4);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.tk-branch-update + .tk-branch-update {
+  margin-top: 12px;
+}
+
+.tk-branch-update__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.tk-branch-update__meta span {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fcebd3;
+  color: #8a4a18;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.tk-branch-update__meta small {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.tk-branch-update h3 {
+  margin: 0 0 7px;
+  font-size: 16px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.tk-branch-update p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 560px) {
+  .tk-branch-updates {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .tk-branch-update {
+    padding: 16px;
+  }
+
+  .tk-branch-updates h2 {
+    font-size: 17px;
+  }
+}

@@ -3,7 +3,8 @@ import { useOutletContext } from 'react-router';
 import { UserContext } from '../../contexts/UserContext';
 import { getAdminUsers, liftRestriction, setUserActive } from '../../services/adminManageService';
 import { initial } from '../Owner/ownerSetup';
-import { SearchBox, Tabs, isRestricted, matches, shortDate } from './AdminParts';
+import { SearchBox, Tabs } from './AdminParts';
+import { isRestricted, matches, shortDate } from './adminUtils';
 
 const ROLE_NAMES = { customer: 'Visitor', owner: 'Owner', staff: 'Staff', admin: 'Admin' };
 
@@ -17,13 +18,15 @@ export default function AdminUsers() {
   const [q, setQ] = useState('');
   const [busyId, setBusyId] = useState(null);
 
-  const load = useCallback(async () => {
-    try {
-      setList(await getAdminUsers());
-      setError('');
-    } catch (err) {
-      setError(err.message);
-    }
+    const load = useCallback(() => {
+    return getAdminUsers()
+      .then((data) => {
+        setList(data);
+        setError('');
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
   }, []);
 
   useEffect(() => { load(); }, [load]);

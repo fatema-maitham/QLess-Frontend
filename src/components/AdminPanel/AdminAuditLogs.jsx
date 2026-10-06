@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getAuditLogs } from '../../services/adminManageService';
-import { SearchBox, matches } from './AdminParts';
+import { SearchBox } from './AdminParts';
+import { matches } from './adminUtils';
 
 // dot colour from the action name, e.g. "approve_business"
 function tone(action = '') {
@@ -37,7 +38,6 @@ export default function AdminAuditLogs() {
 
   useEffect(() => {
     const controller = new AbortController();
-    setList(null);
     getAuditLogs({ entity_type: type, signal: controller.signal })
       .then((data) => { setList(data); setError(''); })
       .catch((err) => { if (err.name !== 'AbortError') setError(err.message); });
@@ -62,7 +62,14 @@ export default function AdminAuditLogs() {
         <h1>Audit logs</h1>
         <span className="sp" />
         <SearchBox value={q} onChange={setQ} placeholder="Search actions" />
-        <select className="sel" aria-label="Filter by type" value={type} onChange={(e) => setType(e.target.value)}>
+        <select className="sel" aria-label="Filter by type" value={type} onChange={(e) => {
+  const nextType = e.target.value;
+  if (nextType === type) return;
+
+  setList(null);
+  setError('');
+  setType(nextType);
+}}>
           <option value="">All actions</option>
           <option value="business">Businesses</option>
           <option value="user">Users</option>

@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router';
 import { getAdminBranches, setBranchActive } from '../../services/adminManageService';
 import { initial } from '../Owner/ownerSetup';
-import { SearchBox, Tabs, matches } from './AdminParts';
+import { SearchBox, Tabs } from './AdminParts';
+import { matches } from './adminUtils';
 
 export default function AdminBranches() {
   const { toast } = useOutletContext();
@@ -13,13 +14,15 @@ export default function AdminBranches() {
   const [q, setQ] = useState('');
   const [busyId, setBusyId] = useState(null);
 
-  const load = useCallback(async () => {
-    try {
-      setList(await getAdminBranches());
-      setError('');
-    } catch (err) {
-      setError(err.message);
-    }
+    const load = useCallback(() => {
+    return getAdminBranches()
+      .then((data) => {
+        setList(data);
+        setError('');
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
   }, []);
 
   useEffect(() => { load(); }, [load]);

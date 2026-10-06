@@ -412,7 +412,6 @@ export default function CustomerProfile({ settings = false }) {
                     <Icon name="user" />
                     Visitor
                   </span>
-                  <p>{profile.email}</p>
                 </div>
 
                 {!editing && (

@@ -86,7 +86,10 @@ export default function AdminQueuesPage() {
     getAdminBranches({ signal: controller.signal })
       .then(setBranches)
       .catch(() => { }); // without it we still show every branch that has a queue
-    const id = setInterval(() => load(), REFRESH_MS);
+        const id = setInterval(
+      () => load(controller.signal),
+      REFRESH_MS,
+    );
     return () => {
       controller.abort();
       clearInterval(id);

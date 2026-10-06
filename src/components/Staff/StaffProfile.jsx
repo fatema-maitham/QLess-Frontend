@@ -1,227 +1,670 @@
-import { useContext, useState } from 'react';
-import { useOutletContext } from 'react-router';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useLocation, useOutletContext } from 'react-router';
 import { UserContext } from '../../contexts/UserContext';
-import { saveUser } from '../../lib/helpers/jwt-helpers';
 import { updateMe } from '../../services/profileService';
 import { uploadImage } from '../../services/cloudinaryService';
-import { initial } from './staffHelpers';
+import { saveUser } from '../../lib/helpers/jwt-helpers';
+import { EyeIcon } from '../Auth/AuthIcons';
+import './StaffProfile.css';
 
-const Svg = ({ children, color = '#E2572A', size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{children}</svg>
-);
-const UserIcon = () => <Svg><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" /></Svg>;
-const MailIcon = () => <Svg><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M3 7l9 6 9-6" /></Svg>;
-const PhoneIcon = () => <Svg><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" /></Svg>;
-const TrashIcon = ({ color = '#1B191A', size = 16 }) => <Svg color={color} size={size}><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></Svg>;
-const LockIcon = () => <Svg><rect x="4" y="11" width="16" height="10" rx="2.5" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></Svg>;
+const icons = {
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+    </>
+  ),
+  position: (
+    <>
+      <rect x="3" y="7" width="18" height="13" rx="2.5" />
+      <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </>
+  ),
+  location: (
+    <>
+      <path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z" />
+      <circle cx="12" cy="10" r="2.5" />
+    </>
+  ),
+  edit: <path d="m15 5 4 4M4 20l4-1L20 7l-4-4L4 15Z" />,
+  camera: (
+    <>
+      <path d="M4 8h3l2-3h6l2 3h3v12H4Z" />
+      <circle cx="12" cy="14" r="3.5" />
+    </>
+  ),
+  image: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="3" />
+      <circle cx="9" cy="10" r="1.6" />
+      <path d="m21 15-5-5-8 8" />
+    </>
+  ),
+  trash: (
+    <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7" />
+  ),
+  lock: (
+    <>
+      <rect x="4" y="11" width="16" height="10" rx="3" />
+      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+    </>
+  ),
+};
 
-function Field({ id, label, icon, ...input }) {
+function Icon({ name }) {
   return (
-    <div className="pf-f">
-      <label htmlFor={id}>{label}</label>
-      <div className="pf-in">{icon}<input id={id} {...input} /></div>
-    </div>
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {icons[name]}
+    </svg>
   );
 }
 
-function PasswordField({ id, label, value, onChange }) {
-  const [show, setShow] = useState(false);
-  return (
-    <div className="pf-f">
-      <label htmlFor={id}>{label}</label>
-      <div className="pf-in">
-        <LockIcon />
-        <input id={id} type={show ? 'text' : 'password'} value={value} onChange={onChange} autoComplete="new-password" />
-        <button type="button" className="pf-eye" aria-label={show ? 'Hide password' : 'Show password'} onClick={() => setShow(!show)}>
-          <Svg color="#5A524C"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></Svg>
-        </button>
-      </div>
-    </div>
-  );
-}
+const emptyPasswords = {
+  current: '',
+  next: '',
+  confirm: '',
+};
+
+const hiddenPasswords = {
+  current: false,
+  next: false,
+  confirm: false,
+};
 
 export default function StaffProfile() {
   const { me, profile, setProfile } = useOutletContext();
   const { user, setUser } = useContext(UserContext);
-  const [tab, setTab] = useState('details');
-  const [details, setDetails] = useState({ name: profile.name, email: profile.email, phone: profile.phone || '' });
-  const [pw, setPw] = useState({ current: '', next: '', confirm: '' });
+  const location = useLocation();
+
+  const settings = location.pathname.endsWith('/settings');
+
+  const [editing, setEditing] = useState(false);
+  const [passwordEditing, setPasswordEditing] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
+  const [message, setMessage] = useState('');
 
-  // Save the new account everywhere: this page, the header and the signed-in user
+  const [details, setDetails] = useState({
+    name: '',
+    email: '',
+    phone: '',
+  });
+
+  const [images, setImages] = useState({});
+  const imageFiles = useRef({});
+  const imageUrls = useRef([]);
+
+  const [passwords, setPasswords] = useState(emptyPasswords);
+  const [showPasswords, setShowPasswords] = useState(hiddenPasswords);
+
+  useEffect(() => {
+    return () => {
+      imageUrls.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
+  function clearImages() {
+    imageUrls.current.forEach((url) => URL.revokeObjectURL(url));
+    imageUrls.current = [];
+    imageFiles.current = {};
+  }
+
   function applyUpdate(updated) {
+    const updatedUser = { ...user, ...updated };
+
     setProfile(updated);
-    const merged = { ...user, ...updated };
-    setUser(merged);
-    saveUser(merged);
+    setUser(updatedUser);
+    saveUser(updatedUser);
   }
 
-  async function handlePhoto(evt) {
-    const file = evt.target.files?.[0];
-    evt.target.value = '';
+  function startEditing() {
+    clearImages();
+
+    setDetails({
+      name: profile.name,
+      email: profile.email,
+      phone: profile.phone || '',
+    });
+
+    setImages({
+      profile_image: profile.profile_image,
+      cover_image: profile.cover_image,
+    });
+
+    setMessage('');
+    setEditing(true);
+  }
+
+  function cancelEditing() {
+    clearImages();
+    setImages({});
+    setEditing(false);
+    setMessage('');
+  }
+
+  function chooseImage(event, key) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
     if (!file) return;
-    setUploading(true);
-    setMessage({ type: '', text: '' });
-    try {
-      const url = await uploadImage(file);
-      applyUpdate(await updateMe({ profile_image: url }));
-      setMessage({ type: 'ok', text: 'Your photo was updated.' });
-    } catch (err) {
-      setMessage({ type: 'bad', text: err.message });
-    } finally {
-      setUploading(false);
+
+    if (!file.type.startsWith('image/')) {
+      setMessage('Please choose an image file.');
+      return;
     }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage('Please use an image under 5 MB.');
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+
+    imageUrls.current.push(url);
+    imageFiles.current[key] = file;
+
+    setImages((previous) => ({
+      ...previous,
+      [key]: url,
+    }));
+
+    setMessage('');
   }
 
-  async function handleCover(evt) {
-    const file = evt.target.files?.[0];
-    evt.target.value = '';
-    if (!file) return;
-    setUploading(true);
-    setMessage({ type: '', text: '' });
-    try {
-      const url = await uploadImage(file);
-      applyUpdate(await updateMe({ cover_image: url }));
-      setMessage({ type: 'ok', text: 'Your cover was updated.' });
-    } catch (err) {
-      setMessage({ type: 'bad', text: err.message });
-    } finally {
-      setUploading(false);
-    }
+  function removeImage(key) {
+    delete imageFiles.current[key];
+
+    setImages((previous) => ({
+      ...previous,
+      [key]: null,
+    }));
   }
 
-  async function removeImage(field, text) {
-    setUploading(true);
-    setMessage({ type: '', text: '' });
-    try {
-      applyUpdate(await updateMe({ [field]: null }));
-      setMessage({ type: 'ok', text });
-    } catch (err) {
-      setMessage({ type: 'bad', text: err.message });
-    } finally {
-      setUploading(false);
-    }
-  }
+  async function handleSave(event) {
+    event.preventDefault();
 
-  async function saveDetails(evt) {
-    evt.preventDefault();
+    if (!details.name.trim()) {
+      setMessage('Enter your full name.');
+      return;
+    }
+
     setBusy(true);
-    setMessage({ type: '', text: '' });
+    setMessage('');
+
     try {
-      applyUpdate(await updateMe({ name: details.name, email: details.email, phone: details.phone || null }));
-      setMessage({ type: 'ok', text: 'Your details were saved.' });
-    } catch (err) {
-      setMessage({ type: 'bad', text: err.message });
+      const savedImages = { ...images };
+
+      for (const [key, file] of Object.entries(imageFiles.current)) {
+        savedImages[key] = await uploadImage(file);
+      }
+
+      const updated = await updateMe({
+        ...details,
+        ...savedImages,
+        name: details.name.trim(),
+        email: details.email.trim(),
+      });
+
+      applyUpdate(updated);
+      clearImages();
+      setImages({});
+      setEditing(false);
+      setMessage('Your details have been updated.');
+    } catch (error) {
+      setMessage(error.message);
     } finally {
       setBusy(false);
     }
   }
 
-  async function savePassword(evt) {
-    evt.preventDefault();
-    if (pw.next.length < 6) return setMessage({ type: 'bad', text: 'The new password needs at least 6 characters.' });
-    if (pw.next !== pw.confirm) return setMessage({ type: 'bad', text: "The new passwords don't match." });
+  function togglePassword(key) {
+    setShowPasswords((previous) => {
+      if (key === 'current') {
+        return {
+          ...previous,
+          current: !previous.current,
+        };
+      }
+
+      const show = !previous[key];
+
+      return {
+        ...previous,
+        next: show,
+        confirm: show,
+      };
+    });
+  }
+
+  function cancelPasswordEditing() {
+    setPasswordEditing(false);
+    setPasswords(emptyPasswords);
+    setShowPasswords(hiddenPasswords);
+    setMessage('');
+  }
+
+  async function handlePasswordChange(event) {
+    event.preventDefault();
+
+    if (passwords.next !== passwords.confirm) {
+      setMessage('Your new passwords do not match.');
+      return;
+    }
+
+    if (passwords.next.length < 6) {
+      setMessage('Use at least 6 characters.');
+      return;
+    }
+
     setBusy(true);
-    setMessage({ type: '', text: '' });
+    setMessage('');
+
     try {
-      await updateMe({ current_password: pw.current, new_password: pw.next });
-      setPw({ current: '', next: '', confirm: '' });
-      setMessage({ type: 'ok', text: 'Your password was changed.' });
-    } catch (err) {
-      setMessage({ type: 'bad', text: err.message });
+      await updateMe({
+        current_password: passwords.current,
+        new_password: passwords.next,
+      });
+
+      setPasswords(emptyPasswords);
+      setShowPasswords(hiddenPasswords);
+      setPasswordEditing(false);
+      setMessage('Your password has been updated.');
+    } catch (error) {
+      setMessage(error.message);
     } finally {
       setBusy(false);
     }
   }
 
-  function openTab(name) {
-    setTab(name);
-    setMessage({ type: '', text: '' });
-  }
-
-  const photo = profile.profile_image;
+  const shown = editing ? { ...profile, ...images } : profile;
 
   return (
-    <>
-      <div className="page-h"><h1>My profile</h1></div>
+    <div className="cp-page sp-preview">
+      <div className="sp-container">
+        <header className="page-head">
+          <h1>{settings ? 'Settings' : 'My profile'}</h1>
+        </header>
 
-      <div className="pf2">
-        <div className="pf-cover">
-          {profile.cover_image && <img src={profile.cover_image} alt="" />}
-          <div className="pf-cover-acts">
-            {profile.cover_image && (
-              <button type="button" className="pf-trash" aria-label="Remove cover" title="Remove cover"
-                disabled={uploading} onClick={() => removeImage('cover_image', 'Your cover was removed.')}>
-                <TrashIcon />
-              </button>
-            )}
-            <label className="pf-icon-btn" title="Change cover" aria-label="Change cover">
-              <Svg color="#1B191A" size={17}><rect x="3" y="5" width="18" height="14" rx="3" /><circle cx="9" cy="10" r="1.6" /><path d="M21 15l-5-5-8 8" /></Svg>
-              <input type="file" accept="image/*" hidden onChange={handleCover} disabled={uploading} />
-            </label>
+        {message && (
+          <p className="cp-message" role="status">
+            {message}
+          </p>
+        )}
+
+        {!settings ? (
+          <div className="cp-profile">
+            <section className="cp-identity-card">
+              <div className="cp-cover">
+                {shown.cover_image ? (
+                  <img src={shown.cover_image} alt="" />
+                ) : (
+                  <svg
+                    viewBox="0 0 1000 160"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                  >
+                    <rect
+                      width="1000"
+                      height="160"
+                      fill="#F9CA87"
+                      opacity=".65"
+                    />
+                    <path
+                      d="M0 115C220 35 360 200 570 110S860 55 1000 100V160H0Z"
+                      fill="#F8713A"
+                      opacity=".15"
+                    />
+                  </svg>
+                )}
+
+                {editing && (
+                  <div className="cp-cover-tools">
+                    {shown.cover_image && (
+                      <button
+                        type="button"
+                        className="cp-image-tool cp-cover-trash"
+                        title="Remove cover"
+                        aria-label="Remove cover"
+                        disabled={busy}
+                        onClick={() => removeImage('cover_image')}
+                      >
+                        <Icon name="trash" />
+                      </button>
+                    )}
+
+                    <label
+                      className="cp-image-tool"
+                      title="Change cover"
+                      aria-label="Change cover"
+                    >
+                      <Icon name="image" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        disabled={busy}
+                        onChange={(event) =>
+                          chooseImage(event, 'cover_image')
+                        }
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
+
+              <div className="cp-identity-row">
+                <div className="cp-avatar">
+                  {shown.profile_image ? (
+                    <img src={shown.profile_image} alt="" />
+                  ) : (
+                    <span>{profile.name.charAt(0).toUpperCase()}</span>
+                  )}
+
+                  {editing && (
+                    <>
+                      <label
+                        className="cp-photo-upload"
+                        title="Change profile photo"
+                        aria-label="Change profile photo"
+                      >
+                        <Icon name="camera" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          disabled={busy}
+                          onChange={(event) =>
+                            chooseImage(event, 'profile_image')
+                          }
+                        />
+                      </label>
+
+                      {shown.profile_image && (
+                        <button
+                          type="button"
+                          className="cp-photo-trash"
+                          title="Remove profile photo"
+                          aria-label="Remove profile photo"
+                          disabled={busy}
+                          onClick={() => removeImage('profile_image')}
+                        >
+                          <Icon name="trash" />
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                <div className="cp-identity">
+                  <h2>{profile.name}</h2>
+
+                  <div className="pf-tags sp-tags">
+                    <span>
+                      <Icon name="user" />
+                      Staff
+                    </span>
+
+                    <span>
+                      <Icon name="position" />
+                      {me.position || 'Staff'}
+                    </span>
+
+                    <span>
+                      <Icon name="location" />
+                      {me.branch.name} · {me.business.name}
+                    </span>
+                  </div>
+
+                  <p>{profile.email}</p>
+                </div>
+
+                {!editing && (
+                  <button
+                    type="button"
+                    className="btn btn--primary cp-button"
+                    onClick={startEditing}
+                  >
+                    <Icon name="edit" />
+                    Edit profile
+                  </button>
+                )}
+              </div>
+            </section>
+
+            <section className="cp-details-card">
+              <div className="cp-section-heading">
+                <h2>
+                  {editing ? 'Edit personal details' : 'Personal details'}
+                </h2>
+
+                <p>
+                  {editing
+                    ? 'Update your details below.'
+                    : 'Your name and contact information.'}
+                </p>
+              </div>
+
+              {editing ? (
+                <form className="cp-edit-form" onSubmit={handleSave}>
+                  <div className="cp-fields">
+                    {[
+                      ['name', 'Full name', 'text'],
+                      ['email', 'Email address', 'email'],
+                      ['phone', 'Phone (optional)', 'tel'],
+                    ].map(([key, label, type]) => (
+                      <label key={key} htmlFor={`sp-${key}`}>
+                        {label}
+
+                        <input
+                          id={`sp-${key}`}
+                          type={type}
+                          value={details[key]}
+                          disabled={busy}
+                          required={key !== 'phone'}
+                          autoComplete={key === 'phone' ? 'tel' : key}
+                          onChange={(event) =>
+                            setDetails((previous) => ({
+                              ...previous,
+                              [key]: event.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+                    ))}
+                  </div>
+
+                  <div className="cp-actions">
+                    <button
+                      type="button"
+                      className="btn btn--secondary"
+                      disabled={busy}
+                      onClick={cancelEditing}
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="btn btn--primary"
+                      disabled={busy}
+                    >
+                      {busy ? 'Saving…' : 'Save changes'}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <dl className="cp-facts">
+                  <div>
+                    <dt>Full name</dt>
+                    <dd>{profile.name}</dd>
+                  </div>
+
+                  <div>
+                    <dt>Email address</dt>
+                    <dd>{profile.email}</dd>
+                  </div>
+
+                  <div>
+                    <dt>Phone</dt>
+                    <dd>{profile.phone || 'Not added yet'}</dd>
+                  </div>
+                </dl>
+              )}
+            </section>
           </div>
-          <svg className="pf-wave" viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">
-            <rect width="1000" height="200" fill="#FCEBD3" />
-            <path d="M0 140 C180 60 320 200 520 120 S860 40 1000 110 V200 H0Z" fill="#F9CA87" opacity=".45" />
-            <path d="M0 170 C220 110 380 210 600 160 S880 120 1000 150 V200 H0Z" fill="#F8713A" opacity=".22" />
-          </svg>
-        </div>
-
-        <div className="pf-top">
-          <div className="pf-avw">
-            <label className="pf-av" title="Change photo">
-              {photo ? <img src={photo} alt="" /> : <span>{initial(profile.name)}</span>}
-              <i><Svg color="#fff" size={17}><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" /><circle cx="12" cy="13.5" r="3.5" /></Svg></i>
-              <input type="file" accept="image/*" hidden onChange={handlePhoto} disabled={uploading} />
-            </label>
-            {photo && (
-              <button type="button" className="pf-trash photo" aria-label="Remove photo" title="Remove photo"
-                disabled={uploading} onClick={() => removeImage('profile_image', 'Your photo was removed.')}>
-                <TrashIcon color="#fff" size={26} />
-              </button>
-            )}
-          </div>
-          <div className="pf-who">
-            <h2>{profile.name}</h2>
-            <div className="pf-tags">
-              <span><Svg size={16}><rect x="3" y="7" width="18" height="13" rx="2.5" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></Svg>{me.position || 'Staff'}</span>
-              <span><Svg size={16}><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></Svg>{me.branch.name} · {me.business.name}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="pf-tabs" role="tablist">
-          <button type="button" role="tab" aria-selected={tab === 'details'} className={tab === 'details' ? 'on' : ''} onClick={() => openTab('details')}>My details</button>
-          <button type="button" role="tab" aria-selected={tab === 'password'} className={tab === 'password' ? 'on' : ''} onClick={() => openTab('password')}>Password</button>
-        </div>
-
-        {message.text && <p className={`pf-msg ${message.type}`} role="status">{message.text}</p>}
-
-        {tab === 'details' ? (
-          <form className="pf-panel" onSubmit={saveDetails}>
-            <div className="pf-grid">
-              <Field id="pf-name" label="Full name" icon={<UserIcon />} value={details.name} autoComplete="name"
-                onChange={(e) => setDetails({ ...details, name: e.target.value })} required />
-              <Field id="pf-phone" label="Phone" icon={<PhoneIcon />} type="tel" value={details.phone} autoComplete="tel"
-                onChange={(e) => setDetails({ ...details, phone: e.target.value })} />
-              <Field id="pf-email" label="Email" icon={<MailIcon />} type="email" value={details.email} autoComplete="email"
-                onChange={(e) => setDetails({ ...details, email: e.target.value })} required />
-            </div>
-            <div className="pf-end"><button className="st-btn" type="submit" disabled={busy}>{busy ? 'Saving…' : 'Save changes'}</button></div>
-          </form>
         ) : (
-          <form className="pf-panel pw" onSubmit={savePassword}>
-            <div className="pf-grid">
-              <PasswordField id="pf-current" label="Current password" value={pw.current} onChange={(e) => setPw({ ...pw, current: e.target.value })} />
-              <PasswordField id="pf-new" label="New password" value={pw.next} onChange={(e) => setPw({ ...pw, next: e.target.value })} />
-              <PasswordField id="pf-confirm" label="Confirm new password" value={pw.confirm} onChange={(e) => setPw({ ...pw, confirm: e.target.value })} />
+          <div className="sa-stage">
+            <div className="sa-shell">
+              <aside className="sa-intro">
+                <span className="sa-eyebrow">ACCOUNT SECURITY</span>
+
+                <h2>
+                  A little care.
+                  <br />
+                  A safer account.
+                </h2>
+
+                <p>
+                  Update your password whenever you need to.
+                  Your profile details stay on My profile.
+                </p>
+
+                <div className="sa-tip">
+                  <Icon name="lock" />
+                  <span>
+                    Choose at least 6 characters and avoid a password
+                    you use elsewhere.
+                  </span>
+                </div>
+              </aside>
+
+              <section className="cp-setting-card cp-security">
+                <div className="cp-setting-title">
+                  <span className="cp-setting-icon">
+                    <Icon name="lock" />
+                  </span>
+
+                  <h2>
+                    {passwordEditing ? 'Change password' : 'Security'}
+                  </h2>
+                </div>
+
+                <p>
+                  Keep your account secure with a password only you know.
+                </p>
+
+                {!passwordEditing ? (
+                  <div className="sa-security-overview">
+                    <div className="sa-password-row">
+                      <div>
+                        <h3>Password</h3>
+                        <p>A password is set for your account.</p>
+                        <span
+                          className="sa-password-dots"
+                          aria-hidden="true"
+                        >
+                          ••••••••••••
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="btn btn--primary"
+                        onClick={() => {
+                          setPasswordEditing(true);
+                          setMessage('');
+                        }}
+                      >
+                        Change password
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handlePasswordChange}>
+                    <div className="cp-fields password">
+                      {[
+                        ['current', 'Current password'],
+                        ['next', 'New password'],
+                        ['confirm', 'Confirm new password'],
+                      ].map(([key, label]) => (
+                        <label key={key} htmlFor={`sp-password-${key}`}>
+                          {label}
+
+                          <span className="cp-password-input">
+                            <input
+                              id={`sp-password-${key}`}
+                              type={
+                                showPasswords[key] ? 'text' : 'password'
+                              }
+                              value={passwords[key]}
+                              disabled={busy}
+                              required
+                              minLength={
+                                key === 'current' ? undefined : 6
+                              }
+                              autoComplete={
+                                key === 'current'
+                                  ? 'current-password'
+                                  : 'new-password'
+                              }
+                              onChange={(event) =>
+                                setPasswords((previous) => ({
+                                  ...previous,
+                                  [key]: event.target.value,
+                                }))
+                              }
+                            />
+
+                            <button
+                              type="button"
+                              className="cp-eye"
+                              aria-label={
+                                showPasswords[key]
+                                  ? `Hide ${label.toLowerCase()}`
+                                  : `Show ${label.toLowerCase()}`
+                              }
+                              onClick={() => togglePassword(key)}
+                            >
+                              <EyeIcon open={showPasswords[key]} />
+                            </button>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+
+                    <div className="cp-actions">
+                      <button
+                        type="button"
+                        className="btn btn--secondary"
+                        disabled={busy}
+                        onClick={cancelPasswordEditing}
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        type="submit"
+                        className="btn btn--primary"
+                        disabled={busy}
+                      >
+                        {busy ? 'Updating…' : 'Update password'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </section>
             </div>
-            <div className="pf-end"><button className="st-btn" type="submit" disabled={busy || !pw.current || !pw.next}>{busy ? 'Saving…' : 'Update password'}</button></div>
-          </form>
+          </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

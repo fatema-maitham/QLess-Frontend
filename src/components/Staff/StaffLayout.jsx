@@ -52,34 +52,42 @@ export default function StaffLayout() {
   const [services, setServices] = useState([]);
   const [profile, setProfile] = useState(null); // /users/me: name, email, phone, profile_image
 
-    const load = useCallback(async () => {
-    try {
-      const [staffMe, account] = await Promise.all([getStaffMe(), getMe()]);
-      const branchId = staffMe.branch.id;
-      const [fullBranch, branchHours, branchServices] = await Promise.all([
-        getBranch(branchId),
-        getBranchHours(branchId),
-        getBranchServices(branchId),
-      ]);
-      setMe(staffMe);
-      setProfile(account);
-      setBranch(fullBranch);
-      setHours(branchHours);
-      setServices(branchServices);
-      setState({ status: 'ready', error: '' });
-    } catch (err) {
-      setState({ status: err.status === 404 ? 'unassigned' : 'error', error: err.message });
-    }
+    const load = useCallback(() => {
+    return Promise.all([getStaffMe(), getMe()])
+      .then(async ([staffMe, account]) => {
+        const branchId = staffMe.branch.id;
+
+        const [fullBranch, branchHours, branchServices] =
+          await Promise.all([
+            getBranch(branchId),
+            getBranchHours(branchId),
+            getBranchServices(branchId),
+          ]);
+
+        setMe(staffMe);
+        setProfile(account);
+        setBranch(fullBranch);
+        setHours(branchHours);
+        setServices(branchServices);
+        setState({ status: 'ready', error: '' });
+      })
+      .catch((err) => {
+        setState({
+          status: err.status === 404 ? 'unassigned' : 'error',
+          error: err.message,
+        });
+      });
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
-
-    function retryLoad() {
+  function retryLoad() {
     setState({ status: 'loading', error: '' });
     load();
   }
-  
+
   function signOut() {
     removeToken();
     setUser(null);
@@ -170,7 +178,7 @@ export default function StaffLayout() {
             <div className="st-msg">
               <h2>You're not assigned to a branch yet</h2>
               <p>Ask the business owner to add you to a branch, then check again.</p>
-              <button type="button" className="st-btn" onClick={load}>Check again</button>
+              <button type="button" className="st-btn" onClick={retryLoad}>Check again</button>
             </div>
           )}
 
@@ -178,7 +186,7 @@ export default function StaffLayout() {
             <div className="st-msg" role="alert">
               <h2>We couldn't load your branch</h2>
               <p>{state.error}</p>
-              <button type="button" className="st-btn" onClick={load}>Try again</button>
+              <button type="button" className="st-btn" onClick={retryLoad}>Try again</button>
             </div>
           )}
 

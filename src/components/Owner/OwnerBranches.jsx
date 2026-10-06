@@ -3,10 +3,12 @@ import { useNavigate, useOutletContext, useSearchParams } from 'react-router';
 import { createBranch } from '../../services/ownerApi';
 import { isReady, plural, stepsDone } from './ownerSetup';
 import { BizLogo, Empty } from './OwnerParts';
+import OwnerPageSearch from './OwnerPageSearch';
 
 const EMPTY_FORM = { name: '', address: '', phone: '' };
 
 export default function OwnerBranches() {
+  const [query, setQuery] = useState('');
   const { business, branches, reload, toast } = useOutletContext();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
@@ -49,6 +51,11 @@ export default function OwnerBranches() {
       <div className="page-h">
         <h1>Branches</h1>
         <span className="sp" />
+      <OwnerPageSearch
+        value={query}
+        onChange={setQuery}
+        placeholder="Search branches"
+      />
         <button className="btn btn-primary" type="button" onClick={() => setOpen(true)}>+ Add branch</button>
       </div>
 
@@ -67,7 +74,13 @@ export default function OwnerBranches() {
 
       {branches.length ? (
         <div className="bgrid">
-          {branches.map((b) => {
+          {branches
+          .filter((b) =>
+            `${b.name} ${b.address || ''}`
+              .toLowerCase()
+              .includes(query.toLowerCase())
+          )
+          .map((b) => {
             const ready = isReady(b);
             const done = stepsDone(b) - 1;
             return (

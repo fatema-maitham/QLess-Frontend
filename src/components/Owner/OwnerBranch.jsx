@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Navigate,
   useNavigate,
@@ -20,7 +20,6 @@ import {
 import {
   DAYS,
   DEFAULT_HOURS,
-  NEEDS,
   hhmm,
   initial,
   isReady,
@@ -32,6 +31,7 @@ import { BizLogo, Empty } from './OwnerParts';
 import OwnerServiceEdit from './OwnerServiceEdit';
 import OwnerStaffEdit from './OwnerStaffEdit';
 import OwnerAvailability from './OwnerAvailability';
+import StaffAssignmentFields from '../Staff/StaffAssignmentFields';
 
 function rowsFrom(hours) {
   return DAYS.map(({ n, name }) => {
@@ -73,10 +73,6 @@ function HoursTab({ branch, branches, onSaved }) {
     (item) => item.id !== branch.id && item.hours.length
   );
 
-  useEffect(() => {
-    setRows(rowsFrom(branch.hours));
-    setSameAs('');
-  }, [branch.id, branch.hours]);
 
   function edit(index, patch) {
     setSameAs('');
@@ -422,10 +418,8 @@ function ServicesTab({
     </div>
   );
 }
-
 function StaffTab({
   branch,
-  branches,
   startOpen,
   onSaved,
   toast,
@@ -433,15 +427,22 @@ function StaffTab({
 }) {
   const [editing, setEditing] = useState(null);
   const [open, setOpen] = useState(startOpen);
+  const [saving, setSaving] = useState(false);
+  const [removingId, setRemovingId] = useState(null);
+  const [error, setError] = useState('');
+
   const [form, setForm] = useState({
     email: '',
     position: '',
+    queue_id: '',
+    counter_number: '1',
   });
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+
+  const busy = saving || removingId !== null;
 
   async function save(event) {
     event.preventDefault();
+    if (busy) return;
 
     setSaving(true);
     setError('');
@@ -450,11 +451,17 @@ function StaffTab({
       await createStaff(branch.id, {
         user_email: form.email.trim(),
         position: form.position.trim() || null,
+        queue_id: form.queue_id
+          ? Number(form.queue_id)
+          : null,
+        counter_number: Number(form.counter_number),
       });
 
       setForm({
         email: '',
         position: '',
+        queue_id: '',
+        counter_number: '1',
       });
 
       setOpen(false);
@@ -467,28 +474,34 @@ function StaffTab({
   }
 
   async function remove(id) {
+    if (busy) return;
+    setRemovingId(id);
+
     try {
       await deleteStaff(id);
       await reload();
       toast('Staff member removed');
     } catch (err) {
       toast(err.message);
+    } finally {
+      setRemovingId(null);
     }
   }
 
   return (
     <div>
       <div className="toolbar">
-        <p>
-          Staff call the next visitor at this branch.
-        </p>
-
+        <p>Staff call the next visitor at this branch.</p>
         <span className="sp" />
 
         <button
           className="btn btn-primary btn-sm"
           type="button"
-          onClick={() => setOpen(true)}
+          disabled={busy}
+          onClick={() => {
+            setError('');
+            setOpen(true);
+          }}
         >
           + Add staff
         </button>
@@ -497,28 +510,32 @@ function StaffTab({
       {open && (
         <form className="addform" onSubmit={save}>
           <div className="f wide">
-            <label htmlFor="te">Their QLess email</label>
-
+            <label htmlFor="branch-staff-email">
+              Their QLess email
+            </label>
             <input
-              id="te"
+              id="branch-staff-email"
               type="email"
               value={form.email}
+              disabled={busy}
+              required
               onChange={(event) =>
                 setForm({
                   ...form,
                   email: event.target.value,
                 })
               }
-              required
             />
           </div>
 
           <div className="f">
-            <label htmlFor="tp">Position</label>
-
+            <label htmlFor="branch-staff-position">
+              Position
+            </label>
             <input
-              id="tp"
+              id="branch-staff-position"
               value={form.position}
+              disabled={busy}
               onChange={(event) =>
                 setForm({
                   ...form,
@@ -528,11 +545,25 @@ function StaffTab({
             />
           </div>
 
+          <StaffAssignmentFields
+            prefix="branch-staff"
+            queues={branch.queues || []}
+            queueId={form.queue_id}
+            counterNumber={form.counter_number}
+            disabled={busy}
+            onChange={(changes) =>
+              setForm((previous) => ({
+                ...previous,
+                ...changes,
+              }))
+            }
+          />
+
           <div className="fa">
             <button
               className="btn btn-primary"
               type="submit"
-              disabled={saving}
+              disabled={busy}
             >
               {saving ? 'Saving…' : 'Add staff'}
             </button>
@@ -540,6 +571,7 @@ function StaffTab({
             <button
               className="btn btn-ghost"
               type="button"
+              disabled={busy}
               onClick={() => {
                 setOpen(false);
                 setError('');
@@ -549,63 +581,93 @@ function StaffTab({
             </button>
           </div>
 
-          {error && <p className="form-error">{error}</p>}
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
         </form>
       )}
 
-      <div className="list">
-        {branch.staff.length ? (
-          branch.staff.map((staff) => (
-            <div className="li" key={staff.id}>
-              <span className="ic">
-                {initial(staff.user?.name)}
-              </span>
+      {branch.staff.length ? (
+        <div className="list">
+          {branch.staff.map((staff) => {
+            const queue = branch.queues?.find(
+              (item) => item.id === staff.queue_id
+            );
 
-              <div>
-                <div className="owner-row-title">
-                  <b>{staff.user?.name}</b>
+            return (
+              <div className="li" key={staff.id}>
+                <span className="ic">
+                  {initial(staff.user?.name)}
+                </span>
 
-                  <span
-                    className={
-                      staff.is_active ? 'st open' : 'st off'
-                    }
-                  >
-                    {staff.is_active ? 'Active' : 'Inactive'}
-                  </span>
+                <div>
+                  <div className="owner-row-title">
+                    <b>{staff.user?.name}</b>
+                    <span
+                      className={
+                        staff.is_active
+                          ? 'st open'
+                          : 'st off'
+                      }
+                    >
+                      {staff.is_active
+                        ? 'Active'
+                        : 'Inactive'}
+                    </span>
+                  </div>
+
+                  <small>
+                    {staff.user?.email}
+                    {staff.position
+                      ? ` · ${staff.position}`
+                      : ''}
+                  </small>
+
+                  <div className="owner-assignment-tags">
+                    <span>
+                      {queue?.name || 'Not assigned'}
+                    </span>
+                    <span>
+                      Counter {staff.counter_number || 1}
+                    </span>
+                  </div>
                 </div>
 
-                <small>
-                  {staff.user?.email}
-                  {staff.position ? ` · ${staff.position}` : ''}
-                </small>
+                <span className="acts">
+                  <button
+                    className="edit-action"
+                    type="button"
+                    disabled={busy}
+                    onClick={() =>
+                      setEditing({ ...staff, branch })
+                    }
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    className="del"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => remove(staff.id)}
+                  >
+                    {removingId === staff.id
+                      ? 'Removing…'
+                      : 'Remove'}
+                  </button>
+                </span>
               </div>
-
-              <span className="acts">
-                <button
-                  className="edit-action"
-                  type="button"
-                  onClick={() => setEditing(staff)}
-                >
-                  Edit
-                </button>
-
-                <button
-                  className="del"
-                  type="button"
-                  onClick={() => remove(staff.id)}
-                >
-                  Remove
-                </button>
-              </span>
-            </div>
-          ))
-        ) : (
-          <Empty
-            title="No staff yet"
-            text="Add the people who will call visitors."
-          />
-        )}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        <Empty
+          title="No staff yet"
+          text="Add the people who call visitors at this branch."
+        />
+      )}
 
       {editing && (
         <OwnerStaffEdit
@@ -902,7 +964,8 @@ export default function OwnerBranch() {
       </div>
 
       {tab === 'hours' && (
-        <HoursTab
+                <HoursTab
+          key={`${branch.id}:${JSON.stringify(branch.hours)}`}
           branch={branch}
           branches={branches}
           onSaved={onSaved}

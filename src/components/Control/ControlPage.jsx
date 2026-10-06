@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router";
 import { getBranchQueues } from "../../services/branchService";
 import QueueControl from "./QueueControl";
 import "./Control.css";
-
+import OwnerPageSearch from "../Owner/OwnerPageSearch";
 export default function ControlPage({
   branches,
   title = "Live Queues",
@@ -19,7 +19,7 @@ export default function ControlPage({
   canServe = true,
 }) {
   const [params, setParams] = useSearchParams();
-
+  const [search, setSearch] = useState('');
   const [queues, setQueues] = useState({
     status: "loading",
     list: [],
@@ -63,7 +63,13 @@ export default function ControlPage({
     return () => controller.abort();
   }, [branchId]);
 
-  const list = queues.list;
+    const list = queues.list.filter(
+      (queue) =>
+        !showSettings ||
+        `${queue.name || ''} ${queue.service?.name || ''}`
+          .toLowerCase()
+          .includes(search.toLowerCase())
+    );
 
   const fromUrl = list.find(
     (queue) => String(queue.id) === params.get("queue")
@@ -100,6 +106,13 @@ export default function ControlPage({
         </div>
 
         <span className="sp" />
+        {showSettings && (
+        <OwnerPageSearch
+          value={search}
+          onChange={setSearch}
+          placeholder="Search queues"
+        />
+        )}
 
         {branches.length > 1 && (
           <select

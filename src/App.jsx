@@ -38,6 +38,7 @@ import OwnerStaff from "./components/Owner/OwnerStaff";
 import OwnerAnnouncements from "./components/Owner/OwnerAnnouncements";
 import OwnerProfile from "./components/Owner/OwnerProfile";
 import OwnerQueues from "./components/Control/OwnerQueues";
+import OwnerAccount from "./components/Owner/OwnerAccount";
 
 // Queue analytics
 import QueueAnalyticsPage from "./components/Analytics/QueueAnalyticsPage";
@@ -338,7 +339,18 @@ export default function App() {
             path="/owner/profile"
             element={<OwnerProfile />}
           />
+
+          <Route
+          path="/owner/my-profile"
+          element={<OwnerAccount key="profile" />}
+        />
+        <Route
+          path="/owner/settings"
+          element={<OwnerAccount key="settings" />}
+        />
         </Route>
+
+        
 
         {/* ================= STAFF ================= */}
 

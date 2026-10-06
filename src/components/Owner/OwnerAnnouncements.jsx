@@ -7,6 +7,7 @@ import {
 } from '../../services/ownerApi';
 import { Empty } from './OwnerParts';
 import OwnerEditDialog from './OwnerEditDialog';
+import OwnerPageSearch from './OwnerPageSearch';
 
 const EMPTY_FORM = {
   title: '',
@@ -15,6 +16,7 @@ const EMPTY_FORM = {
 };
 
 export default function OwnerAnnouncements() {
+  const [query, setQuery] = useState('');
   const {
     business,
     branches,
@@ -110,6 +112,11 @@ export default function OwnerAnnouncements() {
       <div className="page-h">
         <h1>Announcements</h1>
         <span className="sp" />
+        <OwnerPageSearch
+          value={query}
+          onChange={setQuery}
+          placeholder="Search announcements"
+        />
 
         <button
           className="btn btn-primary"
@@ -205,9 +212,15 @@ export default function OwnerAnnouncements() {
         </form>
       )}
 
-      <div className="list">
-        {announcements.length ? (
-          announcements.map((announcement) => (
+      <div className={announcements.length ? 'list' : ''}>
+      {announcements.length ? (
+         announcements
+          .filter((announcement) =>
+            `${announcement.title || ''} ${announcement.message || ''}`
+              .toLowerCase()
+              .includes(query.toLowerCase())
+          )
+          .map((announcement) => (
             <div className="li" key={announcement.id}>
               <span className="ic" aria-hidden="true">
                 !

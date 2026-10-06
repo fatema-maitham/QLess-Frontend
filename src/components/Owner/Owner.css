@@ -1290,3 +1290,79 @@ body,
 .owner .side::after {
   display: none;
 }
+
+
+.owner.owner-business .owner-assignment-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.owner.owner-business .owner-assignment-tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.owner.owner-business .owner-assignment-tags svg {
+  color: var(--orange-btn);
+}
+
+.owner.owner-business .addform:has(#staff-queue) {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: end;
+}
+
+.owner.owner-business .addform:has(#staff-queue) .f {
+  min-width: 0;
+  grid-column: span 2;
+}
+
+.owner.owner-business .addform:has(#staff-queue)
+.f:nth-child(1),
+.owner.owner-business .addform:has(#staff-queue)
+.f:nth-child(2) {
+  grid-column: span 3;
+}
+
+.owner.owner-business .addform:has(#staff-queue) .fa,
+.owner.owner-business .addform:has(#staff-queue) .form-error {
+  grid-column: 1 / -1;
+}
+
+.owner.owner-business .addform:has(#staff-queue) .fa {
+  justify-content: flex-end;
+}
+
+@media (max-width: 650px) {
+  .owner.owner-business .addform:has(#staff-queue) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .owner.owner-business .addform:has(#staff-queue)
+  .f:nth-child(n) {
+    grid-column: 1 / -1;
+  }
+}
+
+.owner.owner-business .blogo {
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.owner.owner-business .blogo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}

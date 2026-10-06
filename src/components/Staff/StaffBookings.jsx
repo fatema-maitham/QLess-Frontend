@@ -115,7 +115,13 @@ export default function StaffBookings() {
               type="button"
               aria-pressed={statusFilter === item.id}
               className={statusFilter === item.id ? "on" : ""}
-              onClick={() => setStatusFilter(item.id)}
+                            onClick={() => {
+                if (item.id === statusFilter) return;
+
+                setPageStatus("loading");
+                setError("");
+                setStatusFilter(item.id);
+              }}
             >
               {item.label}
             </button>

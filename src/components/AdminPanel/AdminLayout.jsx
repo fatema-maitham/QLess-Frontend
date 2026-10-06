@@ -10,7 +10,7 @@ import '../Owner/Owner.css';
 import './AdminPanel.css';
 import './AdminResponsive.css';
 
-export const ICONS = {
+const ICONS = {
   overview: <path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />,
   businesses: <path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6" />,
   users: <><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" /><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2.2.6 3.5 2.6 3.5 6" /></>,

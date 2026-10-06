@@ -221,7 +221,13 @@ export default function OwnerStaff() {
 
       <div className="list">
         {people.length ? (
-          people.map((staff) => (
+          people
+          .filter((staff) =>
+            `${staff.user?.name || ''} ${staff.user?.email || ''} ${staff.position || ''}`
+              .toLowerCase()
+              .includes(query.toLowerCase())
+          )
+          .map((staff) => (
             <div className="li" key={staff.id}>
               <span className="ic">{initial(staff.user?.name)}</span>
 

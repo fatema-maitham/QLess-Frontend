@@ -408,10 +408,26 @@ export default function App() {
             element={<StaffBranch />}
           />
 
-          <Route
-            path="profile"
-            element={<StaffProfile key="profile" />}
-          />
+                  <Route
+          path="/profile"
+          element={
+            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+              <CustomerProfile key="customer-profile" />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+              <CustomerProfile
+                key="customer-settings"
+                settings
+              />
+            </ProtectedRoute>
+          }
+        />
 
           <Route
             path="settings"

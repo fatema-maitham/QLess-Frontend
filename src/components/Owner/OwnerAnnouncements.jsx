@@ -16,6 +16,7 @@ const EMPTY_FORM = {
 };
 
 export default function OwnerAnnouncements() {
+  const [query, setQuery] = useState('');
   const {
     business,
     branches,

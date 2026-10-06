@@ -1,29 +1,18 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useLocation, useOutletContext } from 'react-router';
+import { useNavigate } from 'react-router';
 import { UserContext } from '../../contexts/UserContext';
-import { updateMe } from '../../services/profileService';
+import { getMe, updateMe } from '../../services/profileService';
 import { uploadImage } from '../../services/cloudinaryService';
-import { saveUser } from '../../lib/helpers/jwt-helpers';
+import { apiDelete } from '../../services/api';
+import { saveUser, removeToken } from '../../lib/helpers/jwt-helpers';
 import { EyeIcon } from '../Auth/AuthIcons';
-import './StaffProfile.css';
+import './CustomerProfile.css';
 
 const icons = {
   user: (
     <>
       <circle cx="12" cy="8" r="4" />
       <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
-    </>
-  ),
-  position: (
-    <>
-      <rect x="3" y="7" width="18" height="13" rx="2.5" />
-      <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-    </>
-  ),
-  location: (
-    <>
-      <path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z" />
-      <circle cx="12" cy="10" r="2.5" />
     </>
   ),
   edit: <path d="m15 5 4 4M4 20l4-1L20 7l-4-4L4 15Z" />,
@@ -69,29 +58,17 @@ function Icon({ name }) {
   );
 }
 
-const emptyPasswords = {
-  current: '',
-  next: '',
-  confirm: '',
-};
-
-const hiddenPasswords = {
-  current: false,
-  next: false,
-  confirm: false,
-};
-
-export default function StaffProfile() {
-  const { me, profile, setProfile } = useOutletContext();
+export default function CustomerProfile() {
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
-  const location = useLocation();
 
-  const settings = location.pathname.endsWith('/settings');
-
+  const [profile, setProfile] = useState(null);
+  const [loadError, setLoadError] = useState('');
   const [editing, setEditing] = useState(false);
-  const [passwordEditing, setPasswordEditing] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const [settings, setSettings] = useState(false);
   const [message, setMessage] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const [details, setDetails] = useState({
     name: '',
@@ -103,8 +80,31 @@ export default function StaffProfile() {
   const imageFiles = useRef({});
   const imageUrls = useRef([]);
 
-  const [passwords, setPasswords] = useState(emptyPasswords);
-  const [showPasswords, setShowPasswords] = useState(hiddenPasswords);
+  const [passwords, setPasswords] = useState({
+    current: '',
+    next: '',
+    confirm: '',
+  });
+
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    next: false,
+    confirm: false,
+  });
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    getMe({ signal: controller.signal })
+      .then(setProfile)
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          setLoadError(error.message);
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -116,14 +116,6 @@ export default function StaffProfile() {
     imageUrls.current.forEach((url) => URL.revokeObjectURL(url));
     imageUrls.current = [];
     imageFiles.current = {};
-  }
-
-  function applyUpdate(updated) {
-    const updatedUser = { ...user, ...updated };
-
-    setProfile(updated);
-    setUser(updatedUser);
-    saveUser(updatedUser);
   }
 
   function startEditing() {
@@ -214,7 +206,12 @@ export default function StaffProfile() {
         email: details.email.trim(),
       });
 
-      applyUpdate(updated);
+      const updatedUser = { ...user, ...updated };
+
+      setProfile(updated);
+      saveUser(updatedUser);
+      setUser(updatedUser);
+
       clearImages();
       setImages({});
       setEditing(false);
@@ -224,32 +221,6 @@ export default function StaffProfile() {
     } finally {
       setBusy(false);
     }
-  }
-
-  function togglePassword(key) {
-    setShowPasswords((previous) => {
-      if (key === 'current') {
-        return {
-          ...previous,
-          current: !previous.current,
-        };
-      }
-
-      const show = !previous[key];
-
-      return {
-        ...previous,
-        next: show,
-        confirm: show,
-      };
-    });
-  }
-
-  function cancelPasswordEditing() {
-    setPasswordEditing(false);
-    setPasswords(emptyPasswords);
-    setShowPasswords(hiddenPasswords);
-    setMessage('');
   }
 
   async function handlePasswordChange(event) {
@@ -274,9 +245,8 @@ export default function StaffProfile() {
         new_password: passwords.next,
       });
 
-      setPasswords(emptyPasswords);
-      setShowPasswords(hiddenPasswords);
-      setPasswordEditing(false);
+      setPasswords({ current: '', next: '', confirm: '' });
+      setShowPasswords({ current: false, next: false, confirm: false });
       setMessage('Your password has been updated.');
     } catch (error) {
       setMessage(error.message);
@@ -285,13 +255,51 @@ export default function StaffProfile() {
     }
   }
 
+  async function handleDeleteAccount() {
+    setBusy(true);
+
+    try {
+      await apiDelete('/users/me');
+      removeToken();
+      setUser(null);
+      navigate('/', { replace: true });
+    } catch (error) {
+      setDeleteOpen(false);
+      setMessage(error.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function switchTab(nextSettings) {
+    if (busy) return;
+
+    cancelEditing();
+    setSettings(nextSettings);
+  }
+
+  if (!profile) {
+    return (
+      <main className="page">
+        <div className="page__container">
+          <div className="page-empty">
+            {loadError || 'Loading profile…'}
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   const shown = editing ? { ...profile, ...images } : profile;
 
   return (
-    <div className="cp-page sp-preview">
-      <div className="sp-container">
+    <main className="page cp-page">
+      <div className="page__container">
         <header className="page-head">
-          <h1>{settings ? 'Settings' : 'My profile'}</h1>
+          <div>
+            <h1>My profile</h1>
+            <p>Your personal information, all in one place.</p>
+          </div>
         </header>
 
         {message && (
@@ -300,8 +308,30 @@ export default function StaffProfile() {
           </p>
         )}
 
+        <div className="cp-tabs">
+          <button
+            type="button"
+            className={!settings ? 'is-active' : ''}
+            aria-pressed={!settings}
+            disabled={busy}
+            onClick={() => switchTab(false)}
+          >
+            My profile
+          </button>
+
+          <button
+            type="button"
+            className={settings ? 'is-active' : ''}
+            aria-pressed={settings}
+            disabled={busy}
+            onClick={() => switchTab(true)}
+          >
+            Account settings
+          </button>
+        </div>
+
         {!settings ? (
-          <div className="cp-profile">
+          <div className="cp-profile cp-layout-cover">
             <section className="cp-identity-card">
               <div className="cp-cover">
                 {shown.cover_image ? (
@@ -405,24 +435,10 @@ export default function StaffProfile() {
 
                 <div className="cp-identity">
                   <h2>{profile.name}</h2>
-
-                  <div className="pf-tags sp-tags">
-                    <span>
-                      <Icon name="user" />
-                      Staff
-                    </span>
-
-                    <span>
-                      <Icon name="position" />
-                      {me.position || 'Staff'}
-                    </span>
-
-                    <span>
-                      <Icon name="location" />
-                      {me.branch.name} · {me.business.name}
-                    </span>
-                  </div>
-
+                  <span className="cp-role">
+                    <Icon name="user" />
+                    Visitor
+                  </span>
                   <p>{profile.email}</p>
                 </div>
 
@@ -444,7 +460,6 @@ export default function StaffProfile() {
                 <h2>
                   {editing ? 'Edit personal details' : 'Personal details'}
                 </h2>
-
                 <p>
                   {editing
                     ? 'Update your details below.'
@@ -460,16 +475,15 @@ export default function StaffProfile() {
                       ['email', 'Email address', 'email'],
                       ['phone', 'Phone (optional)', 'tel'],
                     ].map(([key, label, type]) => (
-                      <label key={key} htmlFor={`sp-${key}`}>
+                      <label key={key} htmlFor={`cp-${key}`}>
                         {label}
-
                         <input
-                          id={`sp-${key}`}
+                          id={`cp-${key}`}
                           type={type}
                           value={details[key]}
                           disabled={busy}
                           required={key !== 'phone'}
-                          autoComplete={key === 'phone' ? 'tel' : key}
+                          autoComplete={key}
                           onChange={(event) =>
                             setDetails((previous) => ({
                               ...previous,
@@ -506,12 +520,10 @@ export default function StaffProfile() {
                     <dt>Full name</dt>
                     <dd>{profile.name}</dd>
                   </div>
-
                   <div>
                     <dt>Email address</dt>
                     <dd>{profile.email}</dd>
                   </div>
-
                   <div>
                     <dt>Phone</dt>
                     <dd>{profile.phone || 'Not added yet'}</dd>
@@ -521,150 +533,154 @@ export default function StaffProfile() {
             </section>
           </div>
         ) : (
-          <div className="sa-stage">
-            <div className="sa-shell">
-              <aside className="sa-intro">
-                <span className="sa-eyebrow">ACCOUNT SECURITY</span>
-
-                <h2>
-                  A little care.
-                  <br />
-                  A safer account.
-                </h2>
-
-                <p>
-                  Update your password whenever you need to.
-                  Your profile details stay on My profile.
-                </p>
-
-                <div className="sa-tip">
+          <div className="cp-settings-content">
+            <section className="cp-setting-card cp-security">
+              <div className="cp-setting-title">
+                <span className="cp-setting-icon">
                   <Icon name="lock" />
-                  <span>
-                    Choose at least 6 characters and avoid a password
-                    you use elsewhere.
-                  </span>
-                </div>
-              </aside>
+                </span>
+                <h2>Change password</h2>
+              </div>
 
-              <section className="cp-setting-card cp-security">
-                <div className="cp-setting-title">
-                  <span className="cp-setting-icon">
-                    <Icon name="lock" />
-                  </span>
+              <p>
+                Keep your account secure with a password only you know.
+              </p>
 
-                  <h2>
-                    {passwordEditing ? 'Change password' : 'Security'}
-                  </h2>
-                </div>
+              <form onSubmit={handlePasswordChange}>
+                <div className="cp-fields password">
+                  {[
+                    ['current', 'Current password'],
+                    ['next', 'New password'],
+                    ['confirm', 'Confirm new password'],
+                  ].map(([key, label]) => (
+                    <label key={key} htmlFor={`cp-password-${key}`}>
+                      {label}
 
-                <p>
-                  Keep your account secure with a password only you know.
-                </p>
+                      <span className="cp-password-input">
+                        <input
+                          id={`cp-password-${key}`}
+                          type={showPasswords[key] ? 'text' : 'password'}
+                          value={passwords[key]}
+                          disabled={busy}
+                          required
+                          minLength={key === 'current' ? undefined : 6}
+                          autoComplete={
+                            key === 'current'
+                              ? 'current-password'
+                              : 'new-password'
+                          }
+                          onChange={(event) =>
+                            setPasswords((previous) => ({
+                              ...previous,
+                              [key]: event.target.value,
+                            }))
+                          }
+                        />
 
-                {!passwordEditing ? (
-                  <div className="sa-security-overview">
-                    <div className="sa-password-row">
-                      <div>
-                        <h3>Password</h3>
-                        <p>A password is set for your account.</p>
-                        <span
-                          className="sa-password-dots"
-                          aria-hidden="true"
+                        <button
+                          type="button"
+                          className="cp-eye"
+                          aria-label={
+                            showPasswords[key]
+                              ? `Hide ${label.toLowerCase()}`
+                              : `Show ${label.toLowerCase()}`
+                          }
+                          onClick={() =>
+                          setShowPasswords((previous) => {
+                            if (key === 'current') {
+                              return {
+                                ...previous,
+                                current: !previous.current,
+                              };
+                            }
+
+                            const show = !previous[key];
+
+                            return {
+                              ...previous,
+                              next: show,
+                              confirm: show,
+                            };
+                          })
+                        }
                         >
-                          ••••••••••••
-                        </span>
-                      </div>
+                          <EyeIcon open={showPasswords[key]} />
+                        </button>
+                      </span>
+                    </label>
+                  ))}
+                </div>
 
-                      <button
-                        type="button"
-                        className="btn btn--primary"
-                        onClick={() => {
-                          setPasswordEditing(true);
-                          setMessage('');
-                        }}
-                      >
-                        Change password
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <form onSubmit={handlePasswordChange}>
-                    <div className="cp-fields password">
-                      {[
-                        ['current', 'Current password'],
-                        ['next', 'New password'],
-                        ['confirm', 'Confirm new password'],
-                      ].map(([key, label]) => (
-                        <label key={key} htmlFor={`sp-password-${key}`}>
-                          {label}
+                <div className="cp-actions">
+                  <button
+                    type="submit"
+                    className="btn btn--primary"
+                    disabled={busy}
+                  >
+                    {busy ? 'Updating…' : 'Update password'}
+                  </button>
+                </div>
+              </form>
+            </section>
 
-                          <span className="cp-password-input">
-                            <input
-                              id={`sp-password-${key}`}
-                              type={
-                                showPasswords[key] ? 'text' : 'password'
-                              }
-                              value={passwords[key]}
-                              disabled={busy}
-                              required
-                              minLength={
-                                key === 'current' ? undefined : 6
-                              }
-                              autoComplete={
-                                key === 'current'
-                                  ? 'current-password'
-                                  : 'new-password'
-                              }
-                              onChange={(event) =>
-                                setPasswords((previous) => ({
-                                  ...previous,
-                                  [key]: event.target.value,
-                                }))
-                              }
-                            />
+            <section className="cp-setting-card cp-danger">
+              <div>
+                <h2>Delete account</h2>
+                <p>Permanently delete your QLess account.</p>
+              </div>
 
-                            <button
-                              type="button"
-                              className="cp-eye"
-                              aria-label={
-                                showPasswords[key]
-                                  ? `Hide ${label.toLowerCase()}`
-                                  : `Show ${label.toLowerCase()}`
-                              }
-                              onClick={() => togglePassword(key)}
-                            >
-                              <EyeIcon open={showPasswords[key]} />
-                            </button>
-                          </span>
-                        </label>
-                      ))}
-                    </div>
+              <button
+                type="button"
+                className="btn btn--secondary cp-delete"
+                disabled={busy}
+                onClick={() => setDeleteOpen(true)}
+              >
+                Delete my account
+              </button>
+            </section>
+          </div>
+        )}
 
-                    <div className="cp-actions">
-                      <button
-                        type="button"
-                        className="btn btn--secondary"
-                        disabled={busy}
-                        onClick={cancelPasswordEditing}
-                      >
-                        Cancel
-                      </button>
+        {deleteOpen && (
+          <div className="cp-modal-backdrop">
+            <section
+              className="cp-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="cp-delete-title"
+              onKeyDown={(event) => {
+                if (event.key === 'Escape' && !busy) {
+                  setDeleteOpen(false);
+                }
+              }}
+            >
+              <h2 id="cp-delete-title">Delete your account?</h2>
+              <p>This cannot be undone.</p>
 
-                      <button
-                        type="submit"
-                        className="btn btn--primary"
-                        disabled={busy}
-                      >
-                        {busy ? 'Updating…' : 'Update password'}
-                      </button>
-                    </div>
-                  </form>
-                )}
-              </section>
-            </div>
+              <div className="cp-actions">
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  disabled={busy}
+                  autoFocus
+                  onClick={() => setDeleteOpen(false)}
+                >
+                  Keep my account
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  disabled={busy}
+                  onClick={handleDeleteAccount}
+                >
+                  {busy ? 'Deleting…' : 'Delete account'}
+                </button>
+              </div>
+            </section>
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

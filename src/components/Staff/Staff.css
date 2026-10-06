@@ -31,7 +31,16 @@
 
 /* ===== Overview ===== */
 .owner .sx .ov-full { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-.owner .sx .ovh { flex: 1; min-height: 300px; display: grid; grid-template-columns: .9fr 1.4fr; align-items: end; background: var(--peach-soft); border-radius: 30px; overflow: hidden; }
+.owner .sx .ovh {
+  flex: 1;
+  min-height: 300px;
+  display: grid;
+  grid-template-columns: .9fr 1.4fr;
+  align-items: end;
+  background: #F5F2EE;
+  border-radius: 30px;
+  overflow: hidden;
+}
 .owner .sx .ovh .txt { padding: 34px 38px; align-self: center; }
 .owner .sx .ovh .d { font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #8A4A18; }
 .owner .sx .ovh h2 { margin: 10px 0 8px; font-size: 42px; font-weight: 800; letter-spacing: -.04em; line-height: 1.08; }
@@ -167,7 +176,7 @@
    Live queues (same look as the rest of the staff pages)
    ========================================================= */
 .owner .sx .st-queues .cp-toolbar { border: 1px solid var(--line); border-radius: 22px; padding: 12px 16px; }
-.owner .sx .st-queues .cp-serving { border: 0; border-radius: 28px; padding: 26px 30px; background: var(--peach-soft); }
+.owner .sx .st-queues .cp-serving { border: 0; border-radius: 28px; padding: 26px 30px; background: var(--bg); }
 .owner .sx .st-queues .cp-serving span { font-size: 12.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #8A4A18; }
 .owner .sx .st-queues .cp-serving strong { font-size: 60px; letter-spacing: -.04em; color: var(--orange-btn); }
 .owner .sx .st-queues .cp-counter { border: 0; border-radius: 16px; background: #fff; padding: 10px 14px; }
@@ -190,7 +199,7 @@
 .owner .sx .sh-stat { display: flex; flex-direction: column; gap: 4px; padding: 20px 22px; border: 1.5px solid var(--line); border-radius: 24px; background: #fff; }
 .owner .sx .sh-stat small { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .owner .sx .sh-stat b { font-size: 32px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
-.owner .sx .sh-stat--main { border-color: transparent; background: var(--peach-soft); }
+.owner .sx .sh-stat--main { border-color: transparent; background: var(--bg); }
 .owner .sx .sh-stat--main small { color: #8A4A18; }
 .owner .sx .sh-stat--main b { color: var(--orange-btn); }
 
@@ -254,4 +263,77 @@
 @media (prefers-reduced-motion: reduce) {
   .owner .sx .sh-skeleton { animation: none; }
   .owner .sx .sb-card { transition: none; }
+}
+
+
+.owner .sx .st-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.owner .sx .st-tile {
+  min-width: 0;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-content: start;
+  align-items: center;
+  gap: 12px;
+}
+
+.owner .sx .st-tile .i {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+}
+
+.owner .sx .st-tile > span:not(.i):not(.chip) {
+  min-width: 0;
+}
+
+.owner .sx .st-tile small {
+  font-size: 11px;
+}
+
+.owner .sx .st-tile b {
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.owner .sx .st-tile .chip {
+  grid-column: 2;
+  justify-self: start;
+  margin-left: 0;
+}
+
+@media (max-width: 1100px) {
+  .owner .sx .st-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .owner .sx .st-tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
+.owner .sx .st-tile {
+  position: relative;
+  min-height: 140px;
+  box-sizing: border-box;
+  padding: 20px 20px 24px;
+  align-content: center;
+  align-items: center;
+}
+
+.owner .sx .st-tile .chip {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  margin: 0;
+  grid-column: auto;
 }

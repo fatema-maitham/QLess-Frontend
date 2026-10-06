@@ -25,6 +25,7 @@ import MyTicketsPage from "./components/Ticket/MyTicketsPage";
 import FavoritesPage from "./components/Favorites/FavoritesPage";
 import MyBookingsPage from "./components/Bookings/MyBookingsPage";
 import CustomerDashboard from "./components/Dashboard/CustomerDashboard";
+import CustomerProfile from "./components/CustomerProfile/CustomerProfile";
 
 // Owner pages
 import OwnerHome from "./components/Business/OwnerHome";
@@ -220,6 +221,15 @@ export default function App() {
         {/* ================= CUSTOMER ================= */}
 
         <Route
+          path="/profile"
+          element={
+            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+              <CustomerProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/my-tickets"
           element={
             <ProtectedRoute roles={[ROLES.CUSTOMER]}>
@@ -345,7 +355,15 @@ export default function App() {
           <Route path="history" element={<StaffHistory />} />
           <Route path="bookings" element={<StaffBookings />} />
           <Route path="branch" element={<StaffBranch />} />
-          <Route path="profile" element={<StaffProfile />} />
+          <Route
+            path="profile"
+            element={<StaffProfile key="profile" />}
+          />
+
+          <Route
+            path="settings"
+            element={<StaffProfile key="settings" />}
+          />
         </Route>
 
         {/* ================= BRANCH BOOKINGS ================= */}

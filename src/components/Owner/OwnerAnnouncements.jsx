@@ -7,6 +7,7 @@ import {
 } from '../../services/ownerApi';
 import { Empty } from './OwnerParts';
 import OwnerEditDialog from './OwnerEditDialog';
+import OwnerPageSearch from './OwnerPageSearch';
 
 const EMPTY_FORM = {
   title: '',

@@ -7,6 +7,7 @@ import OwnerStaffEdit from './OwnerStaffEdit';
 import OwnerPageSearch from './OwnerPageSearch';
 
 export default function OwnerStaff() {
+  const [query, setQuery] = useState('');
   const { branches, reload, toast } = useOutletContext();
   const navigate = useNavigate();
 

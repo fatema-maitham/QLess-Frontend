@@ -13,13 +13,15 @@ export default function AdminBranches() {
   const [q, setQ] = useState('');
   const [busyId, setBusyId] = useState(null);
 
-  const load = useCallback(async () => {
-    try {
-      setList(await getAdminBranches());
-      setError('');
-    } catch (err) {
-      setError(err.message);
-    }
+    const load = useCallback(() => {
+    return getAdminBranches()
+      .then((data) => {
+        setList(data);
+        setError('');
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
   }, []);
 
   useEffect(() => { load(); }, [load]);

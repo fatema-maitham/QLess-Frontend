@@ -37,6 +37,7 @@ import OwnerBranch from "./components/Owner/OwnerBranch";
 import OwnerStaff from "./components/Owner/OwnerStaff";
 import OwnerAnnouncements from "./components/Owner/OwnerAnnouncements";
 import OwnerProfile from "./components/Owner/OwnerProfile";
+import OwnerAccount from "./components/Owner/OwnerAccount";
 import OwnerQueues from "./components/Control/OwnerQueues";
 
 // Queue analytics
@@ -377,6 +378,15 @@ export default function App() {
             path="/owner/profile"
             element={<OwnerProfile />}
           />
+          <Route
+          path="/owner/my-profile"
+          element={<OwnerAccount key="owner-my-profile" />}
+        />
+
+        <Route
+          path="/owner/settings"
+          element={<OwnerAccount key="owner-settings" />}
+        />
 
           {/* OWNER NOTIFICATIONS - keeps Owner sidebar */}
           <Route

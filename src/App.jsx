@@ -10,7 +10,7 @@ import NotFound from "./components/NotFound/NotFound";
 
 // Auth + shared
 import NavBar from "./components/NavBar/NavBar";
-import Footer from "./components/Footer/Footer"; // NEW
+import Footer from "./components/Footer/Footer";
 import ScrollToHash from "./components/ScrollToHash/ScrollToHash";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import NoAccess from "./components/NoAccess/NoAccess";
@@ -38,7 +38,6 @@ import OwnerStaff from "./components/Owner/OwnerStaff";
 import OwnerAnnouncements from "./components/Owner/OwnerAnnouncements";
 import OwnerProfile from "./components/Owner/OwnerProfile";
 import OwnerQueues from "./components/Control/OwnerQueues";
-import OwnerAccount from "./components/Owner/OwnerAccount";
 
 // Queue analytics
 import QueueAnalyticsPage from "./components/Analytics/QueueAnalyticsPage";
@@ -70,21 +69,24 @@ import AdminBusinesses from "./components/AdminPanel/AdminBusinesses";
 import AdminUsers from "./components/AdminPanel/AdminUsers";
 import AdminBranches from "./components/AdminPanel/AdminBranches";
 import AdminAuditLogs from "./components/AdminPanel/AdminAuditLogs";
+
 // Context + helpers
 import { UserContext } from "./contexts/UserContext";
 import { ROLES, getRole, homeFor } from "./lib/helpers/roles";
 
 import "./App.css";
 
-// Pages that have their own full-screen layout (no NavBar)
-const NO_NAV = ["/sign-in", "/sign-up", "/forgot-password", "/reset-password"];
+const NO_NAV = [
+  "/sign-in",
+  "/sign-up",
+  "/forgot-password",
+  "/reset-password",
+];
 
 export default function App() {
   const { user } = useContext(UserContext);
   const location = useLocation();
 
-  // After signing in, go back to the page the user came from
-  // (for example the branch page after "Sign in to book")
   const requestedPage = location.state?.from;
 
   const canReturnToPage = (path, user) => {
@@ -109,7 +111,8 @@ export default function App() {
       path.startsWith("/my-tickets") ||
       path.startsWith("/tickets/") ||
       path.startsWith("/favorites") ||
-      path.startsWith("/my-bookings")
+      path.startsWith("/my-bookings") ||
+      path === "/notifications"
     ) {
       return role === ROLES.CUSTOMER;
     }
@@ -127,12 +130,12 @@ export default function App() {
     !location.pathname.startsWith("/staff") &&
     !location.pathname.startsWith("/admin");
 
-  // NEW: the landing page ("/") already has its own footer
   const showFooter = showNav;
 
   return (
     <div className="app">
       {showNav && <NavBar />}
+
       <ScrollToHash />
 
       <Routes>
@@ -149,7 +152,10 @@ export default function App() {
           }
         />
 
-        <Route path="/business/register" element={<Navigate to="/sign-up?type=owner" replace />} />
+        <Route
+          path="/business/register"
+          element={<Navigate to="/sign-up?type=owner" replace />}
+        />
 
         {/* ================= AUTH ================= */}
 
@@ -177,10 +183,21 @@ export default function App() {
 
         <Route
           path="/forgot-password"
-          element={user ? <Navigate to={homeFor(user)} replace /> : <ForgotPassword />}
+          element={
+            user ? (
+              <Navigate to={homeFor(user)} replace />
+            ) : (
+              <ForgotPassword />
+            )
+          }
         />
 
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
+        />
+
+        {/* ================= CUSTOMER DASHBOARD ================= */}
 
         <Route
           path="/dashboard"
@@ -266,6 +283,16 @@ export default function App() {
           }
         />
 
+        {/* Customer notifications */}
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+              <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+
         {/* ================= OWNER ================= */}
 
         <Route
@@ -329,7 +356,6 @@ export default function App() {
             element={<QueueSettingsPage />}
           />
 
-          {/* Queue analytics - owner only */}
           <Route
             path="/owner/queues/:queueId/analytics"
             element={<QueueAnalyticsPage />}
@@ -340,17 +366,12 @@ export default function App() {
             element={<OwnerProfile />}
           />
 
+          {/* OWNER NOTIFICATIONS - keeps Owner sidebar */}
           <Route
-          path="/owner/my-profile"
-          element={<OwnerAccount key="profile" />}
-        />
-        <Route
-          path="/owner/settings"
-          element={<OwnerAccount key="settings" />}
-        />
+            path="/owner/notifications"
+            element={<NotificationsPage />}
+          />
         </Route>
-
-        
 
         {/* ================= STAFF ================= */}
 
@@ -362,11 +383,31 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<StaffOverview />} />
-          <Route path="queues" element={<StaffQueues />} />
-          <Route path="history" element={<StaffHistory />} />
-          <Route path="bookings" element={<StaffBookings />} />
-          <Route path="branch" element={<StaffBranch />} />
+          <Route
+            index
+            element={<StaffOverview />}
+          />
+
+          <Route
+            path="queues"
+            element={<StaffQueues />}
+          />
+
+          <Route
+            path="history"
+            element={<StaffHistory />}
+          />
+
+          <Route
+            path="bookings"
+            element={<StaffBookings />}
+          />
+
+          <Route
+            path="branch"
+            element={<StaffBranch />}
+          />
+
           <Route
             path="profile"
             element={<StaffProfile key="profile" />}
@@ -375,6 +416,12 @@ export default function App() {
           <Route
             path="settings"
             element={<StaffProfile key="settings" />}
+          />
+
+          {/* STAFF NOTIFICATIONS - keeps Staff sidebar */}
+          <Route
+            path="notifications"
+            element={<NotificationsPage />}
           />
         </Route>
 
@@ -389,20 +436,8 @@ export default function App() {
           }
         />
 
-        {/* ================= NOTIFICATIONS ================= */}
-
-        <Route
-          path="/notifications"
-          element={
-            <ProtectedRoute>
-              <NotificationsPage />
-            </ProtectedRoute>
-          }
-        />
-
         {/* ================= ADMIN ================= */}
 
-        {/* Temporary: send /admin here until the admin dashboard is built */}
         <Route
           path="/admin"
           element={
@@ -411,19 +446,59 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<AdminOverview />} />
-          <Route path="businesses" element={<AdminBusinesses />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route path="branches" element={<AdminBranches />} />
-          <Route path="audit-logs" element={<AdminAuditLogs />} />
-          <Route path="categories" element={<AdminCategoriesPage />} />
-          <Route path="queues" element={<AdminQueuesPage />} />
-          <Route path="reviews" element={<AdminReviewsPage />} />
-          <Route path="suspicious-activity" element={<AdminSuspiciousPage />} />
+          <Route
+            index
+            element={<AdminOverview />}
+          />
+
+          <Route
+            path="businesses"
+            element={<AdminBusinesses />}
+          />
+
+          <Route
+            path="users"
+            element={<AdminUsers />}
+          />
+
+          <Route
+            path="branches"
+            element={<AdminBranches />}
+          />
+
+          <Route
+            path="audit-logs"
+            element={<AdminAuditLogs />}
+          />
+
+          <Route
+            path="categories"
+            element={<AdminCategoriesPage />}
+          />
+
+          <Route
+            path="queues"
+            element={<AdminQueuesPage />}
+          />
+
+          <Route
+            path="reviews"
+            element={<AdminReviewsPage />}
+          />
+
+          <Route
+            path="suspicious-activity"
+            element={<AdminSuspiciousPage />}
+          />
+
+          {/* ADMIN NOTIFICATIONS - keeps Admin sidebar */}
+          <Route
+            path="notifications"
+            element={<NotificationsPage />}
+          />
         </Route>
 
         {/* ================= NO ACCESS ================= */}
-
 
         <Route
           path="/no-access"
@@ -438,7 +513,6 @@ export default function App() {
         />
       </Routes>
 
-      {/* NEW: footer on app pages */}
       {showFooter && <Footer />}
     </div>
   );

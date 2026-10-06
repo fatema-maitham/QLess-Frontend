@@ -24,6 +24,7 @@ import {
 import CalledAlert from "./CalledAlert";
 import useNoShowStatus from "../../hooks/useNoShowStatus";
 import NoShowBanner from "../NoShow/NoShowBanner";
+import TicketAnnouncements from "./TicketAnnouncements";
 import "./Ticket.css";
 
 const BACKUP_REFRESH_MS = 15000; // only used while the live connection is down

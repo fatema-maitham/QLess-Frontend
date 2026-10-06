@@ -74,6 +74,12 @@ export default function StaffLayout() {
 
   useEffect(() => { load(); }, [load]);
 
+
+    function retryLoad() {
+    setState({ status: 'loading', error: '' });
+    load();
+  }
+  
   function signOut() {
     removeToken();
     setUser(null);

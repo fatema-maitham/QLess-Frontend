@@ -73,7 +73,13 @@ export default function OwnerBranches() {
 
       {branches.length ? (
         <div className="bgrid">
-          {branches.map((b) => {
+          {branches
+          .filter((b) =>
+            `${b.name} ${b.address || ''}`
+              .toLowerCase()
+              .includes(query.toLowerCase())
+          )
+          .map((b) => {
             const ready = isReady(b);
             const done = stepsDone(b) - 1;
             return (

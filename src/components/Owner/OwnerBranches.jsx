@@ -7,6 +7,7 @@ import { BizLogo, Empty } from './OwnerParts';
 const EMPTY_FORM = { name: '', address: '', phone: '' };
 
 export default function OwnerBranches() {
+  const [query, setQuery] = useState('');
   const { business, branches, reload, toast } = useOutletContext();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();

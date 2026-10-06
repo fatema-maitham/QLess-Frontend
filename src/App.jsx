@@ -25,6 +25,7 @@ import MyTicketsPage from "./components/Ticket/MyTicketsPage";
 import FavoritesPage from "./components/Favorites/FavoritesPage";
 import MyBookingsPage from "./components/Bookings/MyBookingsPage";
 import CustomerDashboard from "./components/Dashboard/CustomerDashboard";
+import CustomerProfile from "./components/CustomerProfile/CustomerProfile";
 
 // Owner pages
 import OwnerHome from "./components/Business/OwnerHome";

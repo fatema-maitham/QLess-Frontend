@@ -3,7 +3,8 @@ import { useOutletContext } from 'react-router';
 import { UserContext } from '../../contexts/UserContext';
 import { getAdminUsers, liftRestriction, setUserActive } from '../../services/adminManageService';
 import { initial } from '../Owner/ownerSetup';
-import { SearchBox, Tabs, isRestricted, matches, shortDate } from './AdminParts';
+import { SearchBox, Tabs } from './AdminParts';
+import { isRestricted, matches, shortDate } from './adminUtils';
 
 const ROLE_NAMES = { customer: 'Visitor', owner: 'Owner', staff: 'Staff', admin: 'Admin' };
 

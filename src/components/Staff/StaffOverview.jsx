@@ -19,7 +19,7 @@ export default function StaffOverview() {
         <div className="txt">
           <div className="d">{date}</div>
           <h2>Good to see you,<br /><span>{profile.name}</span>.</h2>
-          <p>Your visitors are on their way. Open your queues when you're ready to start.</p>
+          <p>Your visitors are on their way. Open live queues when you're ready to serve.</p>
           <div className="b">
             <Link className="st-btn" to="/staff/queues">Open live queues</Link>
             <Link className="st-btn ghost" to="/staff/branch">My branch</Link>
@@ -41,6 +41,10 @@ export default function StaffOverview() {
         <Link className="st-tile" to="/staff/profile">
           <Icon><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" /></Icon>
           <span><small>Your role</small><b>{me.position || 'Staff'}</b></span>
+        </Link>
+        <Link className="st-tile" to="/staff/queues">
+          <Icon><rect x="4" y="5" width="16" height="14" rx="2" /><path d="M8 9h8M8 13h5" /></Icon>
+          <span><small>Your counter</small><b>Counter {me.counter_number}</b></span>
         </Link>
       </div>
     </div>

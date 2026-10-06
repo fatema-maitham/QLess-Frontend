@@ -14,6 +14,8 @@ export default function ControlPage({
   bookingsTo = "",
   // the analytics page is owner only
   showAnalytics = true,
+  canManageStatus = true,
+  fixedCounter = null,
 }) {
   const [params, setParams] = useSearchParams();
 
@@ -187,6 +189,8 @@ export default function ControlPage({
               key={current.id}
               queueId={current.id}
               showAnalytics={showAnalytics}
+              canManageStatus={canManageStatus}
+              fixedCounter={fixedCounter}
             />
           )}
         </>

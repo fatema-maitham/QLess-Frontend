@@ -16,6 +16,7 @@ export default function OwnerStaff() {
     email: '',
     position: '',
     branch: '',
+    counter_number: '1',
   });
   const [saving, setSaving] = useState(false);
   const [removingId, setRemovingId] = useState(null);
@@ -43,6 +44,7 @@ export default function OwnerStaff() {
       email: '',
       position: '',
       branch: filter !== 'all' ? filter : String(branches[0].id),
+      counter_number: '1',
     });
     setError('');
     setOpen(true);
@@ -59,6 +61,7 @@ export default function OwnerStaff() {
       await createStaff(Number(form.branch), {
         user_email: form.email.trim(),
         position: form.position.trim() || null,
+        counter_number: Number(form.counter_number),
       });
 
       await reload();
@@ -152,6 +155,21 @@ export default function OwnerStaff() {
           </div>
 
           <div className="f">
+            <label htmlFor="staff-counter">Counter</label>
+            <input
+              id="staff-counter"
+              type="number"
+              min="1"
+              max="20"
+              value={form.counter_number}
+              onChange={(event) =>
+                setForm({ ...form, counter_number: event.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="f">
             <label htmlFor="staff-branch">Branch</label>
             <select
               id="staff-branch"
@@ -208,6 +226,7 @@ export default function OwnerStaff() {
                 <small>
                   {staff.user?.email} · {staff.branch.name}
                   {staff.position ? ` · ${staff.position}` : ''}
+                  {staff.counter_number ? ` · Counter ${staff.counter_number}` : ''}
                 </small>
               </div>
 

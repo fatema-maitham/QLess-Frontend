@@ -252,7 +252,7 @@ function DeskCard({
   );
 }
 
-export default function QueueControl({ queueId, showAnalytics = true }) {
+export default function QueueControl({ queueId, showAnalytics = true, canManageStatus = true, fixedCounter = null }) {
   const [data, setData] = useState({
     status: "loading",
     error: "",
@@ -389,7 +389,7 @@ export default function QueueControl({ queueId, showAnalytics = true }) {
 
   // How many counters this queue has, and which one is mine
   const counterCount = data.queue?.counter_count || 1;
-  const myCounter = Math.min(counter, counterCount);
+  const myCounter = fixedCounter ?? Math.min(counter, counterCount);
   const counterNumbers = Array.from(
     { length: counterCount },
     (_, i) => i + 1
@@ -489,7 +489,7 @@ export default function QueueControl({ queueId, showAnalytics = true }) {
             </Link>
           )}
 
-          {(STATUS_ACTIONS[queue.status] || []).map(
+          {canManageStatus && (STATUS_ACTIONS[queue.status] || []).map(
             ({ to, label, Icon }) => (
               <button
                 key={to}
@@ -555,7 +555,7 @@ export default function QueueControl({ queueId, showAnalytics = true }) {
         )}
 
         <div className="cp-call-wrap">
-          {counterCount > 1 && (
+          {counterCount > 1 && fixedCounter == null && (
             <label className="cp-counter-pick">
               <span>My counter</span>
               <select
@@ -574,11 +574,18 @@ export default function QueueControl({ queueId, showAnalytics = true }) {
             </label>
           )}
 
+          {fixedCounter != null && (
+            <div className="cp-counter-pick">
+              <span>Your counter</span>
+              <strong>Counter {fixedCounter}</strong>
+            </div>
+          )}
+
           <button
             type="button"
             className="btn btn-primary cp-call"
             onClick={handleCallNext}
-            disabled={busy || !isOpen || !next}
+            disabled={busy || !isOpen || !next || myCounter > counterCount}
           >
             <Megaphone size={18} weight="fill" />
 

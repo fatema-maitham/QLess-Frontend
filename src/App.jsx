@@ -339,9 +339,8 @@ export default function App() {
             path="/owner/profile"
             element={<OwnerProfile />}
           />
-        </Route>
 
-        <Route
+          <Route
           path="/owner/my-profile"
           element={<OwnerAccount key="profile" />}
         />
@@ -349,6 +348,9 @@ export default function App() {
           path="/owner/settings"
           element={<OwnerAccount key="settings" />}
         />
+        </Route>
+
+        
 
         {/* ================= STAFF ================= */}
 

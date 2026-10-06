@@ -214,7 +214,13 @@ export default function OwnerAnnouncements() {
 
       <div className="list">
         {announcements.length ? (
-          announcements.map((announcement) => (
+         announcements
+          .filter((announcement) =>
+            `${announcement.title || ''} ${announcement.message || ''}`
+              .toLowerCase()
+              .includes(query.toLowerCase())
+          )
+          .map((announcement) => (
             <div className="li" key={announcement.id}>
               <span className="ic" aria-hidden="true">
                 !

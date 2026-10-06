@@ -16,6 +16,18 @@ const ICONS = {
   announcements: <><path d="M4 10v4a1 1 0 0 0 1 1h3l6 4V5L8 9H5a1 1 0 0 0-1 1z" /><path d="M18 9a4 4 0 0 1 0 6" /></>,
   queues: <><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M7 10h4M7 14h7" /></>,
   profile: <path d="M3 9l1.5-5h15L21 9M3 9h18M3 9v11h18V9M9 20v-6h6v6" />,
+  account: (
+  <>
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+  </>
+),
+settings: (
+  <>
+    <circle cx="12" cy="12" r="4" />
+    <path d="m9 3-1 3-3 1-2 5 2 5 3 1 1 3h6l1-3 3-1 2-5-2-5-3-1-1-3Z" />
+  </>
+),
 };
 
 function Item({ to, icon, children, end }) {
@@ -145,7 +157,7 @@ export default function OwnerLayout() {
   const needsSetup = !!firstUnready(data.branches);
 
   return (
-    <div className="owner app">
+    <div className="owner app owner-business">
             <div className="logo"><img src={logo} alt="QLess" /></div>
 
       <header className="top">

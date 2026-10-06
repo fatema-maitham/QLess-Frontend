@@ -506,95 +506,172 @@ export default function CustomerProfile({ settings = false }) {
             </section>
           </div>
         ) : (
-          <div className="cp-settings-content">
-            <section className="cp-setting-card cp-security">
-              <div className="cp-setting-title">
-                <span className="cp-setting-icon">
-                  <Icon name="lock" />
+                    <div className="cp-settings-content customer-settings-redesign">
+            <div className="customer-security-shell">
+              <aside className="customer-security-intro">
+                <span className="customer-security-eyebrow">
+                  ACCOUNT SECURITY
                 </span>
-                <h2>Change password</h2>
-              </div>
 
-              <p>
-                Keep your account secure with a password only you know.
-              </p>
+                <h2>
+                  A little care.
+                  <br />
+                  A safer account.
+                </h2>
 
-              <form onSubmit={handlePasswordChange}>
-                <div className="cp-fields password">
-                  {[
-                    ['current', 'Current password'],
-                    ['next', 'New password'],
-                    ['confirm', 'Confirm new password'],
-                  ].map(([key, label]) => (
-                    <label key={key} htmlFor={`cp-password-${key}`}>
-                      {label}
+                <p>
+                  Update your password whenever you need to.
+                  Your personal details stay on My profile.
+                </p>
 
-                      <span className="cp-password-input">
-                        <input
-                          id={`cp-password-${key}`}
-                          type={showPasswords[key] ? 'text' : 'password'}
-                          value={passwords[key]}
-                          disabled={busy}
-                          required
-                          minLength={key === 'current' ? undefined : 6}
-                          autoComplete={
-                            key === 'current'
-                              ? 'current-password'
-                              : 'new-password'
-                          }
-                          onChange={(event) =>
-                            setPasswords((previous) => ({
-                              ...previous,
-                              [key]: event.target.value,
-                            }))
-                          }
-                        />
+                <div className="customer-security-tip">
+                  <Icon name="lock" />
+                  <span>
+                    Choose at least 6 characters and avoid a password
+                    you use elsewhere.
+                  </span>
+                </div>
+              </aside>
 
-                        <button
-                          type="button"
-                          className="cp-eye"
-                          aria-label={
-                            showPasswords[key]
-                              ? `Hide ${label.toLowerCase()}`
-                              : `Show ${label.toLowerCase()}`
-                          }
-                          onClick={() =>
-                          setShowPasswords((previous) => {
-                            if (key === 'current') {
-                              return {
-                                ...previous,
-                                current: !previous.current,
-                              };
-                            }
+              <section className="cp-setting-card cp-security">
+                <div className="cp-setting-title">
+                  <span className="cp-setting-icon">
+                    <Icon name="lock" />
+                  </span>
+                  <h2>Security</h2>
+                </div>
 
-                            const show = !previous[key];
+                {!changingPassword ? (
+                  <div className="customer-password-summary">
+                    <h3>Password</h3>
+                    <p>A password is set for your account.</p>
 
-                            return {
-                              ...previous,
-                              next: show,
-                              confirm: show,
-                            };
-                          })
-                        }
+                    <span
+                      className="customer-password-dots"
+                      aria-hidden="true"
+                    >
+                      ••••••••••••
+                    </span>
+
+                    <button
+                      type="button"
+                      className="btn btn--primary"
+                      onClick={() => {
+                        setMessage('');
+                        setChangingPassword(true);
+                      }}
+                    >
+                      Change password
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handlePasswordChange}>
+                    <div className="cp-fields password">
+                      {[
+                        ['current', 'Current password'],
+                        ['next', 'New password'],
+                        ['confirm', 'Confirm new password'],
+                      ].map(([key, label]) => (
+                        <label
+                          key={key}
+                          htmlFor={`cp-password-${key}`}
                         >
-                          <EyeIcon open={showPasswords[key]} />
-                        </button>
-                      </span>
-                    </label>
-                  ))}
-                </div>
+                          {label}
 
-                <div className="cp-actions">
-                  <button
-                    type="submit"
-                    className="btn btn--primary"
-                    disabled={busy}
-                  >
-                    {busy ? 'Updating…' : 'Update password'}
-                  </button>
-                </div>
-              </form>
-            </section>
+                          <span className="cp-password-input">
+                            <input
+                              id={`cp-password-${key}`}
+                              type={
+                                showPasswords[key] ? 'text' : 'password'
+                              }
+                              value={passwords[key]}
+                              disabled={busy}
+                              required
+                              minLength={
+                                key === 'current' ? undefined : 6
+                              }
+                              autoComplete={
+                                key === 'current'
+                                  ? 'current-password'
+                                  : 'new-password'
+                              }
+                              onChange={(event) =>
+                                setPasswords((previous) => ({
+                                  ...previous,
+                                  [key]: event.target.value,
+                                }))
+                              }
+                            />
+
+                            <button
+                              type="button"
+                              className="cp-eye"
+                              aria-label={
+                                showPasswords[key]
+                                  ? `Hide ${label.toLowerCase()}`
+                                  : `Show ${label.toLowerCase()}`
+                              }
+                              onClick={() =>
+                                setShowPasswords((previous) => {
+                                  if (key === 'current') {
+                                    return {
+                                      ...previous,
+                                      current: !previous.current,
+                                    };
+                                  }
+
+                                  const show = !previous[key];
+
+                                  return {
+                                    ...previous,
+                                    next: show,
+                                    confirm: show,
+                                  };
+                                })
+                              }
+                            >
+                              <EyeIcon open={showPasswords[key]} />
+                            </button>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+
+                    <div className="cp-actions">
+                      <button
+                        type="button"
+                        className="btn btn--secondary"
+                        disabled={busy}
+                        onClick={() => {
+                          setPasswords({
+                            current: '',
+                            next: '',
+                            confirm: '',
+                          });
+                          setShowPasswords({
+                            current: false,
+                            next: false,
+                            confirm: false,
+                          });
+                          setMessage('');
+                          setChangingPassword(false);
+                        }}
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        type="submit"
+                        className="btn btn--primary"
+                        disabled={busy}
+                      >
+                        {busy ? 'Updating…' : 'Update password'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </section>
+            </div>
 
             <section className="cp-setting-card cp-danger">
               <div>
@@ -614,6 +691,7 @@ export default function CustomerProfile({ settings = false }) {
           </div>
         )}
 
+      
         {deleteOpen && (
           <div className="cp-modal-backdrop">
             <section

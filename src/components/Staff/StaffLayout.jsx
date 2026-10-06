@@ -126,7 +126,21 @@ export default function StaffLayout() {
         </div>
       </header>
 
-      <nav className="side" aria-label="Staff menu">
+           <nav
+        id="staff-navigation"
+        className={`side${menuOpen ? ' staff-menu-open' : ''}`}
+        aria-label="Staff menu"
+        onClick={(event) => {
+          if (event.target.closest('a, .signout')) {
+            setMenuOpen(false);
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setMenuOpen(false);
+          }
+        }}
+      >
         <Item to="/staff" icon="overview" end>Overview</Item>
         <p className="grp">Queues</p>
         <Item to="/staff/queues" icon="queues">Live queues</Item>

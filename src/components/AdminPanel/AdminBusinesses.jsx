@@ -24,13 +24,15 @@ export default function AdminBusinesses() {
   const [reason, setReason] = useState('');
   const dialog = useRef(null);
 
-  const load = useCallback(async () => {
-    try {
-      setList(await getAdminBusinesses());
-      setError('');
-    } catch (err) {
-      setError(err.message);
-    }
+    const load = useCallback(() => {
+    return getAdminBusinesses()
+      .then((data) => {
+        setList(data);
+        setError('');
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
   }, []);
 
   useEffect(() => { load(); }, [load]);

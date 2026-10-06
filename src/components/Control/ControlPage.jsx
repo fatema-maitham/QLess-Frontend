@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router";
 import { getBranchQueues } from "../../services/branchService";
 import QueueControl from "./QueueControl";
 import "./Control.css";
-
+import OwnerPageSearch from "../Owner/OwnerPageSearch";
 export default function ControlPage({
   branches,
   title = "Live Queues",

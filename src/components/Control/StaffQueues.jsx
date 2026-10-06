@@ -16,6 +16,9 @@ export default function StaffQueues() {
         subtitle={`${me.branch.name} · ${me.business.name}`}
         bookingsTo="/staff/bookings"
         showAnalytics={false}
+        canManageStatus={false}
+        fixedCounter={me.counter_number}
+        canServe
       />
     </div>
   );

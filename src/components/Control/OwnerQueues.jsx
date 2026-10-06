@@ -9,6 +9,7 @@ export default function OwnerQueues() {
       branches={branches}
       title="Live Queues"
       showSettings
+      canServe={false}
     />
   );
 }

@@ -83,6 +83,8 @@ At the same time, businesses can manage customer flow, operate queues, organize 
 - As a guest, I can sign up for an account.
 - As a guest, I can log in to my account.
 
+---
+
 ### Customer User Stories
 
 - As a customer, I can log in to my account.
@@ -120,65 +122,79 @@ At the same time, businesses can manage customer flow, operate queues, organize 
 - As a customer, I can view my favorite businesses.
 - As a customer, I can view business announcements.
 
-### Business Owner User Stories
+---
 
-- As a business owner, I can create a business.
-- As a business owner, I can view my businesses.
-- As a business owner, I can submit a business for admin approval.
-- As a business owner, I can view the approval status of my business.
-- As a business owner, I can see the reason my business was rejected.
-- As a business owner, I can edit my business information.
-- As a business owner, I can resubmit a rejected business.
-- As a business owner, I can deactivate my business.
-- As a business owner, I can create multiple branches.
-- As a business owner, I can edit branch information.
-- As a business owner, I can deactivate a branch.
-- As a business owner, I can manage branch addresses and contact information.
-- As a business owner, I can add services to a branch.
-- As a business owner, I can edit services.
-- As a business owner, I can deactivate services.
-- As a business owner, I can configure operating hours.
-- As a business owner, I can create queues.
-- As a business owner, I can configure queue capacity.
-- As a business owner, I can configure average service duration.
-- As a business owner, I can configure the no-show grace period.
-- As a business owner, I can open a queue.
-- As a business owner, I can pause a queue.
-- As a business owner, I can resume a queue.
-- As a business owner, I can close a queue.
-- As a business owner, I can view customers waiting in a queue.
-- As a business owner, I can see which customers are on their way.
-- As a business owner, I can call the next customer.
-- As a business owner, I can check in a customer.
-- As a business owner, I can mark a customer as completed.
-- As a business owner, I can mark a customer as a no-show.
-- As a business owner, I can manage staff members.
-- As a business owner, I can view branch bookings.
-- As a business owner, I can confirm or complete bookings.
-- As a business owner, I can create announcements.
-- As a business owner, I can edit announcements.
-- As a business owner, I can deactivate announcements.
-- As a business owner, I can view customer reviews.
-- As a business owner, I can view queue analytics.
+## Business Owner
 
-### Staff User Stories
+* As a business owner, I can create a business.
+* As a business owner, I can view all my businesses and their status.
+* As a business owner, I can submit my business for admin approval.
+* As a business owner, I can view my business approval status.
+* As a business owner, I can see the reason my business was rejected.
+* As a business owner, I can edit my business information.
+* As a business owner, I can resubmit a rejected business.
+* As a business owner, I can deactivate my business.
+* As a business owner, I can select a business category.
+* As a business owner, I can create multiple branches for my business.
+* As a business owner, I can edit branch information.
+* As a business owner, I can deactivate a branch.
+* As a business owner, I can manage branch addresses and contact information.
+* As a business owner, I can add services to a branch.
+* As a business owner, I can edit services.
+* As a business owner, I can deactivate services.
+* As a business owner, I can configure operating hours for each branch.
+* As a business owner, I can create queues for a branch.
+* As a business owner, I can open a queue.
+* As a business owner, I can pause a queue.
+* As a business owner, I can resume a queue.
+* As a business owner, I can close a queue.
+* As a business owner, I can delete a queue.
+* As a business owner, I can set queue capacity.
+* As a business owner, I can set the number of service counters for a queue.
+* As a business owner, I can set average service duration.
+* As a business owner, I can configure the no-show grace period.
+* As a business owner, I can add staff members to a branch.
+* As a business owner, I can assign a staff member to a service counter.
+* As a business owner, I can update a staff member's role and assigned counter.
+* As a business owner, I can deactivate staff members.
+* As a business owner, I can monitor active queues.
+* As a business owner, I can view customers waiting in queues.
+* As a business owner, I can view customers currently being served at each counter.
+* As a business owner, I can view which customers are on their way.
+* As a business owner, I can view reviews.
+* As a business owner, I can create announcements.
+* As a business owner, I can edit announcements.
+* As a business owner, I can deactivate announcements.
+* As a business owner, I can view bookings for a branch.
+* As a business owner, I can confirm or complete a booking.
+* As a business owner, I can view queue analytics.
 
-- As a staff member, I can log in and log out.
-- As a staff member, I can view my assigned business.
-- As a staff member, I can view my assigned branch.
-- As a staff member, I can view branch services and operating hours.
-- As a staff member, I can view queues belonging to my branch.
-- As a staff member, I can view customers waiting in a queue.
-- As a staff member, I can see which customers are on their way.
-- As a staff member, I can call the next customer.
-- As a staff member, I can check in a customer.
-- As a staff member, I can mark a customer as completed.
-- As a staff member, I can mark a customer as a no-show.
-- As a staff member, I can pause a queue.
-- As a staff member, I can resume a queue.
-- As a staff member, I can view queue history.
-- As a staff member, I can view branch bookings.
-- As a staff member, I can confirm or complete bookings.
+---
+
+## Staff
+
+* As a staff member, I can log in and log out.
+* As a staff member, I can view my assigned business.
+* As a staff member, I can view my assigned branch.
+* As a staff member, I can view my role or position.
+* As a staff member, I can view my assigned service counter.
+* As a staff member, I can view branch operating hours.
+* As a staff member, I can view services offered at my branch.
+* As a staff member, I can view all queues belonging to my assigned branch.
+* As a staff member, I can view customers waiting in a queue.
+* As a staff member, I can see which customers are on their way.
+* As a staff member, I can call the next customer to my assigned counter.
+* As a staff member, I can view the customer currently being served at my assigned counter.
+* As a staff member, I can check in a customer at my assigned counter.
+* As a staff member, I can mark a customer at my assigned counter as completed.
+* As a staff member, I can mark a customer at my assigned counter as a no-show.
+* As a staff member, I can pause an active queue.
+* As a staff member, I can resume a paused queue.
+* As a staff member, I can view queue history.
+* As a staff member, I can view bookings for my branch.
+* As a staff member, I can confirm or complete a booking.
+
+---
 
 ### Admin User Stories
 

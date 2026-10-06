@@ -9,6 +9,7 @@ export default function OwnerStaffEdit({
   toast,
 }) {
   const [position, setPosition] = useState(staff.position || '');
+  const [counterNumber, setCounterNumber] = useState(String(staff.counter_number || 1));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -21,6 +22,7 @@ export default function OwnerStaffEdit({
     try {
       await updateStaff(staff.id, {
         position: position.trim() || null,
+        counter_number: Number(counterNumber),
       });
 
       await reload();
@@ -36,7 +38,7 @@ export default function OwnerStaffEdit({
   return (
     <OwnerEditDialog
       title="Edit staff"
-      description="Update this staff member's position."
+      description="Update this staff member's role and assigned counter."
       onClose={onClose}
       onSubmit={save}
       saving={saving}
@@ -53,6 +55,20 @@ export default function OwnerStaffEdit({
           value={position}
           onChange={(event) => setPosition(event.target.value)}
         />
+      </div>
+
+      <div className="f">
+        <label htmlFor="staff-edit-counter">Counter</label>
+        <input
+          id="staff-edit-counter"
+          type="number"
+          min="1"
+          max="20"
+          value={counterNumber}
+          onChange={(event) => setCounterNumber(event.target.value)}
+          required
+        />
+        <small>Counter is separate from the role. A Teller can work at Counter 1, 2, 3, etc.</small>
       </div>
     </OwnerEditDialog>
   );

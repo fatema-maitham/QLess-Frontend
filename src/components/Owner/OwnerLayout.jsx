@@ -41,75 +41,75 @@ function Item({ to, icon, children, end }) {
   );
 }
 
-function Search({ branches }) {
-  const navigate = useNavigate();
-  const [q, setQ] = useState('');
-  const [active, setActive] = useState(-1);
-  const box = useRef(null);
+// function Search({ branches }) {
+//   const navigate = useNavigate();
+//   const [q, setQ] = useState('');
+//   const [active, setActive] = useState(-1);
+//   const box = useRef(null);
 
-  useEffect(() => {
-    const close = (e) => { if (box.current && !box.current.contains(e.target)) setQ(''); };
-    document.addEventListener('mousedown', close);
-    return () => document.removeEventListener('mousedown', close);
-  }, []);
+//   useEffect(() => {
+//     const close = (e) => { if (box.current && !box.current.contains(e.target)) setQ(''); };
+//     document.addEventListener('mousedown', close);
+//     return () => document.removeEventListener('mousedown', close);
+//   }, []);
 
-  const v = q.trim().toLowerCase();
-  const results = [];
-  if (v) {
-    branches.forEach((b) => {
-      if (`${b.name} ${b.address || ''}`.toLowerCase().includes(v))
-        results.push({ kind: 'Branch', title: b.name, sub: b.address || 'Branch', to: `/owner/branches/${b.id}` });
-      b.services.forEach((s) => {
-        if (s.name.toLowerCase().includes(v))
-          results.push({ kind: 'Service', title: s.name, sub: b.name, to: `/owner/branches/${b.id}?tab=services` });
-      });
-      b.staff.forEach((s) => {
-        const name = s.user?.name || '';
-        if (`${name} ${s.user?.email || ''}`.toLowerCase().includes(v))
-          results.push({ kind: 'Staff', title: name, sub: b.name, to: `/owner/branches/${b.id}?tab=staff` });
-      });
-    });
-  }
-  const shown = results.slice(0, 8);
+//   const v = q.trim().toLowerCase();
+//   const results = [];
+//   if (v) {
+//     branches.forEach((b) => {
+//       if (`${b.name} ${b.address || ''}`.toLowerCase().includes(v))
+//         results.push({ kind: 'Branch', title: b.name, sub: b.address || 'Branch', to: `/owner/branches/${b.id}` });
+//       b.services.forEach((s) => {
+//         if (s.name.toLowerCase().includes(v))
+//           results.push({ kind: 'Service', title: s.name, sub: b.name, to: `/owner/branches/${b.id}?tab=services` });
+//       });
+//       b.staff.forEach((s) => {
+//         const name = s.user?.name || '';
+//         if (`${name} ${s.user?.email || ''}`.toLowerCase().includes(v))
+//           results.push({ kind: 'Staff', title: name, sub: b.name, to: `/owner/branches/${b.id}?tab=staff` });
+//       });
+//     });
+//   }
+//   const shown = results.slice(0, 8);
 
-  function pick(r) {
-    setQ('');
-    navigate(r.to);
-  }
+//   function pick(r) {
+//     setQ('');
+//     navigate(r.to);
+//   }
 
-  function onKey(e) {
-    if (!shown.length) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); setActive((a) => (a + 1) % shown.length); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => (a - 1 + shown.length) % shown.length); }
-    if (e.key === 'Enter') { e.preventDefault(); pick(shown[active] || shown[0]); }
-    if (e.key === 'Escape') setQ('');
-  }
+//   function onKey(e) {
+//     if (!shown.length) return;
+//     if (e.key === 'ArrowDown') { e.preventDefault(); setActive((a) => (a + 1) % shown.length); }
+//     if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => (a - 1 + shown.length) % shown.length); }
+//     if (e.key === 'Enter') { e.preventDefault(); pick(shown[active] || shown[0]); }
+//     if (e.key === 'Escape') setQ('');
+//   }
 
-  return (
-    <label className="search" ref={box}>
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
-      <input
-        type="search"
-        aria-label="Search branches, services and staff"
-        autoComplete="off"
-        value={q}
-        onChange={(e) => { setQ(e.target.value); setActive(-1); }}
-        onKeyDown={onKey}
-      />
-      {v && (
-        <div className="sres">
-          {shown.length ? shown.map((r, i) => (
-            <button type="button" key={r.kind + r.to + r.title} className={i === active ? 'on' : ''} onClick={() => pick(r)}>
-              <span className="ic">{initial(r.title)}</span>
-              <span><b>{r.title}</b><small>{r.sub}</small></span>
-              <span className="k">{r.kind}</span>
-            </button>
-          )) : <div className="none">Nothing matches “{q.trim()}”</div>}
-        </div>
-      )}
-    </label>
-  );
-}
+//   return (
+//     <label className="search" ref={box}>
+//       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
+//       <input
+//         type="search"
+//         aria-label="Search branches, services and staff"
+//         autoComplete="off"
+//         value={q}
+//         onChange={(e) => { setQ(e.target.value); setActive(-1); }}
+//         onKeyDown={onKey}
+//       />
+//       {v && (
+//         <div className="sres">
+//           {shown.length ? shown.map((r, i) => (
+//             <button type="button" key={r.kind + r.to + r.title} className={i === active ? 'on' : ''} onClick={() => pick(r)}>
+//               <span className="ic">{initial(r.title)}</span>
+//               <span><b>{r.title}</b><small>{r.sub}</small></span>
+//               <span className="k">{r.kind}</span>
+//             </button>
+//           )) : <div className="none">Nothing matches “{q.trim()}”</div>}
+//         </div>
+//       )}
+//     </label>
+//   );
+// }
 
 export default function OwnerLayout() {
   const { user, setUser } = useContext(UserContext);
@@ -185,6 +185,8 @@ export default function OwnerLayout() {
         <Item to="/owner/queues" icon="queues">Live queues</Item>
         <p className="grp">Business</p>
         <Item to="/owner/profile" icon="profile">Business profile</Item>
+        <Item to="/owner/my-profile" icon="account">My profile</Item>
+        <Item to="/owner/settings" icon="settings">Settings</Item>
 
         <div className="meter">
           <button className="signout" type="button" onClick={signOut}>

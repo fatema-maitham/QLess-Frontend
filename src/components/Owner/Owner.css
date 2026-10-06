@@ -1290,3 +1290,25 @@ body,
 .owner .side::after {
   display: none;
 }
+
+
+/* Match the announcement card to the other list cards. */
+.owner .owner-announcements .list {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.owner .owner-announcements .list > .empty {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 48px 24px;
+}
+
+@media (max-width: 650px) {
+  .owner .owner-announcements .list > .empty {
+    padding: 32px 20px;
+  }
+}

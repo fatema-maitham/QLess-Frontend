@@ -267,23 +267,49 @@
 
 
 .owner .sx .st-tiles {
+  display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .owner .sx .st-tile {
   min-width: 0;
-  flex-wrap: wrap;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-content: start;
+  align-items: center;
+  gap: 12px;
+}
+
+.owner .sx .st-tile .i {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
 }
 
 .owner .sx .st-tile > span:not(.i):not(.chip) {
   min-width: 0;
 }
 
-.owner .sx .st-tile b {
-  white-space: normal;
+.owner .sx .st-tile small {
+  font-size: 11px;
 }
 
-@media (max-width: 1200px) {
+.owner .sx .st-tile b {
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.owner .sx .st-tile .chip {
+  grid-column: 2;
+  justify-self: start;
+  margin-left: 0;
+}
+
+@media (max-width: 1100px) {
   .owner .sx .st-tiles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

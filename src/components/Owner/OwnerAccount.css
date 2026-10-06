@@ -736,3 +736,36 @@
     flex: none;
   }
 }
+
+/* My profile fills the available desktop height. */
+.owner.owner-business .owner-account
+.sp-container:has(> .cp-layout-cover) {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 146px);
+}
+
+.owner.owner-business .owner-account .cp-layout-cover {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.owner.owner-business .owner-account
+.cp-layout-cover .cp-details-card {
+  flex: 1;
+}
+
+/* Natural height on smaller screens. */
+@media (max-width: 850px) {
+  .owner.owner-business .owner-account
+  .sp-container:has(> .cp-layout-cover) {
+    min-height: 0;
+  }
+
+  .owner.owner-business .owner-account .cp-layout-cover,
+  .owner.owner-business .owner-account
+  .cp-layout-cover .cp-details-card {
+    flex: none;
+  }
+}

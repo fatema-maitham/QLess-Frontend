@@ -106,6 +106,7 @@ export default function StaffLayout() {
         <p className="grp">Account</p>
         <Item to="/staff/branch" icon="branch">My branch</Item>
         <Item to="/staff/profile" icon="profile">My profile</Item>
+        <Item to="/staff/settings" icon="settings">Settings</Item>
 
         <div className="meter">
           <button className="signout" type="button" onClick={signOut}>

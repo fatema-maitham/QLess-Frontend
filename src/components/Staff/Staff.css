@@ -320,3 +320,20 @@
     grid-template-columns: 1fr;
   }
 }
+
+.owner .sx .st-tile {
+  position: relative;
+  min-height: 140px;
+  box-sizing: border-box;
+  padding: 42px 20px 24px;
+  align-content: center;
+  align-items: center;
+}
+
+.owner .sx .st-tile .chip {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  margin: 0;
+  grid-column: auto;
+}

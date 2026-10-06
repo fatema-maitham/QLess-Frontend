@@ -8,6 +8,7 @@ import { initial } from '../Owner/ownerSetup';
 import logo from '../../assets/qless-logo.png';
 import '../Owner/Owner.css';
 import './AdminPanel.css';
+import './AdminResponsive.css';
 
 export const ICONS = {
   overview: <path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />,
@@ -43,6 +44,7 @@ const today = () =>
   new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
 export default function AdminLayout() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [pending, setPending] = useState(0);
@@ -76,8 +78,35 @@ export default function AdminLayout() {
   const name = user?.name || '';
 
   return (
-    <div className="owner app">
-      <div className="logo"><img src={logo} alt="QLess" /></div>
+        <div className="owner app owner-admin">
+      <div className="logo">
+        <img src={logo} alt="QLess" />
+
+        <button
+          type="button"
+          className="admin-menu-toggle"
+          aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={menuOpen}
+          aria-controls="admin-navigation"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            {menuOpen ? (
+              <path d="m6 6 12 12M6 18 18 6" />
+            ) : (
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
+      </div>
 
       <header className="top">
         <span className="am-date">{today()}</span>
@@ -88,7 +117,21 @@ export default function AdminLayout() {
         </div>
       </header>
 
-      <nav className="side" aria-label="Admin menu">
+            <nav
+        id="admin-navigation"
+        className={`side${menuOpen ? ' admin-menu-open' : ''}`}
+        aria-label="Admin menu"
+        onClick={(event) => {
+          if (event.target.closest('a, .signout')) {
+            setMenuOpen(false);
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setMenuOpen(false);
+          }
+        }}
+      >
         <Item to="/admin" icon="overview" end>Overview</Item>
         <p className="grp">Approvals</p>
         <Item to="/admin/businesses" icon="businesses">

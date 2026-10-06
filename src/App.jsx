@@ -238,11 +238,23 @@ export default function App() {
 
         {/* ================= CUSTOMER ================= */}
 
-        <Route
+                <Route
           path="/profile"
           element={
             <ProtectedRoute roles={[ROLES.CUSTOMER]}>
-              <CustomerProfile />
+              <CustomerProfile key="customer-profile" />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+              <CustomerProfile
+                key="customer-settings"
+                settings
+              />
             </ProtectedRoute>
           }
         />
@@ -373,7 +385,7 @@ export default function App() {
           />
         </Route>
 
-        {/* ================= STAFF ================= */}
+            {/* ================= STAFF ================= */}
 
         <Route
           path="/staff"
@@ -418,7 +430,6 @@ export default function App() {
             element={<StaffProfile key="settings" />}
           />
 
-          {/* STAFF NOTIFICATIONS - keeps Staff sidebar */}
           <Route
             path="notifications"
             element={<NotificationsPage />}

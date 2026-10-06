@@ -188,6 +188,16 @@ const NavBar = () => {
                         My profile
                       </NavLink>
                     </li>
+
+
+                                        <li>
+                      <NavLink
+                        to="/settings"
+                        className={linkClass}
+                      >
+                        Settings
+                      </NavLink>
+                    </li>
                   </>
                 )}
 

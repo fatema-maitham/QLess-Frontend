@@ -264,3 +264,33 @@
   .owner .sx .sh-skeleton { animation: none; }
   .owner .sx .sb-card { transition: none; }
 }
+
+
+.owner .sx .st-tiles {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.owner .sx .st-tile {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.owner .sx .st-tile > span:not(.i):not(.chip) {
+  min-width: 0;
+}
+
+.owner .sx .st-tile b {
+  white-space: normal;
+}
+
+@media (max-width: 1200px) {
+  .owner .sx .st-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .owner .sx .st-tiles {
+    grid-template-columns: 1fr;
+  }
+}

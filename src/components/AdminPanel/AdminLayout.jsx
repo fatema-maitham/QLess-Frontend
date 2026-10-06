@@ -117,7 +117,21 @@ export default function AdminLayout() {
         </div>
       </header>
 
-      <nav className="side" aria-label="Admin menu">
+            <nav
+        id="admin-navigation"
+        className={`side${menuOpen ? ' admin-menu-open' : ''}`}
+        aria-label="Admin menu"
+        onClick={(event) => {
+          if (event.target.closest('a, .signout')) {
+            setMenuOpen(false);
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setMenuOpen(false);
+          }
+        }}
+      >
         <Item to="/admin" icon="overview" end>Overview</Item>
         <p className="grp">Approvals</p>
         <Item to="/admin/businesses" icon="businesses">

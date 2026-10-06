@@ -80,8 +80,11 @@ const ROLES = [
     tag: "For visitors",
     title: "Join from anywhere and arrive on time.",
     text: "No crowded waiting rooms. Visitors always know their number, how many people are ahead and when to come back.",
-    points: ["Join with a QR code or link", "Live place in line and wait time", "A message when it's almost your turn"],
-    button: { label: "Find a place", to: "/businesses" },
+    points: [
+      "Call next, complete or mark no-show",
+      "Serve customers from your assigned counter",
+      "Only sees the branch they work at",
+    ], button: { label: "Find a place", to: "/businesses" },
   },
   {
     id: "staff",
@@ -1296,7 +1299,7 @@ function Industries({ categories }) {
         />
 
         <ul className="lp-inds lp-stagger">
-          {categories.map((category) => (
+          {categories.slice(0, 8).map((category) => (
             <Reveal as="li" key={category.id}>
               <Link className="lp-ind" to={`/businesses?category_id=${category.id}`}>
                 <ColorIcon name={iconFor(category.name)} size={64} />
@@ -1308,7 +1311,7 @@ function Industries({ categories }) {
 
         <div className="lp-more">
           <Link className="btn btn--outline" to="/businesses">
-            See all businesses <ArrowRight size={18} weight="bold" />
+            See all industries <ArrowRight size={18} weight="bold" />
           </Link>
         </div>
       </div>

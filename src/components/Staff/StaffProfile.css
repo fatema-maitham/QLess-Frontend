@@ -593,3 +593,23 @@
     }
   }
 }
+
+/* Fill the available space on My Profile */
+.owner .sx .sp-preview .cp-profile {
+  min-height: calc(100dvh - 225px);
+  display: flex;
+  flex-direction: column;
+}
+
+.owner .sx .sp-preview .cp-details-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 850px) {
+  .owner .sx .sp-preview .cp-profile {
+    min-height: auto;
+  }
+}

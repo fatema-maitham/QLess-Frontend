@@ -61,7 +61,14 @@ export default function AdminAuditLogs() {
         <h1>Audit logs</h1>
         <span className="sp" />
         <SearchBox value={q} onChange={setQ} placeholder="Search actions" />
-        <select className="sel" aria-label="Filter by type" value={type} onChange={(e) => setType(e.target.value)}>
+        <select className="sel" aria-label="Filter by type" value={type} onChange={(e) => {
+  const nextType = e.target.value;
+  if (nextType === type) return;
+
+  setList(null);
+  setError('');
+  setType(nextType);
+}}>
           <option value="">All actions</option>
           <option value="business">Businesses</option>
           <option value="user">Users</option>

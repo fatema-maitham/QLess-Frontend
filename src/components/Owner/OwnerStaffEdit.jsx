@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useOutletContext } from 'react-router';
 import { updateStaff } from '../../services/ownerApi';
 import OwnerEditDialog from './OwnerEditDialog';
+import StaffAssignmentFields from './StaffAssignmentFields';
 
 export default function OwnerStaffEdit({
   staff,
@@ -8,21 +10,40 @@ export default function OwnerStaffEdit({
   reload,
   toast,
 }) {
-  const [position, setPosition] = useState(staff.position || '');
-  const [counterNumber, setCounterNumber] = useState(String(staff.counter_number || 1));
+  const { branches } = useOutletContext();
+
+  const branch = branches.find(
+    (item) =>
+      item.id === staff.branch_id ||
+      item.id === staff.branch?.id
+  );
+
+  const [position, setPosition] = useState(
+    staff.position || ''
+  );
+
+  const [assignment, setAssignment] = useState({
+    queue_id: String(staff.queue_id || ''),
+    counter_number: String(
+      staff.queue_id ? staff.counter_number || 1 : 1
+    ),
+  });
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   async function save(event) {
     event.preventDefault();
-
     setSaving(true);
     setError('');
 
     try {
       await updateStaff(staff.id, {
         position: position.trim() || null,
-        counter_number: Number(counterNumber),
+        queue_id: assignment.queue_id
+          ? Number(assignment.queue_id)
+          : null,
+        counter_number: Number(assignment.counter_number),
       });
 
       await reload();
@@ -38,7 +59,7 @@ export default function OwnerStaffEdit({
   return (
     <OwnerEditDialog
       title="Edit staff"
-      description="Update this staff member's role and assigned counter."
+      description="Update this staff member’s position, assigned queue and counter."
       onClose={onClose}
       onSubmit={save}
       saving={saving}
@@ -49,7 +70,9 @@ export default function OwnerStaffEdit({
       </p>
 
       <div className="f">
-        <label htmlFor="staff-edit-position">Position</label>
+        <label htmlFor="staff-edit-position">
+          Position
+        </label>
         <input
           id="staff-edit-position"
           value={position}
@@ -58,18 +81,29 @@ export default function OwnerStaffEdit({
       </div>
 
       <div className="f">
-        <label htmlFor="staff-edit-counter">Counter</label>
+        <label htmlFor="staff-edit-branch">
+          Branch
+        </label>
         <input
-          id="staff-edit-counter"
-          type="number"
-          min="1"
-          max="20"
-          value={counterNumber}
-          onChange={(event) => setCounterNumber(event.target.value)}
-          required
+          id="staff-edit-branch"
+          value={branch?.name || ''}
+          readOnly
         />
-        <small>Counter is separate from the role. A Teller can work at Counter 1, 2, 3, etc.</small>
       </div>
+
+      <StaffAssignmentFields
+        prefix="staff-edit"
+        queues={branch?.queues || []}
+        queueId={assignment.queue_id}
+        counterNumber={assignment.counter_number}
+        disabled={saving}
+        onChange={(changes) =>
+          setAssignment((previous) => ({
+            ...previous,
+            ...changes,
+          }))
+        }
+      />
     </OwnerEditDialog>
   );
 }

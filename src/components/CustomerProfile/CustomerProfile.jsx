@@ -302,26 +302,6 @@ export default function CustomerProfile({ settings = false }) {
           </p>
         )}
 
-          <button
-            type="button"
-            className={!settings ? 'is-active' : ''}
-            aria-pressed={!settings}
-            disabled={busy}
-            onClick={() => switchTab(false)}
-          >
-            My profile
-          </button>
-
-          <button
-            type="button"
-            className={settings ? 'is-active' : ''}
-            aria-pressed={settings}
-            disabled={busy}
-            onClick={() => switchTab(true)}
-          >
-            Account settings
-          </button>
-        </div>
 
         {!settings ? (
           <div className="cp-profile cp-layout-cover">

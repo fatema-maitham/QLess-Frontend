@@ -4,7 +4,8 @@ import {
   approveBusiness, getAdminBusinesses, rejectBusiness, setBusinessActive,
 } from '../../services/adminManageService';
 import { initial } from '../Owner/ownerSetup';
-import { SearchBox, Tabs, ago, matches, shortDate } from './AdminParts';
+import { SearchBox, Tabs } from './AdminParts';
+import { ago, matches, shortDate } from './adminUtils';
 
 const STATUS = {
   pending: { text: 'Pending', cls: 'warn' },

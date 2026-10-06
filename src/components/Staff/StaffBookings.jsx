@@ -52,10 +52,8 @@ export default function StaffBookings() {
   const [dateFilter, setDateFilter] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
 
-  useEffect(() => {
+    useEffect(() => {
     const controller = new AbortController();
-    setPageStatus("loading");
-    setError("");
 
     getBranchBookings(branchId, {
       status: statusFilter || undefined,

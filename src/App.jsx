@@ -38,7 +38,7 @@ import OwnerStaff from "./components/Owner/OwnerStaff";
 import OwnerAnnouncements from "./components/Owner/OwnerAnnouncements";
 import OwnerProfile from "./components/Owner/OwnerProfile";
 import OwnerQueues from "./components/Control/OwnerQueues";
-
+import OwnerAccount from "./components/Owner/OwnerAccount";
 // Queue analytics
 import QueueAnalyticsPage from "./components/Analytics/QueueAnalyticsPage";
 import QueueSettingsPage from "./components/QueueSettings/QueueSettingsPage";

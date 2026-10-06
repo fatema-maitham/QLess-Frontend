@@ -65,6 +65,7 @@ export default function CustomerProfile({ settings = false }) {
   const [profile, setProfile] = useState(null);
   const [loadError, setLoadError] = useState('');
   const [editing, setEditing] = useState(false);
+    const [changingPassword, setChangingPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);

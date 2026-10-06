@@ -212,8 +212,8 @@ export default function OwnerAnnouncements() {
         </form>
       )}
 
-      <div className="list">
-        {announcements.length ? (
+      <div className={announcements.length ? 'list' : ''}>
+      {announcements.length ? (
          announcements
           .filter((announcement) =>
             `${announcement.title || ''} ${announcement.message || ''}`

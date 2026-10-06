@@ -58,14 +58,13 @@ function Icon({ name }) {
   );
 }
 
-export default function CustomerProfile() {
+export default function CustomerProfile({ settings = false }) {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
 
   const [profile, setProfile] = useState(null);
   const [loadError, setLoadError] = useState('');
   const [editing, setEditing] = useState(false);
-  const [settings, setSettings] = useState(false);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);

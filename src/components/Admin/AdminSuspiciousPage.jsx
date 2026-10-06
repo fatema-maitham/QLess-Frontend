@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router";
 import { getSuspiciousActivity, updateSuspiciousActivity } from "../../services/adminService";
 import { initial } from "../Owner/ownerSetup";
-import { SearchBox, Tabs, ago, matches, shortDate } from "../AdminPanel/AdminParts";
+import { SearchBox, Tabs } from '../AdminPanel/AdminParts';
+import { ago, matches, shortDate } from '../AdminPanel/adminUtils';
 import { label, plural } from "./adminHelpers";
 import "./Admin.css";
 

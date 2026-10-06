@@ -120,9 +120,17 @@ const NavBar = () => {
                       </NavLink>
                     </li>
                     <li>
+                      <li>
                       <NavLink to="/favorites" className={linkClass}>
                         Favorites
                       </NavLink>
+                    </li>
+
+                    <li>
+                      <NavLink to="/profile" className={linkClass}>
+                        My profile
+                      </NavLink>
+                    </li>
                     </li>
                   </>
                 )}

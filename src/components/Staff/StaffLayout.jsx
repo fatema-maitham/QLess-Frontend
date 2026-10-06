@@ -10,6 +10,7 @@ import { initial } from './staffHelpers';
 import logo from '../../assets/qless-logo.png';
 import '../Owner/Owner.css';
 import './Staff.css';
+import './StaffResponsive.css';
 
 const ICONS = {
   settings: (

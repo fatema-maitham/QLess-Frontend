@@ -129,7 +129,16 @@ export default function StaffHistory() {
                   role="tab"
                   aria-selected={queue.id === queueId}
                   className={`tab ${queue.id === queueId ? "on" : ""}`}
-                  onClick={() => setQueueId(queue.id)}
+                                    onClick={() => {
+                    if (queue.id === queueId) return;
+
+                    setEntries({
+                      status: "loading",
+                      list: [],
+                      error: "",
+                    });
+                    setQueueId(queue.id);
+                  }}
                 >
                   {queue.name}
                 </button>

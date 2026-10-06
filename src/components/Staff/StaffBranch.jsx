@@ -17,8 +17,15 @@ export default function StaffBranch() {
 
       <div className="branch-sheet">
         <div className="branch-heading">
-          <div className="branch-logo">
-            {branch.image ? <img src={branch.image} alt="" /> : initial(me.business.name)}
+                    <div className="branch-logo staff-business-logo">
+            {me.business.image ? (
+              <img
+                src={me.business.image}
+                alt={`${me.business.name} logo`}
+              />
+            ) : (
+              initial(me.business.name)
+            )}
           </div>
           <div>
             <div className="branch-eyebrow">YOUR BRANCH</div>

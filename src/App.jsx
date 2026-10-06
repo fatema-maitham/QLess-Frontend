@@ -238,11 +238,23 @@ export default function App() {
 
         {/* ================= CUSTOMER ================= */}
 
-        <Route
+                <Route
           path="/profile"
           element={
             <ProtectedRoute roles={[ROLES.CUSTOMER]}>
-              <CustomerProfile />
+              <CustomerProfile key="customer-profile" />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+              <CustomerProfile
+                key="customer-settings"
+                settings
+              />
             </ProtectedRoute>
           }
         />

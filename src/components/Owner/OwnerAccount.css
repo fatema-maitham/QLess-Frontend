@@ -639,3 +639,67 @@
     width: 100%;
   }
 }
+
+
+/* Settings fills the available desktop height. */
+.owner.owner-business .owner-account
+.sp-container:has(> .cp-settings-content) {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 146px);
+}
+
+.owner.owner-business .owner-account .cp-settings-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 20px;
+}
+
+.owner.owner-business .owner-account .sa-stage {
+  display: flex;
+  flex: 1;
+}
+
+.owner.owner-business .owner-account .sa-shell {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+.owner.owner-business .owner-account .bp-settings-availability {
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+/* Smaller screens use natural height and stacked sections. */
+@media (max-width: 850px) {
+  .owner.owner-business .owner-account
+  .sp-container:has(> .cp-settings-content) {
+    min-height: 0;
+  }
+
+  .owner.owner-business .owner-account .sa-stage {
+    display: block;
+    flex: none;
+  }
+
+  .owner.owner-business .owner-account .sa-shell {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+}
+
+/* Buttons fit narrow phone screens. */
+@media (max-width: 650px) {
+  .owner.owner-business .owner-account .cp-actions {
+    flex-wrap: wrap;
+  }
+
+  .owner.owner-business .owner-account .cp-actions .btn {
+    flex: 1;
+    min-width: 0;
+    white-space: normal;
+    height: auto;
+  }
+}

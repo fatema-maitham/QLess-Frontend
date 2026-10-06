@@ -586,11 +586,23 @@ export default function CustomerProfile() {
                               : `Show ${label.toLowerCase()}`
                           }
                           onClick={() =>
-                            setShowPasswords((previous) => ({
+                          setShowPasswords((previous) => {
+                            if (key === 'current') {
+                              return {
+                                ...previous,
+                                current: !previous.current,
+                              };
+                            }
+
+                            const show = !previous[key];
+
+                            return {
                               ...previous,
-                              [key]: !previous[key],
-                            }))
-                          }
+                              next: show,
+                              confirm: show,
+                            };
+                          })
+                        }
                         >
                           <EyeIcon open={showPasswords[key]} />
                         </button>

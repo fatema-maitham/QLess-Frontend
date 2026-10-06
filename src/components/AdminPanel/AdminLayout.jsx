@@ -8,6 +8,7 @@ import { initial } from '../Owner/ownerSetup';
 import logo from '../../assets/qless-logo.png';
 import '../Owner/Owner.css';
 import './AdminPanel.css';
+import './AdminResponsive.css';
 
 export const ICONS = {
   overview: <path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />,

@@ -63,7 +63,13 @@ export default function ControlPage({
     return () => controller.abort();
   }, [branchId]);
 
-  const list = queues.list;
+    const list = queues.list.filter(
+      (queue) =>
+        !showSettings ||
+        `${queue.name || ''} ${queue.service?.name || ''}`
+          .toLowerCase()
+          .includes(search.toLowerCase())
+    );
 
   const fromUrl = list.find(
     (queue) => String(queue.id) === params.get("queue")

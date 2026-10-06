@@ -190,7 +190,7 @@
 .owner .sx .sh-stat { display: flex; flex-direction: column; gap: 4px; padding: 20px 22px; border: 1.5px solid var(--line); border-radius: 24px; background: #fff; }
 .owner .sx .sh-stat small { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .owner .sx .sh-stat b { font-size: 32px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
-.owner .sx .sh-stat--main { border-color: transparent; background: var(--peach-soft); }
+.owner .sx .sh-stat--main { border-color: transparent; background: var(--bg); }
 .owner .sx .sh-stat--main small { color: #8A4A18; }
 .owner .sx .sh-stat--main b { color: var(--orange-btn); }
 

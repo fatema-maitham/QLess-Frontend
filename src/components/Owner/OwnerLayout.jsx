@@ -136,8 +136,36 @@ export default function OwnerLayout() {
     }
   }, []);
 
-  useEffect(() => { reload(); }, [reload]);
 
+    useEffect(() => {
+    let cancelled = false;
+
+    async function loadInitialData() {
+      try {
+        const fresh = await loadOwnerData();
+
+        if (!cancelled) {
+          setData(fresh);
+          setError('');
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadInitialData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  
   const toast = useCallback((msg) => {
     setToastMsg(msg);
     clearTimeout(timer.current);

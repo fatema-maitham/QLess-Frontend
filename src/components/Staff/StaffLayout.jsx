@@ -52,8 +52,7 @@ export default function StaffLayout() {
   const [services, setServices] = useState([]);
   const [profile, setProfile] = useState(null); // /users/me: name, email, phone, profile_image
 
-  const load = useCallback(async () => {
-    setState({ status: 'loading', error: '' });
+    const load = useCallback(async () => {
     try {
       const [staffMe, account] = await Promise.all([getStaffMe(), getMe()]);
       const branchId = staffMe.branch.id;

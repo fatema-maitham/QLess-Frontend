@@ -270,12 +270,7 @@ export default function CustomerProfile({ settings = false }) {
     }
   }
 
-  function switchTab(nextSettings) {
-    if (busy) return;
-
-    cancelEditing();
-    setSettings(nextSettings);
-  }
+  
 
   if (!profile) {
     return (

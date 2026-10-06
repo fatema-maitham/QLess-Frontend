@@ -3,7 +3,8 @@ import { useOutletContext } from "react-router";
 import { getAdminReviews } from "../../services/adminService";
 import { deleteReview } from "../../services/reviewService";
 import { initial } from "../Owner/ownerSetup";
-import { SearchBox, Tabs, ago, matches } from "../AdminPanel/AdminParts";
+import { SearchBox, Tabs } from '../AdminPanel/AdminParts';
+import { ago, matches } from '../AdminPanel/adminUtils';
 import { Kpi, MeterCard, Stars } from "./AdminBits";
 import "./Admin.css";
 

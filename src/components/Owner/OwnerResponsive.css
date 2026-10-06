@@ -1,0 +1,420 @@
+/* Business owner dashboard only. */
+
+.owner.owner-business .bgrid {
+  grid-template-columns:
+    repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+}
+
+.owner.owner-business .page-h,
+.owner.owner-business .toolbar,
+.owner.owner-business .owner-row-actions,
+.owner.owner-business .acts,
+.owner.owner-business .fa {
+  flex-wrap: wrap;
+}
+
+.owner.owner-business .page-h > *,
+.owner.owner-business .toolbar > *,
+.owner.owner-business .li > div,
+.owner.owner-business .bc-top > div {
+  min-width: 0;
+}
+
+.owner.owner-business .page-h h1,
+.owner.owner-business .li b,
+.owner.owner-business .li small,
+.owner.owner-business .bc-top b,
+.owner.owner-business .bc-top small {
+  overflow-wrap: anywhere;
+}
+
+.owner.owner-business .owner-preview-search {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.owner.owner-business .f input,
+.owner.owner-business .f select,
+.owner.owner-business .f textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.owner.owner-business .owner-edit-dialog {
+  box-sizing: border-box;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+
+.owner.owner-business .cp-tabs,
+.owner.owner-business .tabs {
+  flex-wrap: wrap;
+  height: auto;
+}
+
+/* Tablet layout. */
+@media (max-width: 1150px) {
+  .owner.owner-business .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .owner.owner-business .welcome {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .owner.owner-business .welcome.nor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .owner.owner-business .drawing {
+    display: none;
+  }
+}
+
+/* Mobile navigation, headers and opening hours. */
+@media (max-width: 820px) {
+  .owner.owner-business.app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto;
+    height: auto !important;
+    min-height: 100dvh !important;
+  }
+
+  .owner.owner-business .logo {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 16px;
+    height: auto;
+  }
+
+  .owner.owner-business .top {
+    display: flex;
+    flex-wrap: wrap;
+    grid-column: 1;
+    grid-row: 2;
+    gap: 12px;
+    padding: 0 16px 16px;
+    min-width: 0;
+  }
+
+  .owner.owner-business .owner-date {
+    flex: 1 1 150px;
+    margin-left: 0;
+  }
+
+  .owner.owner-business .top .who {
+    display: flex;
+    flex: 1 1 100%;
+    min-width: 0;
+    padding: 0;
+    border-left: 0;
+    justify-content: space-between;
+  }
+
+  .owner.owner-business .top .who > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .owner.owner-business .av {
+    flex-shrink: 0;
+  }
+
+  .owner.owner-business .side {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    grid-column: 1;
+    grid-row: 3;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .owner.owner-business .side .grp {
+    display: none;
+  }
+
+  .owner.owner-business .side .nav {
+    width: auto;
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .owner.owner-business .side .nav svg {
+    flex-shrink: 0;
+  }
+
+  .owner.owner-business .side .meter {
+    display: flex;
+    flex: 1 1 100%;
+    margin-top: 4px;
+    padding: 8px 0 0;
+    border-top: 1px solid var(--ink-3);
+  }
+
+  .owner.owner-business .signout {
+    min-height: 44px;
+  }
+
+  .owner.owner-business .main {
+    grid-column: 1;
+    grid-row: 4;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .owner.owner-business .main > .content {
+    padding: 20px 16px 24px !important;
+    min-height: 0 !important;
+  }
+
+  .owner.owner-business .page-h {
+    position: static;
+    box-shadow: none;
+    gap: 12px;
+  }
+
+  .owner.owner-business .page-h h1 {
+    font-size: 28px;
+  }
+
+  .owner.owner-business .page-h .sp {
+    display: none;
+  }
+
+  .owner.owner-business .page-h .owner-preview-search {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: none;
+  }
+
+  .owner.owner-business .page-h .sel {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .owner.owner-business .chart-top {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .owner.owner-business .chart-top .sel {
+    max-width: 100%;
+  }
+
+  .owner.owner-business [data-view="overview"] .chart,
+  .owner.owner-business [data-view="overview"] .tiles {
+    height: auto;
+  }
+
+  .owner.owner-business .day {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .owner.owner-business .day > b {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .owner.owner-business .day > .sw {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .owner.owner-business .day > .time {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .owner.owner-business .time input {
+    box-sizing: border-box;
+    flex: 1 1 110px;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .owner.owner-business .toolbar .same {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 100%;
+  }
+
+  .owner.owner-business .toolbar .same .sel {
+    max-width: 100%;
+  }
+}
+
+/* Phone cards, forms and queues. */
+@media (max-width: 650px) {
+  .owner.owner-business .welcome,
+  .owner.owner-business .welcome.nor {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 24px 20px;
+  }
+
+  .owner.owner-business .welcome h2 {
+    overflow-wrap: anywhere;
+  }
+
+  .owner.owner-business .btn {
+    max-width: 100%;
+    min-height: 44px;
+    height: auto;
+    padding: 12px 16px;
+    white-space: normal;
+  }
+
+  .owner.owner-business .bcard,
+  .owner.owner-business .chart {
+    padding: 20px 16px;
+  }
+
+  .owner.owner-business .bc-top {
+    grid-template-columns: 48px minmax(0, 1fr) !important;
+  }
+
+  .owner.owner-business .bc-top > .st {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .owner.owner-business .checks {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .owner.owner-business .bc-foot {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .owner.owner-business .li,
+  .owner.owner-business .owner-announcements .li {
+    grid-template-columns: 44px minmax(0, 1fr) !important;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .owner.owner-business .li > .st,
+  .owner.owner-business .li > .acts,
+  .owner.owner-business .li > .owner-row-actions {
+    grid-column: 2 !important;
+    justify-self: start;
+    justify-content: flex-start !important;
+  }
+
+  .owner.owner-business .addform {
+    padding: 18px 16px;
+  }
+
+  .owner.owner-business .addform .f {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .owner.owner-business .fa,
+  .owner.owner-business .owner-modal-actions {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .owner.owner-business .owner-edit-dialog {
+    padding: 20px;
+  }
+
+  .owner.owner-business .owner-availability {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .owner.owner-business .owner-availability .btn {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .owner.owner-business .bars,
+  .owner.owner-business .days {
+    gap: 6px;
+  }
+
+  .owner.owner-business .days {
+    font-size: 11px;
+  }
+
+  .owner.owner-business .cp-toolbar,
+  .owner.owner-business .cp-serving {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .owner.owner-business .cp-summary,
+  .owner.owner-business .cp-toolbar-actions,
+  .owner.owner-business .cp-mini-stats,
+  .owner.owner-business .cp-actions,
+  .owner.owner-business .cp-tags {
+    flex-wrap: wrap;
+  }
+
+  .owner.owner-business .cp-toolbar-actions .btn {
+    flex: 1 1 120px;
+  }
+
+  .owner.owner-business .cp-serving > div {
+    flex-wrap: wrap;
+  }
+
+  .owner.owner-business .cp-row {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .owner.owner-business .cp-tags {
+    grid-column: 2;
+  }
+
+  .owner.owner-business .cp-call {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .owner.owner-business .owner-account .cp-identity-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .owner.owner-business .owner-account .cp-identity,
+  .owner.owner-business .owner-account .cp-button {
+    width: 100%;
+  }
+
+  .owner.owner-business .owner-account .cp-actions {
+    flex-wrap: wrap;
+  }
+
+  .owner.owner-business .owner-account .cp-actions .btn {
+    flex: 1 1 120px;
+  }
+
+  .owner.owner-business .owner-account .sa-intro,
+  .owner.owner-business .owner-account .cp-security {
+    padding: 22px;
+  }
+
+  .owner.owner-business .toast {
+    max-width: calc(100vw - 32px);
+    overflow-wrap: anywhere;
+  }
+}

@@ -134,7 +134,14 @@ export default function StaffBookings() {
           <input
             type="date"
             value={dateFilter}
-            onChange={(event) => setDateFilter(event.target.value)}
+                        onChange={(event) => {
+              const nextDate = event.target.value;
+              if (nextDate === dateFilter) return;
+
+              setPageStatus("loading");
+              setError("");
+              setDateFilter(nextDate);
+            }}
           />
         </label>
 

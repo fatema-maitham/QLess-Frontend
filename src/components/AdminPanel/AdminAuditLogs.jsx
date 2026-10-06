@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getAuditLogs } from '../../services/adminManageService';
-import { SearchBox, matches } from './AdminParts';
+import { SearchBox } from './AdminParts';
+import { matches } from './adminUtils';
 
 // dot colour from the action name, e.g. "approve_business"
 function tone(action = '') {

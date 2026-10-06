@@ -964,7 +964,8 @@ export default function OwnerBranch() {
       </div>
 
       {tab === 'hours' && (
-        <HoursTab
+                <HoursTab
+          key={`${branch.id}:${JSON.stringify(branch.hours)}`}
           branch={branch}
           branches={branches}
           onSaved={onSaved}

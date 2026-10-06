@@ -3,6 +3,7 @@ import { useNavigate, useOutletContext, useSearchParams } from 'react-router';
 import { createBranch } from '../../services/ownerApi';
 import { isReady, plural, stepsDone } from './ownerSetup';
 import { BizLogo, Empty } from './OwnerParts';
+import OwnerPageSearch from './OwnerPageSearch';
 
 const EMPTY_FORM = { name: '', address: '', phone: '' };
 

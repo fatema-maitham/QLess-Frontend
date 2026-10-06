@@ -160,7 +160,35 @@ export default function OwnerLayout() {
 
   return (
     <div className="owner app owner-business">
-            <div className="logo"><img src={logo} alt="QLess" /></div>
+            <div className="logo">
+  <img src={logo} alt="QLess" />
+
+  <button
+    type="button"
+    className="owner-menu-toggle"
+    aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+    aria-expanded={menuOpen}
+    aria-controls="owner-navigation"
+    onClick={() => setMenuOpen((previous) => !previous)}
+  >
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      {menuOpen ? (
+        <path d="m6 6 12 12M6 18 18 6" />
+      ) : (
+        <path d="M4 6h16M4 12h16M4 18h16" />
+      )}
+    </svg>
+  </button>
+</div>
 
       <header className="top">
         <span className="owner-date">

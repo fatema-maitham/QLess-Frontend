@@ -161,7 +161,13 @@ export default function OwnerLayout() {
             <div className="logo"><img src={logo} alt="QLess" /></div>
 
       <header className="top">
-        <Search branches={data.branches} />
+        <span className="owner-date">
+  {new Date().toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  })}
+</span>
         <NotificationBell />
 
         <div className="who">

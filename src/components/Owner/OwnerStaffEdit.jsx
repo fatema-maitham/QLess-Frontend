@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useOutletContext } from 'react-router';
 import { updateStaff } from '../../services/ownerApi';
 import OwnerEditDialog from './OwnerEditDialog';
-import StaffAssignmentFields from './StaffAssignmentFields';
+import StaffAssignmentFields from '../Staff/StaffAssignmentFields';
 
 export default function OwnerStaffEdit({
   staff,

@@ -20,7 +20,6 @@ import {
 import {
   DAYS,
   DEFAULT_HOURS,
-  NEEDS,
   hhmm,
   initial,
   isReady,
@@ -32,7 +31,6 @@ import { BizLogo, Empty } from './OwnerParts';
 import OwnerServiceEdit from './OwnerServiceEdit';
 import OwnerStaffEdit from './OwnerStaffEdit';
 import OwnerAvailability from './OwnerAvailability';
-import OwnerPageSearch from './OwnerPageSearch';
 import StaffAssignmentFields from '../Staff/StaffAssignmentFields';
 
 function rowsFrom(hours) {

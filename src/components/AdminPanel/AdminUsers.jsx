@@ -18,7 +18,7 @@ export default function AdminUsers() {
   const [q, setQ] = useState('');
   const [busyId, setBusyId] = useState(null);
 
-    const load = useCallback(() => {
+  const load = useCallback(() => {
     return getAdminUsers()
       .then((data) => {
         setList(data);
@@ -91,7 +91,17 @@ export default function AdminUsers() {
             const isMe = u.id === me?.id;
             return (
               <div className={`li am-li${u.is_active ? '' : ' off'}`} key={u.id}>
-                <span className="ic">{initial(u.name)}</span>
+                <span className="ic am-image-icon">
+                  {u.profile_image ? (
+                    <img
+                      src={u.profile_image}
+                      alt={`${u.name} profile`}
+                      className="am-list-image"
+                    />
+                  ) : (
+                    initial(u.name)
+                  )}
+                </span>
                 <div><b>{u.name}{isMe && ' (you)'}</b><small>{details(u)}</small></div>
                 {!u.is_active ? <span className="st off">Inactive</span>
                   : isRestricted(u) ? <span className="st warn">Restricted until {shortDate(u.restricted_until)}</span>

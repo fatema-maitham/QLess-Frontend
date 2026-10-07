@@ -115,7 +115,17 @@ export default function AdminSuspiciousPage() {
             const isOpen = item.status === "open";
             return (
               <div className={`li am-li am-li--top${isOpen ? "" : " off"}`} key={item.id}>
-                <span className="ic">{initial(item.user_name)}</span>
+                <span className="ic am-image-icon">
+                  {item.user_profile_image ? (
+                    <img
+                      src={item.user_profile_image}
+                      alt={`${item.user_name} profile`}
+                      className="am-list-image"
+                    />
+                  ) : (
+                    initial(item.user_name)
+                  )}
+                </span>
                 <div>
                   <b>{item.user_name} <span className="am-reason">· {label(item.activity_type)}</span></b>
                   <small>{details(item)}</small>

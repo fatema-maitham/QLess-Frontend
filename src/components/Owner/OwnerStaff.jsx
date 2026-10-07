@@ -282,8 +282,15 @@ export default function OwnerStaff() {
 
               return (
                 <div className="li" key={staff.id}>
-                  <span className="ic">
-                    {initial(staff.user?.name)}
+                  <span className="owner-staff-avatar">                    {staff.user?.profile_image ? (
+                    <img
+                      src={staff.user.profile_image}
+                      alt={`${staff.user?.name || 'Staff'} profile`}
+                      className="owner-staff-avatar__image"
+                    />
+                  ) : (
+                    initial(staff.user?.name)
+                  )}
                   </span>
 
                   <div>

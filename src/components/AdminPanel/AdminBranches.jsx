@@ -14,7 +14,7 @@ export default function AdminBranches() {
   const [q, setQ] = useState('');
   const [busyId, setBusyId] = useState(null);
 
-    const load = useCallback(() => {
+  const load = useCallback(() => {
     return getAdminBranches()
       .then((data) => {
         setList(data);
@@ -78,7 +78,17 @@ export default function AdminBranches() {
         <div className="list">
           {shown.map((b) => (
             <div className={`li am-li${b.is_active ? '' : ' off'}`} key={b.id}>
-              <span className="ic">{initial(b.name)}</span>
+              <span className="ic am-image-icon">
+                {b.business?.image ? (
+                  <img
+                    src={b.business.image}
+                    alt={`${b.business.name} logo`}
+                    className="am-list-image"
+                  />
+                ) : (
+                  initial(b.business?.name || b.name)
+                )}
+              </span>
               <div>
                 <b>{b.name}</b>
                 <small>{[b.business.name, b.address, b.phone].filter(Boolean).join(' · ')}</small>

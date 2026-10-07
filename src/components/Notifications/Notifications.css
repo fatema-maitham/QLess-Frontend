@@ -479,3 +479,53 @@
     animation: none;
   }
 }
+
+/* =========================================================
+   Admin / Owner / Staff notifications — white background
+   ========================================================= */
+
+.owner .nt,
+.staff .nt,
+.admin .nt {
+  background: #ffffff !important;
+}
+
+/* Main notifications content */
+.owner .nt .page__container,
+.owner .nt .page__narrow,
+.staff .nt .page__container,
+.staff .nt .page__narrow,
+.admin .nt .page__container,
+.admin .nt .page__narrow {
+  background: #ffffff !important;
+}
+
+/* Notification cards */
+.owner .nt-row,
+.staff .nt-row,
+.admin .nt-row {
+  background: #ffffff !important;
+  border-color: var(--color-border-subtle) !important;
+}
+
+/* Keep unread notifications white too */
+.owner .nt-row.is-unread,
+.staff .nt-row.is-unread,
+.admin .nt-row.is-unread {
+  background: #ffffff !important;
+  border-color: var(--color-border-subtle) !important;
+}
+
+/* Tabs area */
+.owner .nt-tabs,
+.staff .nt-tabs,
+.admin .nt-tabs {
+  background: #f6f7f8 !important;
+}
+
+/* Selected tab */
+.owner .nt-tabs__tab[aria-selected="true"],
+.staff .nt-tabs__tab[aria-selected="true"],
+.admin .nt-tabs__tab[aria-selected="true"] {
+  background: #ffffff !important;
+}

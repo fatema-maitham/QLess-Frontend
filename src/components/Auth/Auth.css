@@ -217,16 +217,134 @@
 
 .auth-strength { margin-top: 4px; }
 
-/* make the whole card bigger on laptops and desktops */
-@media (min-width: 861px) {
-  .auth-card {
-    zoom: 1.18;
-    height: min(700px, calc((100vh - 48px) / 1.18));
-  }
-}
+
 
 
 /* "Forgot password?" link on the sign in form */
 .auth-row { justify-content: space-between; }
 .auth-forgot { font-size: 14px; font-weight: 700; color: var(--ink); text-decoration: none; border-bottom: 1.5px solid var(--peach); }
 .auth-forgot:hover { color: var(--orange-dk); }
+
+
+/* Compact sign-in and sign-up layout */
+@media (min-width: 861px) {
+  .auth-card {
+    width: min(1000px, 100%);
+    height: min(640px, calc(100dvh - 48px));
+    min-height: 0;
+    border-radius: 28px;
+  }
+
+  .auth-box {
+    padding: 28px 40px;
+    align-items: flex-start;
+  }
+
+  .auth-form {
+    margin-block: auto;
+  }
+
+  .auth-form h1,
+  .auth-box.up .auth-form h1 {
+    font-size: 30px;
+  }
+
+  .auth-inp input {
+    height: 48px;
+  }
+
+  .auth-btn,
+  .auth-box.up .auth-btn {
+    height: 48px;
+    font-size: 16px;
+  }
+
+  .auth-panel {
+    padding: 40px;
+  }
+
+  .auth-panel h2 {
+    font-size: 36px;
+  }
+
+  .auth-panel p {
+    font-size: 15px;
+  }
+
+  .auth-logo {
+    top: 32px;
+    left: 40px;
+  }
+
+  .auth-panel.right .auth-logo {
+    right: 40px;
+  }
+
+  .auth-logo img {
+    width: 100px;
+  }
+
+  .auth-ghost {
+    height: 46px;
+    padding-inline: 24px;
+    font-size: 15px;
+  }
+}
+
+
+
+/* Leave room for sign-up validation messages */
+@media (min-width: 861px) {
+  .auth-box.up {
+    padding-block: 18px;
+  }
+
+  .auth-box.up .auth-form h1 {
+    font-size: 28px;
+  }
+
+  .auth-box.up .auth-sub {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .auth-box.up .auth-role {
+    padding: 8px 10px;
+    gap: 8px;
+    border-radius: 14px;
+  }
+
+  .auth-box.up .auth-role .ic {
+    width: 32px;
+    height: 32px;
+  }
+
+  .auth-box.up .auth-role b {
+    font-size: 14px;
+  }
+
+  .auth-box.up .auth-field {
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .auth-box.up .auth-inp input {
+    height: 44px;
+  }
+
+  .auth-box.up .auth-hint {
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+
+  .auth-box.up .auth-alert {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  .auth-box.up .auth-btn {
+    height: 44px;
+    margin-top: 4px;
+  }
+}

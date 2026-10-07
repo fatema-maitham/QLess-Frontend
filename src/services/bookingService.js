@@ -6,8 +6,32 @@ import {
   toList,
 } from "./api";
 
-export function createBooking(serviceId, booking, { signal } = {}) {
-  return apiPost(`/services/${serviceId}/bookings`, booking, { signal });
+export function getAvailableSlots(
+  serviceId,
+  bookingDate,
+  { signal } = {}
+) {
+  return apiGet(
+    `/services/${serviceId}/available-slots`,
+    {
+      params: {
+        booking_date: bookingDate,
+      },
+      signal,
+    }
+  );
+}
+
+export function createBooking(
+  serviceId,
+  booking,
+  { signal } = {}
+) {
+  return apiPost(
+    `/services/${serviceId}/bookings`,
+    booking,
+    { signal }
+  );
 }
 
 export async function getMyBookings({ signal } = {}) {
@@ -19,18 +43,24 @@ export async function getBranchBookings(
   branchId,
   { status, bookingDate, signal } = {}
 ) {
-  const data = await apiGet(`/branches/${branchId}/bookings`, {
-    params: {
-      status,
-      booking_date: bookingDate,
-    },
-    signal,
-  });
+  const data = await apiGet(
+    `/branches/${branchId}/bookings`,
+    {
+      params: {
+        status,
+        booking_date: bookingDate,
+      },
+      signal,
+    }
+  );
 
   return toList(data);
 }
 
-export function getBooking(bookingId, { signal } = {}) {
+export function getBooking(
+  bookingId,
+  { signal } = {}
+) {
   return apiGet(`/bookings/${bookingId}`, { signal });
 }
 
@@ -39,7 +69,11 @@ export function rescheduleBooking(
   booking,
   { signal } = {}
 ) {
-  return apiPatch(`/bookings/${bookingId}`, booking, { signal });
+  return apiPatch(
+    `/bookings/${bookingId}`,
+    booking,
+    { signal }
+  );
 }
 
 export function updateBookingStatus(
@@ -54,6 +88,12 @@ export function updateBookingStatus(
   );
 }
 
-export function cancelBooking(bookingId, { signal } = {}) {
-  return apiDelete(`/bookings/${bookingId}`, { signal });
+export function cancelBooking(
+  bookingId,
+  { signal } = {}
+) {
+  return apiDelete(
+    `/bookings/${bookingId}`,
+    { signal }
+  );
 }

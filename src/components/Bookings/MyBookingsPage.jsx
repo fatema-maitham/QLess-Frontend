@@ -1,52 +1,142 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router";
-import { CalendarBlank, Clock, MapPin, PencilSimple, X } from "@phosphor-icons/react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
-import { cancelBooking, getMyBookings, rescheduleBooking } from "../../services/bookingService";
+import { Link } from "react-router";
+
+import {
+  CalendarBlank,
+  Clock,
+  MapPin,
+  PencilSimple,
+  X,
+} from "@phosphor-icons/react";
+
+import {
+  cancelBooking,
+  getAvailableSlots,
+  getMyBookings,
+  rescheduleBooking,
+} from "../../services/bookingService";
 
 import "./Bookings.css";
 
-const OPEN_STATUSES = ["pending", "confirmed"];
+function todayString() {
+  const now = new Date();
+
+  const year = now.getFullYear();
+
+  const month = String(
+    now.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    now.getDate()
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
 function formatDate(value) {
   if (!value) return "";
 
-  return new Date(`${value}T00:00:00`).toLocaleDateString(undefined, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return new Date(
+    `${value}T00:00:00`
+  ).toLocaleDateString(
+    undefined,
+    {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }
+  );
 }
 
 function formatTime(value) {
   if (!value) return "";
 
-  const [hour, minute] = value.split(":").map(Number);
+  const [hour, minute] = value
+    .split(":")
+    .map(Number);
 
-  return new Date(2000, 0, 1, hour, minute).toLocaleTimeString(undefined, {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  return new Date(
+    2000,
+    0,
+    1,
+    hour,
+    minute
+  ).toLocaleTimeString(
+    undefined,
+    {
+      hour: "numeric",
+      minute: "2-digit",
+    }
+  );
+}
+
+function statusLabel(status) {
+  if (status === "no_show") {
+    return "No show";
+  }
+
+  if (!status) return "";
+
+  return (
+    status.charAt(0).toUpperCase() +
+    status.slice(1)
+  );
 }
 
 export default function MyBookingsPage() {
-  const [bookings, setBookings] = useState([]);
-  const [pageStatus, setPageStatus] = useState("loading");
-  const [error, setError] = useState("");
+  const [bookings, setBookings] =
+    useState([]);
 
-  const [editingId, setEditingId] = useState(null);
-  const [editDate, setEditDate] = useState("");
-  const [editTime, setEditTime] = useState("");
-  const [savingId, setSavingId] = useState(null);
+  const [pageStatus, setPageStatus] =
+    useState("loading");
+
+  const [error, setError] =
+    useState("");
+
+  const [editingId, setEditingId] =
+    useState(null);
+
+  const [editDate, setEditDate] =
+    useState("");
+
+  const [editTime, setEditTime] =
+    useState("");
+
+  const [editSlots, setEditSlots] =
+    useState([]);
+
+  const [
+    editDuration,
+    setEditDuration,
+  ] = useState(null);
+
+  const [
+    editSlotStatus,
+    setEditSlotStatus,
+  ] = useState("idle");
+
+  const [savingId, setSavingId] =
+    useState(null);
 
   async function loadBookings(signal) {
     try {
-      const data = await getMyBookings({ signal });
+      const data =
+        await getMyBookings({
+          signal,
+        });
+
       setBookings(data);
       setPageStatus("ready");
     } catch (err) {
-      if (err.name === "AbortError") return;
+      if (err.name === "AbortError") {
+        return;
+      }
 
       setError(err.message);
       setPageStatus("error");
@@ -54,17 +144,110 @@ export default function MyBookingsPage() {
   }
 
   useEffect(() => {
-    const controller = new AbortController();
+    const controller =
+      new AbortController();
 
-    loadBookings(controller.signal);
+    loadBookings(
+      controller.signal
+    );
 
-    return () => controller.abort();
+    return () =>
+      controller.abort();
   }, []);
 
-  function startReschedule(booking) {
+  useEffect(() => {
+    if (
+      !editingId ||
+      !editDate
+    ) {
+      setEditSlots([]);
+      setEditTime("");
+      setEditDuration(null);
+      setEditSlotStatus("idle");
+      return;
+    }
+
+    const booking =
+      bookings.find(
+        (item) =>
+          item.id === editingId
+      );
+
+    if (!booking) return;
+
+    const controller =
+      new AbortController();
+
+    async function loadSlots() {
+      setEditSlotStatus(
+        "loading"
+      );
+
+      setEditTime("");
+      setEditSlots([]);
+      setError("");
+
+      try {
+        const data =
+          await getAvailableSlots(
+            booking.service_id,
+            editDate,
+            {
+              signal:
+                controller.signal,
+            }
+          );
+
+        setEditSlots(
+          data?.slots || []
+        );
+
+        setEditDuration(
+          data?.duration_minutes ??
+          null
+        );
+
+        setEditSlotStatus(
+          "ready"
+        );
+      } catch (err) {
+        if (
+          err.name ===
+          "AbortError"
+        ) {
+          return;
+        }
+
+        setEditSlotStatus(
+          "error"
+        );
+
+        setError(
+          err.message ||
+          "Could not load available times."
+        );
+      }
+    }
+
+    loadSlots();
+
+    return () =>
+      controller.abort();
+  }, [
+    editingId,
+    editDate,
+    bookings,
+  ]);
+
+  function startReschedule(
+    booking
+  ) {
     setEditingId(booking.id);
-    setEditDate(booking.booking_date);
-    setEditTime(booking.booking_time?.slice(0, 5) || "");
+    setEditDate("");
+    setEditTime("");
+    setEditSlots([]);
+    setEditDuration(null);
+    setEditSlotStatus("idle");
     setError("");
   }
 
@@ -72,13 +255,24 @@ export default function MyBookingsPage() {
     setEditingId(null);
     setEditDate("");
     setEditTime("");
+    setEditSlots([]);
+    setEditDuration(null);
+    setEditSlotStatus("idle");
   }
 
-  async function handleReschedule(event, bookingId) {
+  async function handleReschedule(
+    event,
+    bookingId
+  ) {
     event.preventDefault();
 
-    if (!editDate || !editTime) {
-      setError("Choose a new date and time.");
+    if (
+      !editDate ||
+      !editTime
+    ) {
+      setError(
+        "Choose a new date and available time."
+      );
       return;
     }
 
@@ -86,12 +280,28 @@ export default function MyBookingsPage() {
     setError("");
 
     try {
-      const updated = await rescheduleBooking(bookingId, {
-        booking_date: editDate,
-        booking_time: editTime,
-      });
+      const updated =
+        await rescheduleBooking(
+          bookingId,
+          {
+            booking_date:
+              editDate,
 
-      setBookings((current) => current.map((booking) => (booking.id === bookingId ? updated : booking)));
+            booking_time:
+              editTime,
+          }
+        );
+
+      setBookings(
+        (current) =>
+          current.map(
+            (booking) =>
+              booking.id ===
+                bookingId
+                ? updated
+                : booking
+          )
+      );
 
       stopReschedule();
     } catch (err) {
@@ -101,8 +311,13 @@ export default function MyBookingsPage() {
     }
   }
 
-  async function handleCancel(bookingId) {
-    const confirmed = window.confirm("Are you sure you want to cancel this booking?");
+  async function handleCancel(
+    bookingId
+  ) {
+    const confirmed =
+      window.confirm(
+        "Are you sure you want to cancel this booking?"
+      );
 
     if (!confirmed) return;
 
@@ -110,13 +325,29 @@ export default function MyBookingsPage() {
     setError("");
 
     try {
-      await cancelBooking(bookingId);
-
-      setBookings((current) =>
-        current.map((booking) => (booking.id === bookingId ? { ...booking, status: "cancelled" } : booking)),
+      await cancelBooking(
+        bookingId
       );
 
-      if (editingId === bookingId) {
+      setBookings(
+        (current) =>
+          current.map(
+            (booking) =>
+              booking.id ===
+                bookingId
+                ? {
+                  ...booking,
+                  status:
+                    "cancelled",
+                }
+                : booking
+          )
+      );
+
+      if (
+        editingId ===
+        bookingId
+      ) {
         stopReschedule();
       }
     } catch (err) {
@@ -126,17 +357,30 @@ export default function MyBookingsPage() {
     }
   }
 
-  if (pageStatus === "loading") {
+  if (
+    pageStatus === "loading"
+  ) {
     return (
       <main className="page bookings-page">
         <div className="page__container">
-          <div className="page__narrow" aria-busy="true">
+          <div
+            className="page__narrow"
+            aria-busy="true"
+          >
             <header className="page-head">
               <div>
-                <h1>My bookings</h1>
-                <p>View, reschedule or cancel your service bookings.</p>
+                <h1>
+                  My bookings
+                </h1>
+
+                <p>
+                  View, reschedule
+                  or cancel your
+                  service bookings.
+                </p>
               </div>
             </header>
+
             <div className="page-skeleton" />
             <div className="page-skeleton" />
           </div>
@@ -145,19 +389,37 @@ export default function MyBookingsPage() {
     );
   }
 
-  if (pageStatus === "error" && bookings.length === 0) {
+  if (
+    pageStatus === "error" &&
+    bookings.length === 0
+  ) {
     return (
       <main className="page bookings-page">
         <div className="page__container">
           <div className="page__narrow">
             <header className="page-head">
               <div>
-                <h1>My bookings</h1>
-                <p>View, reschedule or cancel your service bookings.</p>
+                <h1>
+                  My bookings
+                </h1>
+
+                <p>
+                  View, reschedule
+                  or cancel your
+                  service bookings.
+                </p>
               </div>
             </header>
-            <div className="page-empty" role="alert">
-              <h2>We couldn't load your bookings</h2>
+
+            <div
+              className="page-empty"
+              role="alert"
+            >
+              <h2>
+                We couldn't load
+                your bookings
+              </h2>
+
               <p>{error}</p>
             </div>
           </div>
@@ -172,137 +434,337 @@ export default function MyBookingsPage() {
         <div className="page__narrow">
           <header className="page-head">
             <div>
-              <h1>My bookings</h1>
-              <p>View, reschedule or cancel your service bookings.</p>
+              <h1>
+                My bookings
+              </h1>
+
+              <p>
+                View, reschedule
+                or cancel your
+                service bookings.
+              </p>
             </div>
           </header>
 
-          {error && <p className="booking-message booking-message--error">{error}</p>}
+          {error && (
+            <p className="booking-message booking-message--error">
+              {error}
+            </p>
+          )}
 
-          {bookings.length === 0 ? (
+          {bookings.length ===
+            0 ? (
             <section className="page-empty">
               <span className="page-empty__icon">
-                <CalendarBlank size={28} weight="duotone" />
+                <CalendarBlank
+                  size={28}
+                  weight="duotone"
+                />
               </span>
 
-              <h2>No bookings yet</h2>
+              <h2>
+                No bookings yet
+              </h2>
 
-              <p>Browse a business and choose a service to make your first booking.</p>
+              <p>
+                Browse a business
+                and choose a
+                service to make
+                your first
+                booking.
+              </p>
 
-              <Link to="/businesses" className="btn btn--primary">
+              <Link
+                to="/businesses"
+                className="btn btn--primary"
+              >
                 Browse places
               </Link>
             </section>
           ) : (
             <div className="bookings-list">
-              {bookings.map((booking) => {
-                const canChange = OPEN_STATUSES.includes(booking.status);
+              {bookings.map(
+                (booking) => {
+                  const canChange =
+                    booking.status ===
+                    "confirmed";
 
-                const editing = editingId === booking.id;
+                  const editing =
+                    editingId ===
+                    booking.id;
 
-                return (
-                  <article className="booking-card" key={booking.id}>
-                    <div className="booking-card__header">
-                      <div>
-                        <span className={`booking-status booking-status--${booking.status}`}>
-                          {booking.status}
+                  return (
+                    <article
+                      className="booking-card"
+                      key={
+                        booking.id
+                      }
+                    >
+                      <div className="booking-card__header">
+                        <div>
+                          <span
+                            className={`booking-status booking-status--${booking.status}`}
+                          >
+                            {statusLabel(
+                              booking.status
+                            )}
+                          </span>
+
+                          <h2>
+                            {
+                              booking.service_name
+                            }
+                          </h2>
+
+                          <p>
+                            {
+                              booking.business_name
+                            }
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="booking-card__details">
+                        <span>
+                          <MapPin
+                            size={17}
+                          />
+
+                          {
+                            booking.branch_name
+                          }
                         </span>
 
-                        <h2>{booking.service_name}</h2>
+                        <span>
+                          <CalendarBlank
+                            size={17}
+                          />
 
-                        <p>{booking.business_name}</p>
+                          {formatDate(
+                            booking.booking_date
+                          )}
+                        </span>
+
+                        <span>
+                          <Clock
+                            size={17}
+                          />
+
+                          {formatTime(
+                            booking.booking_time
+                          )}
+                        </span>
                       </div>
-                    </div>
 
-                    <div className="booking-card__details">
-                      <span>
-                        <MapPin size={17} />
-                        {booking.branch_name}
-                      </span>
+                      {editing && (
+                        <form
+                          className="booking-reschedule"
+                          onSubmit={(
+                            event
+                          ) =>
+                            handleReschedule(
+                              event,
+                              booking.id
+                            )
+                          }
+                        >
+                          <h3>
+                            Choose a
+                            new
+                            appointment
+                          </h3>
 
-                      <span>
-                        <CalendarBlank size={17} />
-                        {formatDate(booking.booking_date)}
-                      </span>
-
-                      <span>
-                        <Clock size={17} />
-                        {formatTime(booking.booking_time)}
-                      </span>
-                    </div>
-
-                    {editing && (
-                      <form
-                        className="booking-reschedule"
-                        onSubmit={(event) => handleReschedule(event, booking.id)}
-                      >
-                        <h3>Choose a new time</h3>
-
-                        <div className="booking-form__row">
                           <div className="booking-field">
-                            <label htmlFor={`edit-date-${booking.id}`}>Date</label>
+                            <label
+                              htmlFor={`edit-date-${booking.id}`}
+                            >
+                              Date
+                            </label>
 
                             <input
                               id={`edit-date-${booking.id}`}
                               type="date"
-                              value={editDate}
-                              onChange={(event) => setEditDate(event.target.value)}
+                              min={todayString()}
+                              value={
+                                editDate
+                              }
+                              onChange={(
+                                event
+                              ) => {
+                                setEditDate(
+                                  event
+                                    .target
+                                    .value
+                                );
+
+                                setEditTime(
+                                  ""
+                                );
+                              }}
                             />
                           </div>
 
-                          <div className="booking-field">
-                            <label htmlFor={`edit-time-${booking.id}`}>Time</label>
+                          {editDate && (
+                            <div className="booking-field">
+                              <label>
+                                Available
+                                times
+                              </label>
 
-                            <input
-                              id={`edit-time-${booking.id}`}
-                              type="time"
-                              value={editTime}
-                              onChange={(event) => setEditTime(event.target.value)}
-                            />
+                              {editDuration && (
+                                <p>
+                                  Appointment
+                                  duration:{" "}
+                                  {
+                                    editDuration
+                                  }{" "}
+                                  minutes
+                                </p>
+                              )}
+
+                              {editSlotStatus ===
+                                "loading" && (
+                                  <p>
+                                    Loading
+                                    available
+                                    times...
+                                  </p>
+                                )}
+
+                              {editSlotStatus ===
+                                "ready" &&
+                                editSlots.length ===
+                                0 && (
+                                  <p>
+                                    No
+                                    available
+                                    appointments
+                                    on this
+                                    date.
+                                  </p>
+                                )}
+
+                              {editSlotStatus ===
+                                "ready" &&
+                                editSlots.length >
+                                0 && (
+                                  <div className="booking-slots">
+                                    {editSlots.map(
+                                      (
+                                        slot
+                                      ) => (
+                                        <button
+                                          key={
+                                            slot
+                                          }
+                                          type="button"
+                                          className={
+                                            editTime ===
+                                              slot
+                                              ? "booking-slot booking-slot--selected"
+                                              : "booking-slot"
+                                          }
+                                          aria-pressed={
+                                            editTime ===
+                                            slot
+                                          }
+                                          onClick={() =>
+                                            setEditTime(
+                                              slot
+                                            )
+                                          }
+                                        >
+                                          {formatTime(
+                                            slot
+                                          )}
+                                        </button>
+                                      )
+                                    )}
+                                  </div>
+                                )}
+                            </div>
+                          )}
+
+                          <div className="booking-actions">
+                            <button
+                              type="button"
+                              className="btn btn--secondary"
+                              onClick={
+                                stopReschedule
+                              }
+                            >
+                              Cancel
+                            </button>
+
+                            <button
+                              type="submit"
+                              className="btn btn--primary"
+                              disabled={
+                                savingId ===
+                                booking.id ||
+                                !editTime
+                              }
+                            >
+                              {savingId ===
+                                booking.id
+                                ? "Saving..."
+                                : "Save new time"}
+                            </button>
                           </div>
-                        </div>
+                        </form>
+                      )}
 
-                        <div className="booking-actions">
-                          <button type="button" className="btn btn--secondary" onClick={stopReschedule}>
-                            Cancel
-                          </button>
+                      {canChange &&
+                        !editing && (
+                          <div className="booking-actions">
+                            <button
+                              type="button"
+                              className="booking-action"
+                              onClick={() =>
+                                startReschedule(
+                                  booking
+                                )
+                              }
+                            >
+                              <PencilSimple
+                                size={
+                                  17
+                                }
+                              />
 
-                          <button
-                            type="submit"
-                            className="btn btn--primary"
-                            disabled={savingId === booking.id}
-                          >
-                            {savingId === booking.id ? "Saving..." : "Save new time"}
-                          </button>
-                        </div>
-                      </form>
-                    )}
+                              Reschedule
+                            </button>
 
-                    {canChange && !editing && (
-                      <div className="booking-actions">
-                        <button
-                          type="button"
-                          className="booking-action"
-                          onClick={() => startReschedule(booking)}
-                        >
-                          <PencilSimple size={17} />
-                          Reschedule
-                        </button>
+                            <button
+                              type="button"
+                              className="booking-action booking-action--danger"
+                              onClick={() =>
+                                handleCancel(
+                                  booking.id
+                                )
+                              }
+                              disabled={
+                                savingId ===
+                                booking.id
+                              }
+                            >
+                              <X
+                                size={
+                                  17
+                                }
+                              />
 
-                        <button
-                          type="button"
-                          className="booking-action booking-action--danger"
-                          onClick={() => handleCancel(booking.id)}
-                          disabled={savingId === booking.id}
-                        >
-                          <X size={17} />
-                          {savingId === booking.id ? "Cancelling..." : "Cancel booking"}
-                        </button>
-                      </div>
-                    )}
-                  </article>
-                );
-              })}
+                              {savingId ===
+                                booking.id
+                                ? "Cancelling..."
+                                : "Cancel booking"}
+                            </button>
+                          </div>
+                        )}
+                    </article>
+                  );
+                }
+              )}
             </div>
           )}
         </div>

@@ -136,10 +136,7 @@ export default function OwnerReviews() {
       <div className="page-h">
         <div>
           <h1>Reviews</h1>
-          <p className="am-note">
-            See what visitors are saying about{" "}
-            {business?.name || "your business"}.
-          </p>
+
         </div>
 
         <span className="sp" />
@@ -240,8 +237,8 @@ export default function OwnerReviews() {
 
                 <p
                   className={`am-quote${review.comment
-                      ? ""
-                      : " none"
+                    ? ""
+                    : " none"
                     }`}
                 >
                   {review.comment ||

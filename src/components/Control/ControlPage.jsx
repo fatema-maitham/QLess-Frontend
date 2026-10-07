@@ -11,17 +11,19 @@ export default function ControlPage({
   subtitle = "",
   onQueueChange,
   showSettings = false,
-  // where the Bookings button goes
-  // (staff stay inside their own dashboard)
+
+  // Staff can pass their own bookings route.
+  // Owner defaults to /owner/bookings?branch=...
   bookingsTo = "",
-  // the analytics page is owner only
+
+  // Analytics is owner only.
   showAnalytics = true,
   canManageStatus = true,
   fixedCounter = null,
   canServe = true,
 
-  // Staff page passes the queue assigned by the owner.
-  // Owner pages leave this as null and can see all queues.
+  // Staff passes the queue assigned by the owner.
+  // Owner leaves this null and can see all queues.
   allowedQueueId = null,
 }) {
   const [params, setParams] = useSearchParams();
@@ -126,6 +128,17 @@ export default function ControlPage({
   const settingsLink =
     `/owner/branches/${branchId}/queues`;
 
+  /*
+   * Owner:
+   * /owner/bookings?branch=4
+   *
+   * Staff:
+   * Staff page can pass bookingsTo="/staff/bookings"
+   */
+  const bookingsLink =
+    bookingsTo ||
+    `/owner/bookings?branch=${branchId}`;
+
   return (
     <section className="cp-page">
       <div className="page-h cp-page-head">
@@ -172,10 +185,7 @@ export default function ControlPage({
         {branchId && (
           <Link
             className="btn btn-ghost"
-            to={
-              bookingsTo ||
-              `/branches/${branchId}/bookings`
-            }
+            to={bookingsLink}
           >
             Bookings
           </Link>
@@ -194,6 +204,7 @@ export default function ControlPage({
       {!branchId && (
         <div className="empty cp-empty-page">
           <b>No branches yet</b>
+
           <p>
             Add a branch before running a queue.
           </p>

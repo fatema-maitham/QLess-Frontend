@@ -18,17 +18,17 @@ const ICONS = {
   queues: <><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M7 10h4M7 14h7" /></>,
   profile: <path d="M3 9l1.5-5h15L21 9M3 9h18M3 9v11h18V9M9 20v-6h6v6" />,
   account: (
-  <>
-    <circle cx="12" cy="8" r="4" />
-    <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
-  </>
-),
-settings: (
-  <>
-    <circle cx="12" cy="12" r="4" />
-    <path d="m9 3-1 3-3 1-2 5 2 5 3 1 1 3h6l1-3 3-1 2-5-2-5-3-1-1-3Z" />
-  </>
-),
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+    </>
+  ),
+  settings: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="m9 3-1 3-3 1-2 5 2 5 3 1 1 3h6l1-3 3-1 2-5-2-5-3-1-1-3Z" />
+    </>
+  ),
 };
 
 function Item({ to, icon, children, end }) {
@@ -137,7 +137,7 @@ export default function OwnerLayout() {
   }, []);
 
 
-    useEffect(() => {
+  useEffect(() => {
     let cancelled = false;
 
     async function loadInitialData() {
@@ -165,7 +165,7 @@ export default function OwnerLayout() {
       cancelled = true;
     };
   }, []);
-  
+
   const toast = useCallback((msg) => {
     setToastMsg(msg);
     clearTimeout(timer.current);
@@ -188,62 +188,71 @@ export default function OwnerLayout() {
 
   return (
     <div className="owner app owner-business">
-            <div className="logo">
-  <img src={logo} alt="QLess" />
+      <div className="logo">
+        <img src={logo} alt="QLess" />
 
-  <button
-    type="button"
-    className="owner-menu-toggle"
-    aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
-    aria-expanded={menuOpen}
-    aria-controls="owner-navigation"
-    onClick={() => setMenuOpen((previous) => !previous)}
-  >
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      aria-hidden="true"
-    >
-      {menuOpen ? (
-        <path d="m6 6 12 12M6 18 18 6" />
-      ) : (
-        <path d="M4 6h16M4 12h16M4 18h16" />
-      )}
-    </svg>
-  </button>
-</div>
+        <button
+          type="button"
+          className="owner-menu-toggle"
+          aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={menuOpen}
+          aria-controls="owner-navigation"
+          onClick={() => setMenuOpen((previous) => !previous)}
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
+            {menuOpen ? (
+              <path d="m6 6 12 12M6 18 18 6" />
+            ) : (
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
+      </div>
 
       <header className="top">
         <span className="owner-date">
-  {new Date().toLocaleDateString('en-GB', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  })}
-</span>
+          {new Date().toLocaleDateString('en-GB', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+          })}
+        </span>
         <NotificationBell />
 
         <div className="who">
           <span>{data.business?.name}{data.business && ' · '}<b>{name}</b></span>
-          <div className="av">{initial(name)}</div>
+          <div className="av">
+            {data.business?.image ? (
+              <img
+                src={data.business.image}
+                alt={`${data.business?.name || 'Business'} logo`}
+              />
+            ) : (
+              initial(data.business?.name || name)
+            )}
+          </div>
         </div>
       </header>
 
       <nav
-  id="owner-navigation"
-  className={`side${menuOpen ? ' owner-menu-open' : ''}`}
-  aria-label="Owner menu"
-  onClick={(event) => {
-    if (event.target.closest('a')) {
-      setMenuOpen(false);
-    }
-  }}
->
+        id="owner-navigation"
+        className={`side${menuOpen ? ' owner-menu-open' : ''}`}
+        aria-label="Owner menu"
+        onClick={(event) => {
+          if (event.target.closest('a')) {
+            setMenuOpen(false);
+          }
+        }}
+      >
         <Item to="/owner/dashboard" icon="overview" end>Overview</Item>
         <p className="grp">Manage</p>
         <Item to="/owner/branches" icon="branches">Branches{needsSetup && <span className="soon">Setup</span>}</Item>

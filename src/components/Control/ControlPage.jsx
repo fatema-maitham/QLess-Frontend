@@ -4,22 +4,29 @@ import { getBranchQueues } from "../../services/branchService";
 import QueueControl from "./QueueControl";
 import "./Control.css";
 import OwnerPageSearch from "../Owner/OwnerPageSearch";
+
 export default function ControlPage({
   branches,
   title = "Live Queues",
   subtitle = "",
   onQueueChange,
   showSettings = false,
-  // where the Bookings button goes (staff stay inside their own dashboard)
+  // where the Bookings button goes
+  // (staff stay inside their own dashboard)
   bookingsTo = "",
   // the analytics page is owner only
   showAnalytics = true,
   canManageStatus = true,
   fixedCounter = null,
   canServe = true,
+
+  // Staff page passes the queue assigned by the owner.
+  // Owner pages leave this as null and can see all queues.
+  allowedQueueId = null,
 }) {
   const [params, setParams] = useSearchParams();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
+
   const [queues, setQueues] = useState({
     status: "loading",
     list: [],
@@ -27,7 +34,8 @@ export default function ControlPage({
   });
 
   const branchId =
-    params.get("branch") || String(branches[0]?.id || "");
+    params.get("branch") ||
+    String(branches[0]?.id || "");
 
   useEffect(() => {
     if (!branchId) return;
@@ -63,16 +71,34 @@ export default function ControlPage({
     return () => controller.abort();
   }, [branchId]);
 
-    const list = queues.list.filter(
-      (queue) =>
-        !showSettings ||
-        `${queue.name || ''} ${queue.service?.name || ''}`
-          .toLowerCase()
-          .includes(search.toLowerCase())
-    );
+  /*
+   * Owner:
+   * allowedQueueId is null -> show every queue.
+   *
+   * Staff:
+   * allowedQueueId contains their assigned queue ->
+   * show ONLY that queue.
+   */
+  const list = queues.list.filter((queue) => {
+    if (
+      allowedQueueId != null &&
+      String(queue.id) !== String(allowedQueueId)
+    ) {
+      return false;
+    }
+
+    if (!showSettings) {
+      return true;
+    }
+
+    return `${queue.name || ""} ${queue.service?.name || ""}`
+      .toLowerCase()
+      .includes(search.toLowerCase());
+  });
 
   const fromUrl = list.find(
-    (queue) => String(queue.id) === params.get("queue")
+    (queue) =>
+      String(queue.id) === params.get("queue")
   );
 
   const current =
@@ -85,7 +111,9 @@ export default function ControlPage({
   }, [current, onQueueChange]);
 
   function pickBranch(id) {
-    setParams({ branch: String(id) });
+    setParams({
+      branch: String(id),
+    });
   }
 
   function pickQueue(id) {
@@ -95,23 +123,30 @@ export default function ControlPage({
     });
   }
 
-  const settingsLink = `/owner/branches/${branchId}/queues`;
+  const settingsLink =
+    `/owner/branches/${branchId}/queues`;
 
   return (
     <section className="cp-page">
       <div className="page-h cp-page-head">
         <div className="cp-title">
           <h1>{title}</h1>
-          {subtitle && <p className="cp-sub">{subtitle}</p>}
+
+          {subtitle && (
+            <p className="cp-sub">
+              {subtitle}
+            </p>
+          )}
         </div>
 
         <span className="sp" />
+
         {showSettings && (
-        <OwnerPageSearch
-          value={search}
-          onChange={setSearch}
-          placeholder="Search queues"
-        />
+          <OwnerPageSearch
+            value={search}
+            onChange={setSearch}
+            placeholder="Search queues"
+          />
         )}
 
         {branches.length > 1 && (
@@ -119,23 +154,38 @@ export default function ControlPage({
             className="sel"
             aria-label="Choose branch"
             value={branchId}
-            onChange={(event) => pickBranch(event.target.value)}
+            onChange={(event) =>
+              pickBranch(event.target.value)
+            }
           >
             {branches.map((branch) => (
-              <option key={branch.id} value={branch.id}>
+              <option
+                key={branch.id}
+                value={branch.id}
+              >
                 {branch.name}
               </option>
             ))}
           </select>
         )}
+
         {branchId && (
-          <Link className="btn btn-ghost" to={bookingsTo || `/branches/${branchId}/bookings`}>
+          <Link
+            className="btn btn-ghost"
+            to={
+              bookingsTo ||
+              `/branches/${branchId}/bookings`
+            }
+          >
             Bookings
           </Link>
         )}
 
         {showSettings && branchId && (
-          <Link className="btn btn--primary" to={settingsLink}>
+          <Link
+            className="btn btn--primary"
+            to={settingsLink}
+          >
             Manage queues
           </Link>
         )}
@@ -144,28 +194,44 @@ export default function ControlPage({
       {!branchId && (
         <div className="empty cp-empty-page">
           <b>No branches yet</b>
-          <p>Add a branch before running a queue.</p>
+          <p>
+            Add a branch before running a queue.
+          </p>
         </div>
       )}
 
-      {branchId && queues.status === "error" && (
-        <div className="empty cp-empty-page" role="alert">
-          <b>Could not load queues</b>
-          <p>{queues.error}</p>
-        </div>
-      )}
+      {branchId &&
+        queues.status === "error" && (
+          <div
+            className="empty cp-empty-page"
+            role="alert"
+          >
+            <b>Could not load queues</b>
+            <p>{queues.error}</p>
+          </div>
+        )}
 
       {branchId &&
         queues.status === "ready" &&
         list.length === 0 && (
           <div className="empty cp-empty-page">
-            <b>No queues yet</b>
+            <b>
+              {allowedQueueId != null
+                ? "No assigned queue"
+                : "No queues yet"}
+            </b>
+
             {showSettings ? (
               <p>
-                <Link to={settingsLink}>Create your first queue</Link>
+                <Link to={settingsLink}>
+                  Create your first queue
+                </Link>
               </p>
             ) : (
-              <p>Ask the owner to create a queue for this branch.</p>
+              <p>
+                Ask the owner to assign you to a
+                queue for this branch.
+              </p>
             )}
           </div>
         )}
@@ -182,10 +248,16 @@ export default function ControlPage({
                 key={queue.id}
                 type="button"
                 role="tab"
-                aria-selected={current?.id === queue.id}
-                className={`tab ${current?.id === queue.id ? "on" : ""
+                aria-selected={
+                  current?.id === queue.id
+                }
+                className={`tab ${current?.id === queue.id
+                    ? "on"
+                    : ""
                   }`}
-                onClick={() => pickQueue(queue.id)}
+                onClick={() =>
+                  pickQueue(queue.id)
+                }
               >
                 {queue.name}
 

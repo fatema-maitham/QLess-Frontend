@@ -7,7 +7,6 @@ import {
   useLocation,
 } from "react-router";
 
-
 // ================= PUBLIC =================
 
 import LandingPage from "./components/Landing/LandingPage";
@@ -15,7 +14,6 @@ import BrowsePage from "./components/Browse/BrowsePage";
 import BusinessDetailsPage from "./components/BusinessDetails/BusinessDetailsPage";
 import BranchDetailsPage from "./components/BranchDetails/BranchDetailsPage";
 import NotFound from "./components/NotFound/NotFound";
-
 
 // ================= AUTH + SHARED =================
 
@@ -28,7 +26,6 @@ import AuthPage from "./components/Auth/AuthPage";
 import ForgotPassword from "./components/Auth/ForgotPassword";
 import ResetPassword from "./components/Auth/ResetPassword";
 
-
 // ================= CUSTOMER =================
 
 import JoinQueuePage from "./components/Ticket/JoinQueuePage";
@@ -38,7 +35,6 @@ import FavoritesPage from "./components/Favorites/FavoritesPage";
 import MyBookingsPage from "./components/Bookings/MyBookingsPage";
 import CustomerDashboard from "./components/Dashboard/CustomerDashboard";
 import CustomerProfile from "./components/CustomerProfile/CustomerProfile";
-
 
 // ================= OWNER =================
 
@@ -54,15 +50,14 @@ import OwnerAnnouncements from "./components/Owner/OwnerAnnouncements";
 import OwnerProfile from "./components/Owner/OwnerProfile";
 import OwnerAccount from "./components/Owner/OwnerAccount";
 import OwnerReviews from "./components/Owner/OwnerReviews";
+import OwnerBookings from "./components/Owner/OwnerBookings";
 
 import OwnerQueues from "./components/Control/OwnerQueues";
-
 
 // ================= QUEUE ANALYTICS =================
 
 import QueueAnalyticsPage from "./components/Analytics/QueueAnalyticsPage";
 import QueueSettingsPage from "./components/QueueSettings/QueueSettingsPage";
-
 
 // ================= STAFF =================
 
@@ -74,16 +69,9 @@ import StaffProfile from "./components/Staff/StaffProfile";
 import StaffHistory from "./components/Staff/StaffHistory";
 import StaffBookings from "./components/Staff/StaffBookings";
 
-
-// ================= BOOKINGS =================
-
-import BranchBookingsPage from "./components/Bookings/BranchBookingsPage";
-
-
 // ================= NOTIFICATIONS =================
 
 import NotificationsPage from "./components/Notifications/NotificationsPage";
-
 
 // ================= ADMIN =================
 
@@ -99,7 +87,6 @@ import AdminUsers from "./components/AdminPanel/AdminUsers";
 import AdminBranches from "./components/AdminPanel/AdminBranches";
 import AdminAuditLogs from "./components/AdminPanel/AdminAuditLogs";
 
-
 // ================= CONTEXT + HELPERS =================
 
 import { UserContext } from "./contexts/UserContext";
@@ -112,14 +99,12 @@ import {
 
 import "./App.css";
 
-
 const NO_NAV = [
   "/sign-in",
   "/sign-up",
   "/forgot-password",
   "/reset-password",
 ];
-
 
 export default function App() {
   const { user } =
@@ -130,7 +115,6 @@ export default function App() {
 
   const requestedPage =
     location.state?.from;
-
 
   const canReturnToPage = (
     path,
@@ -177,7 +161,6 @@ export default function App() {
     return true;
   };
 
-
   const afterSignIn =
     canReturnToPage(
       requestedPage,
@@ -185,7 +168,6 @@ export default function App() {
     )
       ? requestedPage
       : homeFor(user);
-
 
   const showNav =
     !NO_NAV.includes(
@@ -201,9 +183,7 @@ export default function App() {
       "/admin"
     );
 
-
   const showFooter = showNav;
-
 
   return (
     <div className="app">
@@ -212,7 +192,6 @@ export default function App() {
       <ScrollToHash />
 
       <Routes>
-
         {/* ================= HOME ================= */}
 
         <Route
@@ -229,7 +208,6 @@ export default function App() {
           }
         />
 
-
         <Route
           path="/business/register"
           element={
@@ -239,7 +217,6 @@ export default function App() {
             />
           }
         />
-
 
         {/* ================= AUTH ================= */}
 
@@ -257,7 +234,6 @@ export default function App() {
           }
         />
 
-
         <Route
           path="/sign-in"
           element={
@@ -271,7 +247,6 @@ export default function App() {
             )
           }
         />
-
 
         <Route
           path="/forgot-password"
@@ -287,14 +262,12 @@ export default function App() {
           }
         />
 
-
         <Route
           path="/reset-password"
           element={
             <ResetPassword />
           }
         />
-
 
         {/* ================= CUSTOMER DASHBOARD ================= */}
 
@@ -318,7 +291,6 @@ export default function App() {
           }
         />
 
-
         {/* ================= PUBLIC BROWSING ================= */}
 
         <Route
@@ -340,14 +312,12 @@ export default function App() {
           }
         />
 
-
         {/* ================= JOIN QUEUE ================= */}
 
         <Route
           path="/queues/:queueId"
           element={<JoinQueuePage />}
         />
-
 
         {/* ================= CUSTOMER ================= */}
 
@@ -366,7 +336,6 @@ export default function App() {
           }
         />
 
-
         <Route
           path="/settings"
           element={
@@ -383,7 +352,6 @@ export default function App() {
           }
         />
 
-
         <Route
           path="/my-tickets"
           element={
@@ -396,7 +364,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
 
         <Route
           path="/tickets/:entryId"
@@ -411,7 +378,6 @@ export default function App() {
           }
         />
 
-
         <Route
           path="/favorites"
           element={
@@ -424,7 +390,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
 
         <Route
           path="/my-bookings"
@@ -439,7 +404,6 @@ export default function App() {
           }
         />
 
-
         <Route
           path="/notifications"
           element={
@@ -452,7 +416,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
 
         {/* ================= OWNER ================= */}
 
@@ -469,7 +432,6 @@ export default function App() {
           }
         />
 
-
         <Route
           path="/owner/business"
           element={
@@ -482,7 +444,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
 
         {/* OWNER DASHBOARD LAYOUT */}
 
@@ -497,14 +458,12 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-
           <Route
             path="/owner/dashboard"
             element={
               <OwnerOverview />
             }
           />
-
 
           <Route
             path="/owner/branches"
@@ -513,14 +472,12 @@ export default function App() {
             }
           />
 
-
           <Route
             path="/owner/branches/:id"
             element={
               <OwnerBranch />
             }
           />
-
 
           <Route
             path="/owner/staff"
@@ -529,14 +486,12 @@ export default function App() {
             }
           />
 
-
           <Route
             path="/owner/announcements"
             element={
               <OwnerAnnouncements />
             }
           />
-
 
           <Route
             path="/owner/queues"
@@ -545,8 +500,12 @@ export default function App() {
             }
           />
 
-
-          {/* NEW OWNER REVIEWS */}
+          <Route
+            path="/owner/bookings"
+            element={
+              <OwnerBookings />
+            }
+          />
 
           <Route
             path="/owner/reviews"
@@ -555,14 +514,12 @@ export default function App() {
             }
           />
 
-
           <Route
             path="/owner/branches/:branchId/queues"
             element={
               <QueueSettingsPage />
             }
           />
-
 
           <Route
             path="/owner/queues/:queueId/analytics"
@@ -571,14 +528,12 @@ export default function App() {
             }
           />
 
-
           <Route
             path="/owner/profile"
             element={
               <OwnerProfile />
             }
           />
-
 
           <Route
             path="/owner/my-profile"
@@ -589,7 +544,6 @@ export default function App() {
             }
           />
 
-
           <Route
             path="/owner/settings"
             element={
@@ -599,16 +553,13 @@ export default function App() {
             }
           />
 
-
           <Route
             path="/owner/notifications"
             element={
               <NotificationsPage />
             }
           />
-
         </Route>
-
 
         {/* ================= STAFF ================= */}
 
@@ -624,14 +575,12 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-
           <Route
             index
             element={
               <StaffOverview />
             }
           />
-
 
           <Route
             path="queues"
@@ -640,14 +589,12 @@ export default function App() {
             }
           />
 
-
           <Route
             path="history"
             element={
               <StaffHistory />
             }
           />
-
 
           <Route
             path="bookings"
@@ -656,14 +603,12 @@ export default function App() {
             }
           />
 
-
           <Route
             path="branch"
             element={
               <StaffBranch />
             }
           />
-
 
           <Route
             path="profile"
@@ -674,7 +619,6 @@ export default function App() {
             }
           />
 
-
           <Route
             path="settings"
             element={
@@ -684,33 +628,13 @@ export default function App() {
             }
           />
 
-
           <Route
             path="notifications"
             element={
               <NotificationsPage />
             }
           />
-
         </Route>
-
-
-        {/* ================= BRANCH BOOKINGS ================= */}
-
-        <Route
-          path="/branches/:branchId/bookings"
-          element={
-            <ProtectedRoute
-              roles={[
-                ROLES.OWNER,
-                ROLES.STAFF,
-              ]}
-            >
-              <BranchBookingsPage />
-            </ProtectedRoute>
-          }
-        />
-
 
         {/* ================= ADMIN ================= */}
 
@@ -726,14 +650,12 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-
           <Route
             index
             element={
               <AdminOverview />
             }
           />
-
 
           <Route
             path="businesses"
@@ -742,14 +664,12 @@ export default function App() {
             }
           />
 
-
           <Route
             path="users"
             element={
               <AdminUsers />
             }
           />
-
 
           <Route
             path="branches"
@@ -758,14 +678,12 @@ export default function App() {
             }
           />
 
-
           <Route
             path="audit-logs"
             element={
               <AdminAuditLogs />
             }
           />
-
 
           <Route
             path="categories"
@@ -774,14 +692,12 @@ export default function App() {
             }
           />
 
-
           <Route
             path="queues"
             element={
               <AdminQueuesPage />
             }
           />
-
 
           <Route
             path="reviews"
@@ -790,7 +706,6 @@ export default function App() {
             }
           />
 
-
           <Route
             path="suspicious-activity"
             element={
@@ -798,16 +713,13 @@ export default function App() {
             }
           />
 
-
           <Route
             path="notifications"
             element={
               <NotificationsPage />
             }
           />
-
         </Route>
-
 
         {/* ================= NO ACCESS ================= */}
 
@@ -816,14 +728,12 @@ export default function App() {
           element={<NoAccess />}
         />
 
-
         {/* ================= 404 ================= */}
 
         <Route
           path="*"
           element={<NotFound />}
         />
-
       </Routes>
 
       {showFooter && <Footer />}

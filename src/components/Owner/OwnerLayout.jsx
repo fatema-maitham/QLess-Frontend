@@ -334,8 +334,8 @@ export default function OwnerLayout() {
       <nav
         id="owner-navigation"
         className={`side${menuOpen
-            ? " owner-menu-open"
-            : ""
+          ? " owner-menu-open"
+          : ""
           }`}
         aria-label="Owner menu"
         onClick={(event) => {

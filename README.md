@@ -124,6 +124,7 @@ At the same time, businesses can manage customer flow, operate queues, organize 
 
 ---
 
+
 ## Business Owner
 
 * As a business owner, I can create a business.

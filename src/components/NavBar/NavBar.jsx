@@ -190,7 +190,7 @@ const NavBar = () => {
                     </li>
 
 
-                                        <li>
+                    <li>
                       <NavLink
                         to="/settings"
                         className={linkClass}
@@ -246,11 +246,16 @@ const NavBar = () => {
                 {!isPhone && <NotificationBell />}
 
                 <span className="qnav__user">
-                  <span
-                    className="qnav__avatar"
-                    aria-hidden="true"
-                  >
-                    {firstName.charAt(0).toUpperCase()}
+                  <span className="qnav__avatar" aria-hidden="true">
+                    {user?.profile_image ? (
+                      <img
+                        src={user.profile_image}
+                        alt=""
+                        className="qnav__avatar-img"
+                      />
+                    ) : (
+                      firstName.charAt(0).toUpperCase()
+                    )}
                   </span>
 
                   Hello {firstName}

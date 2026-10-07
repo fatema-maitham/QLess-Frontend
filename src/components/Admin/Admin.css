@@ -1598,3 +1598,41 @@
     color: var(--faint)
   }
 }
+
+.am-image-icon {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+}
+
+.am-list-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+}
+
+/* Category icons — same icons as Landing industries */
+.am-category-icon {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 !important;
+  overflow: visible !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}

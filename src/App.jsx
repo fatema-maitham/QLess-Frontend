@@ -1,14 +1,24 @@
 import { useContext } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router";
 
-// Public pages
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router";
+
+
+// ================= PUBLIC =================
+
 import LandingPage from "./components/Landing/LandingPage";
 import BrowsePage from "./components/Browse/BrowsePage";
 import BusinessDetailsPage from "./components/BusinessDetails/BusinessDetailsPage";
 import BranchDetailsPage from "./components/BranchDetails/BranchDetailsPage";
 import NotFound from "./components/NotFound/NotFound";
 
-// Auth + shared
+
+// ================= AUTH + SHARED =================
+
 import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer";
 import ScrollToHash from "./components/ScrollToHash/ScrollToHash";
@@ -18,7 +28,9 @@ import AuthPage from "./components/Auth/AuthPage";
 import ForgotPassword from "./components/Auth/ForgotPassword";
 import ResetPassword from "./components/Auth/ResetPassword";
 
-// Customer pages
+
+// ================= CUSTOMER =================
+
 import JoinQueuePage from "./components/Ticket/JoinQueuePage";
 import TicketPage from "./components/Ticket/TicketPage";
 import MyTicketsPage from "./components/Ticket/MyTicketsPage";
@@ -27,9 +39,12 @@ import MyBookingsPage from "./components/Bookings/MyBookingsPage";
 import CustomerDashboard from "./components/Dashboard/CustomerDashboard";
 import CustomerProfile from "./components/CustomerProfile/CustomerProfile";
 
-// Owner pages
+
+// ================= OWNER =================
+
 import OwnerHome from "./components/Business/OwnerHome";
 import BusinessForm from "./components/Business/BusinessForm";
+
 import OwnerLayout from "./components/Owner/OwnerLayout";
 import OwnerOverview from "./components/Owner/OwnerOverview";
 import OwnerBranches from "./components/Owner/OwnerBranches";
@@ -38,13 +53,19 @@ import OwnerStaff from "./components/Owner/OwnerStaff";
 import OwnerAnnouncements from "./components/Owner/OwnerAnnouncements";
 import OwnerProfile from "./components/Owner/OwnerProfile";
 import OwnerAccount from "./components/Owner/OwnerAccount";
+import OwnerReviews from "./components/Owner/OwnerReviews";
+
 import OwnerQueues from "./components/Control/OwnerQueues";
 
-// Queue analytics
+
+// ================= QUEUE ANALYTICS =================
+
 import QueueAnalyticsPage from "./components/Analytics/QueueAnalyticsPage";
 import QueueSettingsPage from "./components/QueueSettings/QueueSettingsPage";
 
-// Staff
+
+// ================= STAFF =================
+
 import StaffQueues from "./components/Control/StaffQueues";
 import StaffLayout from "./components/Staff/StaffLayout";
 import StaffOverview from "./components/Staff/StaffOverview";
@@ -53,17 +74,24 @@ import StaffProfile from "./components/Staff/StaffProfile";
 import StaffHistory from "./components/Staff/StaffHistory";
 import StaffBookings from "./components/Staff/StaffBookings";
 
-// Bookings
+
+// ================= BOOKINGS =================
+
 import BranchBookingsPage from "./components/Bookings/BranchBookingsPage";
 
-// Notifications
+
+// ================= NOTIFICATIONS =================
+
 import NotificationsPage from "./components/Notifications/NotificationsPage";
 
-// Admin pages
+
+// ================= ADMIN =================
+
 import AdminSuspiciousPage from "./components/Admin/AdminSuspiciousPage";
 import AdminQueuesPage from "./components/Admin/AdminQueuesPage";
 import AdminReviewsPage from "./components/Admin/AdminReviewsPage";
 import AdminCategoriesPage from "./components/Admin/AdminCategoriesPage";
+
 import AdminLayout from "./components/AdminPanel/AdminLayout";
 import AdminOverview from "./components/AdminPanel/AdminOverview";
 import AdminBusinesses from "./components/AdminPanel/AdminBusinesses";
@@ -71,11 +99,19 @@ import AdminUsers from "./components/AdminPanel/AdminUsers";
 import AdminBranches from "./components/AdminPanel/AdminBranches";
 import AdminAuditLogs from "./components/AdminPanel/AdminAuditLogs";
 
-// Context + helpers
+
+// ================= CONTEXT + HELPERS =================
+
 import { UserContext } from "./contexts/UserContext";
-import { ROLES, getRole, homeFor } from "./lib/helpers/roles";
+
+import {
+  ROLES,
+  getRole,
+  homeFor,
+} from "./lib/helpers/roles";
 
 import "./App.css";
+
 
 const NO_NAV = [
   "/sign-in",
@@ -84,26 +120,44 @@ const NO_NAV = [
   "/reset-password",
 ];
 
+
 export default function App() {
-  const { user } = useContext(UserContext);
-  const location = useLocation();
+  const { user } =
+    useContext(UserContext);
 
-  const requestedPage = location.state?.from;
+  const location =
+    useLocation();
 
-  const canReturnToPage = (path, user) => {
-    if (!path || !user) return false;
+  const requestedPage =
+    location.state?.from;
 
-    const role = getRole(user);
 
-    if (path.startsWith("/owner")) {
+  const canReturnToPage = (
+    path,
+    currentUser
+  ) => {
+    if (!path || !currentUser) {
+      return false;
+    }
+
+    const role =
+      getRole(currentUser);
+
+    if (
+      path.startsWith("/owner")
+    ) {
       return role === ROLES.OWNER;
     }
 
-    if (path.startsWith("/staff")) {
+    if (
+      path.startsWith("/staff")
+    ) {
       return role === ROLES.STAFF;
     }
 
-    if (path.startsWith("/admin")) {
+    if (
+      path.startsWith("/admin")
+    ) {
       return role === ROLES.ADMIN;
     }
 
@@ -115,23 +169,41 @@ export default function App() {
       path.startsWith("/my-bookings") ||
       path === "/notifications"
     ) {
-      return role === ROLES.CUSTOMER;
+      return (
+        role === ROLES.CUSTOMER
+      );
     }
 
     return true;
   };
 
-  const afterSignIn = canReturnToPage(requestedPage, user)
-    ? requestedPage
-    : homeFor(user);
+
+  const afterSignIn =
+    canReturnToPage(
+      requestedPage,
+      user
+    )
+      ? requestedPage
+      : homeFor(user);
+
 
   const showNav =
-    !NO_NAV.includes(location.pathname) &&
-    !location.pathname.startsWith("/owner") &&
-    !location.pathname.startsWith("/staff") &&
-    !location.pathname.startsWith("/admin");
+    !NO_NAV.includes(
+      location.pathname
+    ) &&
+    !location.pathname.startsWith(
+      "/owner"
+    ) &&
+    !location.pathname.startsWith(
+      "/staff"
+    ) &&
+    !location.pathname.startsWith(
+      "/admin"
+    );
+
 
   const showFooter = showNav;
+
 
   return (
     <div className="app">
@@ -140,23 +212,34 @@ export default function App() {
       <ScrollToHash />
 
       <Routes>
+
         {/* ================= HOME ================= */}
 
         <Route
           path="/"
           element={
             user ? (
-              <Navigate to={homeFor(user)} replace />
+              <Navigate
+                to={homeFor(user)}
+                replace
+              />
             ) : (
               <LandingPage />
             )
           }
         />
 
+
         <Route
           path="/business/register"
-          element={<Navigate to="/sign-up?type=owner" replace />}
+          element={
+            <Navigate
+              to="/sign-up?type=owner"
+              replace
+            />
+          }
         />
+
 
         {/* ================= AUTH ================= */}
 
@@ -164,39 +247,54 @@ export default function App() {
           path="/sign-up"
           element={
             user ? (
-              <Navigate to={afterSignIn} replace />
+              <Navigate
+                to={afterSignIn}
+                replace
+              />
             ) : (
               <AuthPage />
             )
           }
         />
+
 
         <Route
           path="/sign-in"
           element={
             user ? (
-              <Navigate to={afterSignIn} replace />
+              <Navigate
+                to={afterSignIn}
+                replace
+              />
             ) : (
               <AuthPage />
             )
           }
         />
 
+
         <Route
           path="/forgot-password"
           element={
             user ? (
-              <Navigate to={homeFor(user)} replace />
+              <Navigate
+                to={homeFor(user)}
+                replace
+              />
             ) : (
               <ForgotPassword />
             )
           }
         />
 
+
         <Route
           path="/reset-password"
-          element={<ResetPassword />}
+          element={
+            <ResetPassword />
+          }
         />
+
 
         {/* ================= CUSTOMER DASHBOARD ================= */}
 
@@ -204,14 +302,22 @@ export default function App() {
           path="/dashboard"
           element={
             !user ? (
-              <Navigate to="/sign-in" replace />
-            ) : getRole(user) === ROLES.CUSTOMER ? (
+              <Navigate
+                to="/sign-in"
+                replace
+              />
+            ) : getRole(user) ===
+              ROLES.CUSTOMER ? (
               <CustomerDashboard />
             ) : (
-              <Navigate to={homeFor(user)} replace />
+              <Navigate
+                to={homeFor(user)}
+                replace
+              />
             )
           }
         />
+
 
         {/* ================= PUBLIC BROWSING ================= */}
 
@@ -222,13 +328,18 @@ export default function App() {
 
         <Route
           path="/businesses/:businessId"
-          element={<BusinessDetailsPage />}
+          element={
+            <BusinessDetailsPage />
+          }
         />
 
         <Route
           path="/branches/:branchId"
-          element={<BranchDetailsPage />}
+          element={
+            <BranchDetailsPage />
+          }
         />
+
 
         {/* ================= JOIN QUEUE ================= */}
 
@@ -237,21 +348,33 @@ export default function App() {
           element={<JoinQueuePage />}
         />
 
+
         {/* ================= CUSTOMER ================= */}
 
-                <Route
+        <Route
           path="/profile"
           element={
-            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
-              <CustomerProfile key="customer-profile" />
+            <ProtectedRoute
+              roles={[
+                ROLES.CUSTOMER,
+              ]}
+            >
+              <CustomerProfile
+                key="customer-profile"
+              />
             </ProtectedRoute>
           }
         />
 
+
         <Route
           path="/settings"
           element={
-            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.CUSTOMER,
+              ]}
+            >
               <CustomerProfile
                 key="customer-settings"
                 settings
@@ -260,264 +383,431 @@ export default function App() {
           }
         />
 
+
         <Route
           path="/my-tickets"
           element={
-            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.CUSTOMER,
+              ]}
+            >
               <MyTicketsPage />
             </ProtectedRoute>
           }
         />
 
+
         <Route
           path="/tickets/:entryId"
           element={
-            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.CUSTOMER,
+              ]}
+            >
               <TicketPage />
             </ProtectedRoute>
           }
         />
 
+
         <Route
           path="/favorites"
           element={
-            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.CUSTOMER,
+              ]}
+            >
               <FavoritesPage />
             </ProtectedRoute>
           }
         />
 
+
         <Route
           path="/my-bookings"
           element={
-            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.CUSTOMER,
+              ]}
+            >
               <MyBookingsPage />
             </ProtectedRoute>
           }
         />
 
-        {/* Customer notifications */}
+
         <Route
           path="/notifications"
           element={
-            <ProtectedRoute roles={[ROLES.CUSTOMER]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.CUSTOMER,
+              ]}
+            >
               <NotificationsPage />
             </ProtectedRoute>
           }
         />
+
 
         {/* ================= OWNER ================= */}
 
         <Route
           path="/owner"
           element={
-            <ProtectedRoute roles={[ROLES.OWNER]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.OWNER,
+              ]}
+            >
               <OwnerHome />
             </ProtectedRoute>
           }
         />
 
+
         <Route
           path="/owner/business"
           element={
-            <ProtectedRoute roles={[ROLES.OWNER]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.OWNER,
+              ]}
+            >
               <BusinessForm />
             </ProtectedRoute>
           }
         />
 
-        {/* Owner dashboard layout */}
+
+        {/* OWNER DASHBOARD LAYOUT */}
+
         <Route
           element={
-            <ProtectedRoute roles={[ROLES.OWNER]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.OWNER,
+              ]}
+            >
               <OwnerLayout />
             </ProtectedRoute>
           }
         >
+
           <Route
             path="/owner/dashboard"
-            element={<OwnerOverview />}
+            element={
+              <OwnerOverview />
+            }
           />
+
 
           <Route
             path="/owner/branches"
-            element={<OwnerBranches />}
+            element={
+              <OwnerBranches />
+            }
           />
+
 
           <Route
             path="/owner/branches/:id"
-            element={<OwnerBranch />}
+            element={
+              <OwnerBranch />
+            }
           />
+
 
           <Route
             path="/owner/staff"
-            element={<OwnerStaff />}
+            element={
+              <OwnerStaff />
+            }
           />
+
 
           <Route
             path="/owner/announcements"
-            element={<OwnerAnnouncements />}
+            element={
+              <OwnerAnnouncements />
+            }
           />
+
 
           <Route
             path="/owner/queues"
-            element={<OwnerQueues />}
+            element={
+              <OwnerQueues />
+            }
           />
+
+
+          {/* NEW OWNER REVIEWS */}
+
+          <Route
+            path="/owner/reviews"
+            element={
+              <OwnerReviews />
+            }
+          />
+
 
           <Route
             path="/owner/branches/:branchId/queues"
-            element={<QueueSettingsPage />}
+            element={
+              <QueueSettingsPage />
+            }
           />
+
 
           <Route
             path="/owner/queues/:queueId/analytics"
-            element={<QueueAnalyticsPage />}
+            element={
+              <QueueAnalyticsPage />
+            }
           />
+
 
           <Route
             path="/owner/profile"
-            element={<OwnerProfile />}
+            element={
+              <OwnerProfile />
+            }
           />
+
+
           <Route
-          path="/owner/my-profile"
-          element={<OwnerAccount key="owner-my-profile" />}
-        />
+            path="/owner/my-profile"
+            element={
+              <OwnerAccount
+                key="owner-my-profile"
+              />
+            }
+          />
 
-        <Route
-          path="/owner/settings"
-          element={<OwnerAccount key="owner-settings" />}
-        />
 
-          {/* OWNER NOTIFICATIONS - keeps Owner sidebar */}
+          <Route
+            path="/owner/settings"
+            element={
+              <OwnerAccount
+                key="owner-settings"
+              />
+            }
+          />
+
+
           <Route
             path="/owner/notifications"
-            element={<NotificationsPage />}
+            element={
+              <NotificationsPage />
+            }
           />
+
         </Route>
 
-            {/* ================= STAFF ================= */}
+
+        {/* ================= STAFF ================= */}
 
         <Route
           path="/staff"
           element={
-            <ProtectedRoute roles={[ROLES.STAFF]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.STAFF,
+              ]}
+            >
               <StaffLayout />
             </ProtectedRoute>
           }
         >
+
           <Route
             index
-            element={<StaffOverview />}
+            element={
+              <StaffOverview />
+            }
           />
+
 
           <Route
             path="queues"
-            element={<StaffQueues />}
+            element={
+              <StaffQueues />
+            }
           />
+
 
           <Route
             path="history"
-            element={<StaffHistory />}
+            element={
+              <StaffHistory />
+            }
           />
+
 
           <Route
             path="bookings"
-            element={<StaffBookings />}
+            element={
+              <StaffBookings />
+            }
           />
+
 
           <Route
             path="branch"
-            element={<StaffBranch />}
+            element={
+              <StaffBranch />
+            }
           />
+
 
           <Route
             path="profile"
-            element={<StaffProfile key="profile" />}
+            element={
+              <StaffProfile
+                key="profile"
+              />
+            }
           />
+
 
           <Route
             path="settings"
-            element={<StaffProfile key="settings" />}
+            element={
+              <StaffProfile
+                key="settings"
+              />
+            }
           />
+
 
           <Route
             path="notifications"
-            element={<NotificationsPage />}
+            element={
+              <NotificationsPage />
+            }
           />
+
         </Route>
+
 
         {/* ================= BRANCH BOOKINGS ================= */}
 
         <Route
           path="/branches/:branchId/bookings"
           element={
-            <ProtectedRoute roles={[ROLES.OWNER, ROLES.STAFF]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.OWNER,
+                ROLES.STAFF,
+              ]}
+            >
               <BranchBookingsPage />
             </ProtectedRoute>
           }
         />
+
 
         {/* ================= ADMIN ================= */}
 
         <Route
           path="/admin"
           element={
-            <ProtectedRoute roles={[ROLES.ADMIN]}>
+            <ProtectedRoute
+              roles={[
+                ROLES.ADMIN,
+              ]}
+            >
               <AdminLayout />
             </ProtectedRoute>
           }
         >
+
           <Route
             index
-            element={<AdminOverview />}
+            element={
+              <AdminOverview />
+            }
           />
+
 
           <Route
             path="businesses"
-            element={<AdminBusinesses />}
+            element={
+              <AdminBusinesses />
+            }
           />
+
 
           <Route
             path="users"
-            element={<AdminUsers />}
+            element={
+              <AdminUsers />
+            }
           />
+
 
           <Route
             path="branches"
-            element={<AdminBranches />}
+            element={
+              <AdminBranches />
+            }
           />
+
 
           <Route
             path="audit-logs"
-            element={<AdminAuditLogs />}
+            element={
+              <AdminAuditLogs />
+            }
           />
+
 
           <Route
             path="categories"
-            element={<AdminCategoriesPage />}
+            element={
+              <AdminCategoriesPage />
+            }
           />
+
 
           <Route
             path="queues"
-            element={<AdminQueuesPage />}
+            element={
+              <AdminQueuesPage />
+            }
           />
+
 
           <Route
             path="reviews"
-            element={<AdminReviewsPage />}
+            element={
+              <AdminReviewsPage />
+            }
           />
+
 
           <Route
             path="suspicious-activity"
-            element={<AdminSuspiciousPage />}
+            element={
+              <AdminSuspiciousPage />
+            }
           />
 
-          {/* ADMIN NOTIFICATIONS - keeps Admin sidebar */}
+
           <Route
             path="notifications"
-            element={<NotificationsPage />}
+            element={
+              <NotificationsPage />
+            }
           />
+
         </Route>
+
 
         {/* ================= NO ACCESS ================= */}
 
@@ -526,12 +816,14 @@ export default function App() {
           element={<NoAccess />}
         />
 
+
         {/* ================= 404 ================= */}
 
         <Route
           path="*"
           element={<NotFound />}
         />
+
       </Routes>
 
       {showFooter && <Footer />}

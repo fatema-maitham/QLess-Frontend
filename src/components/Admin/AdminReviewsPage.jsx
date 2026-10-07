@@ -121,8 +121,17 @@ export default function AdminReviewsPage() {
         <div className="list">
           {shown.map((review) => (
             <div className="li am-li am-li--top" key={review.id}>
-              <span className="ic">{initial(review.author_name)}</span>
-              <div>
+              <span className="ic am-image-icon">
+                {review.author_profile_image ? (
+                  <img
+                    src={review.author_profile_image}
+                    alt={`${review.author_name} profile`}
+                    className="am-list-image"
+                  />
+                ) : (
+                  initial(review.author_name)
+                )}
+              </span>              <div>
                 <b>{review.business_name}</b>
                 <small>by {review.author_name} · {ago(review.created_at)}</small>
                 <p className={`am-quote${review.comment ? "" : " none"}`}>

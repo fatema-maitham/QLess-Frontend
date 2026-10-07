@@ -25,7 +25,7 @@ export default function AdminBusinesses() {
   const [reason, setReason] = useState('');
   const dialog = useRef(null);
 
-    const load = useCallback(() => {
+  const load = useCallback(() => {
     return getAdminBusinesses()
       .then((data) => {
         setList(data);
@@ -114,7 +114,17 @@ export default function AdminBusinesses() {
             const busy = busyId === b.id;
             return (
               <div className={`li am-li${b.is_active ? '' : ' off'}`} key={b.id}>
-                <span className="ic">{initial(b.name)}</span>
+                <span className="ic am-image-icon">
+                  {b.image ? (
+                    <img
+                      src={b.image}
+                      alt={`${b.name} logo`}
+                      className="am-list-image"
+                    />
+                  ) : (
+                    initial(b.name)
+                  )}
+                </span>
                 <div><b>{b.name}</b><small>{details(b)}</small></div>
                 <span className={`st ${st.cls}`}>{st.text}</span>
                 <span className="am-acts">

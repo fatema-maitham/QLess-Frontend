@@ -2,7 +2,9 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { UserContext } from '../../contexts/UserContext';
 import { getAdminDashboard } from '../../services/adminManageService';
+import { money } from '../../services/paymentService';
 import { Icon } from './AdminLayout';
+import './AdminPayments.css';
 
 function greeting() {
   const h = new Date().getHours();
@@ -99,6 +101,30 @@ export default function AdminOverview() {
           <span className="ic"><Icon name="queues" /></span>
           <b>{stats.open_queues}</b><span>Open queues</span>
           <small>{stats.people_waiting} people waiting</small>
+        </button>
+      </div>
+
+      <h3 className="am-sub-h">Plans and revenue</h3>
+      <div className="am-kpis">
+        <button className="am-kpi" type="button" onClick={() => navigate('/admin/payments')}>
+          <span className="ic"><Icon name="payments" /></span>
+          <b>{money(stats.revenue_total)}</b><span>Total revenue</span>
+          <small>{stats.paid_payments} paid {stats.paid_payments === 1 ? 'payment' : 'payments'}</small>
+        </button>
+        <button className="am-kpi" type="button" onClick={() => navigate('/admin/businesses')}>
+          <span className="ic"><Icon name="businesses" /></span>
+          <b>{stats.active_plans}</b><span>Active plans</span>
+          <small>businesses paid up</small>
+        </button>
+        <button className="am-kpi" type="button" onClick={() => navigate('/admin/businesses')}>
+          <span className="ic"><Icon name="clock" /></span>
+          <b>{stats.plans_ending_soon}</b><span>Ending this week</span>
+          <small>plans that run out in 7 days</small>
+        </button>
+        <button className="am-kpi" type="button" onClick={() => navigate('/admin/payments')}>
+          <span className="ic"><Icon name="suspicious" /></span>
+          <b>{stats.failed_payments}</b><span>Failed payments</span>
+          <small>{stats.failed_payments ? 'declined cards' : 'nothing to check'}</small>
         </button>
       </div>
 

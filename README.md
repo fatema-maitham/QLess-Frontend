@@ -8,6 +8,8 @@ Customers can browse businesses, choose a branch and service, join a virtual que
 
 The platform also includes dedicated interfaces for business owners, staff members, and administrators to manage businesses, branches, services, queues, bookings, customers, and platform activity.
 
+Business owners subscribe to a monthly or yearly plan to list their business on QLess. Paying sends the business to an admin for approval.
+
 ## Background
 
 QLess was created to reduce the time people spend physically waiting in queues.
@@ -46,6 +48,9 @@ At the same time, businesses can manage customer flow, operate queues, organize 
 - Customer reviews
 - Favorite businesses
 - Business management
+- Owner subscription plans (monthly or yearly)
+- Card checkout before a business is sent for approval
+- Billing page with plan status, plan renewal, and payment history
 - Branch management
 - Service management
 - Operating hours management
@@ -63,6 +68,7 @@ At the same time, businesses can manage customer flow, operate queues, organize 
 - Review moderation
 - Suspicious activity monitoring
 - Audit logs
+- Admin payments page and revenue overview
 
 ## User Stories
 
@@ -129,6 +135,12 @@ At the same time, businesses can manage customer flow, operate queues, organize 
 
 * As a business owner, I can create a business.
 * As a business owner, I can view all my businesses and their status.
+* As a business owner, I can choose a monthly or yearly plan.
+* As a business owner, I can pay for my plan by card.
+* As a business owner, my business is sent for admin approval after I pay.
+* As a business owner, I can see if my plan is active and when it ends.
+* As a business owner, I can extend my plan without losing remaining days.
+* As a business owner, I can view my payment history and receipt numbers.
 * As a business owner, I can submit my business for admin approval.
 * As a business owner, I can view my business approval status.
 * As a business owner, I can see the reason my business was rejected.
@@ -205,7 +217,7 @@ At the same time, businesses can manage customer flow, operate queues, organize 
 - As an admin, I can activate or deactivate user accounts.
 - As an admin, I can lift a customer's temporary restriction.
 - As an admin, I can view all businesses.
-- As an admin, I can view pending business applications.
+- As an admin, I can view pending business applications (only paid businesses can be submitted).
 - As an admin, I can approve a business.
 - As an admin, I can reject a business.
 - As an admin, I can deactivate a business.
@@ -218,6 +230,9 @@ At the same time, businesses can manage customer flow, operate queues, organize 
 - As an admin, I can monitor suspicious activity.
 - As an admin, I can mark suspicious activity as reviewed or dismissed.
 - As an admin, I can view audit logs.
+- As an admin, I can see which businesses have paid for a plan and when each plan ends.
+- As an admin, I can view all owner payments, filter paid or failed payments, and search by business, owner, or receipt number.
+- As an admin, I can see total revenue, active plans, plans ending this week, and failed payments on the dashboard.
 
 ## Planning Materials
 
@@ -243,6 +258,26 @@ Business logos are uploaded directly from the browser to Cloudinary, and the ima
 
 WebSockets are used to provide real-time queue updates without requiring customers to manually refresh the page.
 
+## Owner Plans and Payments
+
+Business owners pay for a plan before their business can be reviewed by an admin.
+
+| Plan | Price | Length |
+| --- | --- | --- |
+| Monthly | 15.000 BHD | 30 days |
+| Yearly | 150.000 BHD | 365 days |
+
+How it works:
+
+1. The owner fills in the business details. The business is saved as a draft.
+2. The owner picks a plan and pays by card on the payment page.
+3. After a successful payment, the business is sent to an admin for approval automatically.
+4. Once approved, the owner can open the **Billing** page from the dashboard to see the plan status, days left, and payment history, and to extend the plan.
+5. Extending the plan adds the new time after the current end date, so no days are lost.
+6. Admins can see every payment on the **Payments** page, a **Paid / Unpaid** badge on each business, and revenue numbers on the admin overview.
+
+The checkout is a **demo**: no real money is taken. Any 16-digit card number works, with any future expiry date and a 3 or 4 digit security code. Only the card brand and the last 4 digits are saved. The full card number and the security code are never stored. A real payment provider such as Tap, BenefitPay, or Stripe can be connected later.
+
 ## Authentication
 
 QLess uses JWT-based authentication to protect user accounts and role-specific application features.
@@ -253,6 +288,7 @@ QLess uses JWT-based authentication to protect user accounts and role-specific a
 - Protected routes require the user to be signed in.
 - Customer features are restricted to customer accounts.
 - Business management features are restricted to business owners.
+- Owners must pay for a plan before submitting a business for approval.
 - Queue operation features are available to authorized owners and staff.
 - Admin features are restricted to users with an admin role.
 - Users can log out from the application.
@@ -278,6 +314,7 @@ The API is used to manage:
 - Favorites
 - Staff
 - Announcements
+- Owner plans and payments
 - Queue analytics
 - Admin monitoring
 - Suspicious activity
@@ -409,6 +446,8 @@ password123
 | Staff | `staff@qless.com` |
 | Customer | `customer@qless.com` |
 
+The seeded owner account has no payments yet, so its **Billing** page shows no active plan. Pay once with any 16-digit card number to activate it.
+
 ## Backend Repository
 
 [QLess Backend Repository](https://github.com/fatema-maitham/QLess-Backend)
@@ -437,6 +476,8 @@ password123
 - Arabic language support
 - Map view of nearby branches
 - Nearby branch discovery
+- Connect a real payment provider (Tap, BenefitPay, or Stripe)
+- Automatic plan renewal and payment reminders
 - Online payment for bookings
 - Advanced queue analytics charts
 - Push notifications

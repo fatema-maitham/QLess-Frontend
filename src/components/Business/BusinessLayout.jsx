@@ -12,6 +12,10 @@ const STEPS = [
     text: 'A name and category are enough to start. A logo and contact details help visitors trust you.',
   },
   {
+    title: 'Pick a plan and pay',
+    text: 'Monthly or yearly. Paying sends your business to our team for approval.',
+  },
+  {
     title: 'We check it',
     text: 'An admin makes sure the business is real before visitors can find it and join its queues.',
   },
@@ -35,7 +39,7 @@ const BusinessLayout = ({ step = 1, children }) => {
     <div className="ob">
       <header className="ob-top">
         <div className="ob-top-in">
-                              <Link className="ob-logo" to="/"><img src={logo} alt="QLess home" /></Link>
+          <Link className="ob-logo" to="/"><img src={logo} alt="QLess home" /></Link>
           <div className="ob-who">
             <span>Signed in as <b>{user?.name}</b></span>
             <button type="button" className="ob-btn ob-btn-ghost" onClick={handleSignOut}>

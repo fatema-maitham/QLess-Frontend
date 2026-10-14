@@ -6,6 +6,7 @@ import {
 import { initial } from '../Owner/ownerSetup';
 import { SearchBox, Tabs } from './AdminParts';
 import { ago, matches, shortDate } from './adminUtils';
+import './AdminPayments.css';
 
 const STATUS = {
   pending: { text: 'Pending', cls: 'warn' },
@@ -92,6 +93,8 @@ export default function AdminBusinesses() {
     if (b.approval_status === 'approved' && !b.is_active) parts.push('deactivated');
     else if (b.approval_status === 'approved') parts.push(`since ${shortDate(b.created_at)}`);
     if (b.approval_status === 'rejected' && b.rejection_reason) parts.push(`reason: “${b.rejection_reason}”`);
+    if (b.is_paid) parts.push(`plan until ${shortDate(b.paid_until)}`);
+    else if (b.paid_until) parts.push(`plan ended ${shortDate(b.paid_until)}`);
     return parts.filter(Boolean).join(' · ');
   }
 
@@ -125,7 +128,15 @@ export default function AdminBusinesses() {
                     initial(b.name)
                   )}
                 </span>
-                <div><b>{b.name}</b><small>{details(b)}</small></div>
+                <div>
+                  <b>
+                    {b.name}
+                    <span className={`am-plan ${b.is_paid ? 'paid' : 'unpaid'}`}>
+                      {b.is_paid ? 'Paid' : 'Unpaid'}
+                    </span>
+                  </b>
+                  <small>{details(b)}</small>
+                </div>
                 <span className={`st ${st.cls}`}>{st.text}</span>
                 <span className="am-acts">
                   {b.approval_status === 'pending' && (

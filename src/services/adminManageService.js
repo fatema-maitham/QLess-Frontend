@@ -54,6 +54,14 @@ export function setBranchActive(id, isActive) {
   return apiPatch(`/admin/branches/${id}`, { is_active: isActive });
 }
 
+// ---------- Payments ----------
+
+// Every owner payment. status: paid | failed (empty = all)
+export async function getAdminPayments({ status, search, signal } = {}) {
+  const data = await apiGet("/admin/payments", { params: { status, search }, signal });
+  return toList(data);
+}
+
 // ---------- Audit logs ----------
 
 // entity_type: business | user | branch (empty = all)

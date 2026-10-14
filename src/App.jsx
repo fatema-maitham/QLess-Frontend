@@ -54,6 +54,11 @@ import OwnerBookings from "./components/Owner/OwnerBookings";
 
 import OwnerQueues from "./components/Control/OwnerQueues";
 
+// ================= PAYMENTS =================
+
+import PaymentPage from "./components/Payment/PaymentPage";
+import OwnerBilling from "./components/Payment/OwnerBilling";
+
 // ================= QUEUE ANALYTICS =================
 
 import QueueAnalyticsPage from "./components/Analytics/QueueAnalyticsPage";
@@ -86,6 +91,7 @@ import AdminBusinesses from "./components/AdminPanel/AdminBusinesses";
 import AdminUsers from "./components/AdminPanel/AdminUsers";
 import AdminBranches from "./components/AdminPanel/AdminBranches";
 import AdminAuditLogs from "./components/AdminPanel/AdminAuditLogs";
+import AdminPayments from "./components/AdminPanel/AdminPayments";
 
 // ================= CONTEXT + HELPERS =================
 
@@ -445,6 +451,19 @@ export default function App() {
           }
         />
 
+        <Route
+          path="/owner/payment"
+          element={
+            <ProtectedRoute
+              roles={[
+                ROLES.OWNER,
+              ]}
+            >
+              <PaymentPage />
+            </ProtectedRoute>
+          }
+        />
+
         {/* OWNER DASHBOARD LAYOUT */}
 
         <Route
@@ -532,6 +551,13 @@ export default function App() {
             path="/owner/profile"
             element={
               <OwnerProfile />
+            }
+          />
+
+          <Route
+            path="/owner/billing"
+            element={
+              <OwnerBilling />
             }
           />
 
@@ -684,7 +710,12 @@ export default function App() {
               <AdminAuditLogs />
             }
           />
-
+          <Route
+            path="payments"
+            element={
+              <AdminPayments />
+            }
+          />
           <Route
             path="categories"
             element={

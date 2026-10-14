@@ -28,7 +28,7 @@ const OwnerHome = () => {
   const [message, setMessage] = useState('');
   const [firstTime, setFirstTime] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
     getMyBusiness()
       .then((b) => {
         if (b?.approval_status === 'approved') {
@@ -55,15 +55,20 @@ const OwnerHome = () => {
     );
   }
 
-  // No business yet, or still a draft → the form
-  if (!business || business.approval_status === 'draft') {
+  // No business yet → the form
+  if (!business) {
     return <Navigate to="/owner/business" replace />;
+  }
+
+  // Draft → pay first (paying sends it for approval)
+  if (business.approval_status === 'draft') {
+    return <Navigate to={business.is_paid ? '/owner/business' : '/owner/payment'} replace />;
   }
 
   // Waiting for the admin
   if (business.approval_status === 'pending') {
     return (
-      <BusinessLayout step={2}>
+      <BusinessLayout step={3}>
         <span className="ob-tag wait"><i></i>Under review</span>
         <h1>Thanks, we got it.</h1>
         <p className="ob-sub">
@@ -73,6 +78,7 @@ const OwnerHome = () => {
         <BizCard business={business} pill="Pending" pillClass="" />
         <dl className="ob-dl">
           <dt>Sent</dt><dd>{formatDate(business.updated_at || business.created_at)}</dd>
+          {business.paid_until && (<><dt>Plan paid until</dt><dd>{formatDate(business.paid_until)}</dd></>)}
           {business.phone && (<><dt>Phone</dt><dd>{business.phone}</dd></>)}
           {business.email && (<><dt>Email</dt><dd>{business.email}</dd></>)}
         </dl>
@@ -86,7 +92,7 @@ const OwnerHome = () => {
   // Rejected by the admin
   if (business.approval_status === 'rejected') {
     return (
-      <BusinessLayout step={2}>
+      <BusinessLayout step={3}>
         <span className="ob-tag no">Needs changes</span>
         <h1>Almost there.</h1>
         <p className="ob-sub">
@@ -109,7 +115,7 @@ const OwnerHome = () => {
 
   // Approved: first time → show the approved page
   return (
-    <BusinessLayout step={3}>
+    <BusinessLayout step={4}>
       <span className="ob-tag ok">Approved</span>
       <h1>You're live on QLess.</h1>
       <p className="ob-sub">
@@ -117,12 +123,12 @@ const OwnerHome = () => {
       </p>
       <BizCard business={business} pill="Live" pillClass="ok" />
       <div className="ob-actions">
-               <Link
+        <Link
           className="ob-btn ob-btn-primary"
           to="/owner/dashboard"
           onClick={() => localStorage.setItem(`qless-approved-seen-${business.id}`, 'yes')}
         >
-          
+
           Go to my dashboard
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
         </Link>

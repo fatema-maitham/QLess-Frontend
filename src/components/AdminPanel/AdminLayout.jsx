@@ -20,6 +20,8 @@ const ICONS = {
   reviews: <path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" />,
   suspicious: <path d="M5 21V4M5 4h12l-2 4 2 4H5" />,
   audit: <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 8h6M9 12h6M9 16h4" /></>,
+  payments: <><rect x="2.5" y="5" width="19" height="14" rx="2.5" /><path d="M2.5 10h19M6.5 15h4" /></>,
+  clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
   search: <><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></>,
 };
 
@@ -52,7 +54,7 @@ export default function AdminLayout() {
   const timer = useRef(null);
 
   // How many businesses are waiting for approval (the orange number in the sidebar)
-    const refreshPending = useCallback(() => {
+  const refreshPending = useCallback(() => {
     return getAdminBusinesses({ approval_status: 'pending' })
       .then((list) => {
         setPending(list.length);
@@ -79,7 +81,7 @@ export default function AdminLayout() {
   const name = user?.name || '';
 
   return (
-        <div className="owner app owner-admin">
+    <div className="owner app owner-admin">
       <div className="logo">
         <img src={logo} alt="QLess" />
 
@@ -118,7 +120,7 @@ export default function AdminLayout() {
         </div>
       </header>
 
-            <nav
+      <nav
         id="admin-navigation"
         className={`side${menuOpen ? ' admin-menu-open' : ''}`}
         aria-label="Admin menu"
@@ -147,6 +149,7 @@ export default function AdminLayout() {
         <Item to="/admin/reviews" icon="reviews">Reviews</Item>
         <Item to="/admin/suspicious-activity" icon="suspicious">Suspicious activity</Item>
         <p className="grp">Records</p>
+        <Item to="/admin/payments" icon="payments">Payments</Item>
         <Item to="/admin/audit-logs" icon="audit">Audit logs</Item>
 
         <div className="meter">

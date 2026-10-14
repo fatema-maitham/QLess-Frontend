@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import BusinessLayout from './BusinessLayout';
-import { getMyBusiness, createAndSubmit, updateBusiness, getCategories, } from '../../services/ownerBusinessService';
+import { getMyBusiness, createBusiness, updateBusiness, getCategories, } from '../../services/ownerBusinessService';
 import { uploadImage } from '../../services/cloudinaryService';
 
 const EMPTY = { name: '', category_id: '', description: '', phone: '', email: '', image: '' };
@@ -71,6 +71,10 @@ const BusinessForm = () => {
     uploadLogo(file);
   };
 
+  const isEdit = Boolean(business);
+  const canResubmit = isEdit && ['draft', 'rejected'].includes(business.approval_status);
+  const needsPayment = !isEdit || (canResubmit && !business.is_paid);
+
   const handleSubmit = async (evt) => {
     evt.preventDefault();
     if (!formData.name.trim()) {
@@ -90,13 +94,19 @@ const BusinessForm = () => {
 
     setSaving(true);
     try {
-      if (business) {
-        const resubmit = ['draft', 'rejected'].includes(business.approval_status);
-        await updateBusiness(business.id, payload, resubmit);
+      if (!business) {
+        // New business: save it as a draft, then pay
+        await createBusiness(payload);
+        navigate('/owner/payment');
+      } else if (canResubmit && !business.is_paid) {
+        // Draft (or rejected with an ended plan): save changes, then pay
+        await updateBusiness(business.id, payload, false);
+        navigate('/owner/payment');
       } else {
-        await createAndSubmit(payload);
+        // Already paid: save, and send again if it was rejected
+        await updateBusiness(business.id, payload, canResubmit);
+        navigate('/owner');
       }
-      navigate('/owner');
     } catch (err) {
       setMessage(err.message);
     } finally {
@@ -106,8 +116,6 @@ const BusinessForm = () => {
 
   const letter = (formData.name.trim()[0] || 'Q').toUpperCase();
   const showLogo = formData.image.trim().startsWith('http');
-  const isEdit = Boolean(business);
-  const canResubmit = isEdit && ['draft', 'rejected'].includes(business.approval_status);
 
   if (loading) {
     return <BusinessLayout step={1}><p className="ob-loading">Loading…</p></BusinessLayout>;
@@ -234,13 +242,17 @@ const BusinessForm = () => {
 
         <div className="ob-note">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A5A14" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9" /><path d="M12 8v5M12 16h.01" /></svg>
-          <span>An admin checks every business before visitors can find it.</span>
+          <span>
+            {needsPayment
+              ? 'Next you pick a plan and pay. Then an admin checks your business before visitors can find it.'
+              : 'An admin checks every business before visitors can find it.'}
+          </span>
         </div>
 
         <div className="ob-submit">
           <button className="ob-btn ob-btn-primary" type="submit" disabled={saving || uploading}>            {saving
             ? 'Sending…'
-            : !isEdit ? 'Send for approval' : canResubmit ? 'Send again for approval' : 'Save changes'}
+            : needsPayment ? 'Continue to payment' : canResubmit ? 'Send again for approval' : 'Save changes'}
             {!saving && (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
             )}
@@ -253,4 +265,3 @@ const BusinessForm = () => {
 };
 
 export default BusinessForm;
-

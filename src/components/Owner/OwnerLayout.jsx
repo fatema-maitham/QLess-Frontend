@@ -82,6 +82,19 @@ const ICONS = {
     <path d="M3 9l1.5-5h15L21 9M3 9h18M3 9v11h18V9M9 20v-6h6v6" />
   ),
 
+  billing: (
+    <>
+      <rect
+        x="2.5"
+        y="5"
+        width="19"
+        height="14"
+        rx="2.5"
+      />
+      <path d="M2.5 10h19M6.5 15h4" />
+    </>
+  ),
+
   account: (
     <>
       <circle cx="12" cy="8" r="4" />
@@ -416,6 +429,21 @@ export default function OwnerLayout() {
           icon="profile"
         >
           Business profile
+        </Item>
+
+
+        <Item
+          to="/owner/billing"
+          icon="billing"
+        >
+          Billing
+
+          {data.business &&
+            !data.business.is_paid && (
+              <span className="soon">
+                Renew
+              </span>
+            )}
         </Item>
 
 

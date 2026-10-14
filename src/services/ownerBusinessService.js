@@ -73,28 +73,13 @@ const getMyBusiness = async () => {
     : null;
 };
 
-// Create business and submit for approval
-const createAndSubmit = async (
-  formData
-) => {
-  const business = await request(
-    "/businesses",
-    {
-      method: "POST",
-      body: JSON.stringify(formData),
-    }
-  );
-
-  return request(
-    `/businesses/${business.id}`,
-    {
-      method: "PATCH",
-      body: JSON.stringify({
-        approval_status: "pending",
-      }),
-    }
-  );
-};
+// Create business as a draft.
+// It goes to the admin after the owner pays (see paymentService.payForPlan).
+const createBusiness = (formData) =>
+  request("/businesses", {
+    method: "POST",
+    body: JSON.stringify(formData),
+  });
 
 // Update business
 const updateBusiness = (
@@ -174,7 +159,7 @@ const getBusinessReviews = async (
 
 export {
   getMyBusiness,
-  createAndSubmit,
+  createBusiness,
   updateBusiness,
   getCategories,
   getBusinessReviews,
